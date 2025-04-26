@@ -59,5 +59,18 @@ class DonationRegisterServiceTest {
 
             verifyNoInteractions(donationRepository);
         }
+
+        @Test
+        @DisplayName("Should throw exception when donor is not eligible to donate")
+        void shouldThrowExceptionWhenDonorIsNotEligible() {
+            Donor ineligibleDonor = new Donor();
+            Appointment appointment = new Appointment();
+
+            assertThatThrownBy(() -> donationRegisterService.register(ineligibleDonor))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("Donor is not eligible to donate");
+
+            verifyNoInteractions(donationRepository);
+        }
     }
 }
