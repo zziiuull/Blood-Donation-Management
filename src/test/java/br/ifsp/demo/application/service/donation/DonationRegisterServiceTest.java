@@ -10,9 +10,9 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DonationRegisterServiceTest {
@@ -48,5 +48,16 @@ class DonationRegisterServiceTest {
     @DisplayName("For invalid tests")
     class InvalidTests {
 
+        @Test
+        @DisplayName("Should throw exception when trying to register donation without donor")
+        void shouldThrowExceptionWhenTryingToRegisterDonationWithoutDonor() {
+            Appointment appointment = new Appointment();
+
+            assertThatThrownBy(() -> donationRegisterService.register(null, appointment))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("Donor must not be null");
+
+            verifyNoInteractions(donationRepository);
+        }
     }
 }
