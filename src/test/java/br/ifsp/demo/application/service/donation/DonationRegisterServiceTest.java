@@ -9,6 +9,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+import java.util.UUID;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
@@ -69,6 +72,22 @@ class DonationRegisterServiceTest {
             assertThatThrownBy(() -> donationRegisterService.register(ineligibleDonor))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("Donor is not eligible to donate");
+
+            verifyNoInteractions(donationRepository);
+        }
+
+        @Test
+        @DisplayName("Should throw exception when trying to register donation for a non-existent donor")
+        void shouldThrowExceptionWhenTryingToRegisterDonationForANonExistentDonor() {
+            UUID nonExistentDonorId = UUID.randomUUID();
+
+            Appointment appointment = new Appointment();
+
+            when(donorRepository.findById(nonExistentDonorId)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> donationRegisterService.registerByDonorId(nonExistentDonorId))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("Donor does not exist");
 
             verifyNoInteractions(donationRepository);
         }
