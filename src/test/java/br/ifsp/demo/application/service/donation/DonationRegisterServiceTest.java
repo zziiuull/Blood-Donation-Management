@@ -3,14 +3,13 @@ package br.ifsp.demo.application.service.donation;
 import br.ifsp.demo.domain.model.*;
 import br.ifsp.demo.domain.repository.DonationRepository;
 import br.ifsp.demo.domain.repository.DonorRepository;
-import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
@@ -40,6 +39,8 @@ class DonationRegisterServiceTest {
     class ValidTests {
 
         @Test
+        @Tag("TDD")
+        @Tag("UnitTest")
         @DisplayName("Should register donation when donor is eligible")
         void shouldRegisterDonationWhenDonorIsEligible() {
 
