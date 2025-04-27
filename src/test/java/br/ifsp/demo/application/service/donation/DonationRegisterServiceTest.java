@@ -175,6 +175,8 @@ class DonationRegisterServiceTest {
         }
 
         @Test
+        @Tag("TDD")
+        @Tag("UnitTest")
         @DisplayName("Should throw exception when trying to register donation for a non-existent donor")
         void shouldThrowExceptionWhenTryingToRegisterDonationForANonExistentDonor() {
             UUID nonExistentDonorId = UUID.randomUUID();
