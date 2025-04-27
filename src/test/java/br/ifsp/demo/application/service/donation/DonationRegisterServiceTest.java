@@ -1,6 +1,7 @@
 package br.ifsp.demo.application.service.donation;
 
 import br.ifsp.demo.domain.model.*;
+import br.ifsp.demo.domain.repository.DonationRepository;
 import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -77,7 +78,7 @@ class DonationRegisterServiceTest {
                     DonationStatus.EM_ANDAMENTO
             );
 
-            when(donationRepository.save()).thenReturn(expectedDonation);
+            when(donationRepository.save(any(Donation.class))).thenReturn(expectedDonation);
 
             Donation result = donationRegisterService.register(eligibleDonor, appointment);
 
@@ -86,7 +87,7 @@ class DonationRegisterServiceTest {
             assertThat(result.getDonor()).isEqualTo(eligibleDonor);
             assertThat(result.getAppointment()).isEqualTo(appointment);
 
-            verify(donationRepository, times(1)).save();
+            verify(donationRepository, times(1)).save(any(Donation.class));
         }
 
     }
