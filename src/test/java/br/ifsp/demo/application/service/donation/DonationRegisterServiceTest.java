@@ -124,10 +124,42 @@ class DonationRegisterServiceTest {
         @Test
         @DisplayName("Should throw exception when donor is not eligible to donate")
         void shouldThrowExceptionWhenDonorIsNotEligible() {
-            Donor ineligibleDonor = new Donor();
-            Appointment appointment = new Appointment();
+            ContactInfo donorContactInfo = new ContactInfo(
+                    "enzo@email.com",
+                    "11991239867",
+                    "Rua da Ponte Caída, n. 101, Itaquaquecetuba/SP"
+            );
 
-            assertThatThrownBy(() -> donationRegisterService.register(ineligibleDonor))
+            Donor ineligibleDonor = new Donor(
+                    "Enzo",
+                    new Cpf("12345678955"),
+                    donorContactInfo,
+                    LocalDate.of(2008, 5, 20),
+                    50.0,
+                    Sex.MALE,
+                    BloodType.O_POS
+            );
+
+            ContactInfo siteContactInfo = new ContactInfo(
+                    "doesangue.sorocaba@email.com",
+                    "1533761530",
+                    "Av. Anhanguera, n. 715, Sorocaba/SP"
+            );
+
+            CollectionSite site = new CollectionSite(
+                    "Banco de Doação de Sorocaba",
+                    siteContactInfo
+            );
+
+            Appointment appointment = new Appointment(
+                    LocalDateTime.now().plusDays(1),
+                    AppointmentStatus.SCHEDULED,
+                    site,
+                    "First donation"
+            );
+
+
+            assertThatThrownBy(() -> donationRegisterService.register(ineligibleDonor, appointment))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("Donor is not eligible to donate");
 
