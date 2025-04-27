@@ -1,6 +1,7 @@
 package br.ifsp.demo.application.service.donation;
 
 import br.ifsp.demo.domain.model.*;
+import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -36,16 +37,34 @@ class DonationRegisterServiceTest {
         @Test
         @DisplayName("Should register donation when donor is eligible")
         void shouldRegisterDonationWhenDonorIsEligible() {
-            Donor eligibleDonor = new Donor(
-                "Weverton",
-                new Cpf("12345678955"),
-                new ContactInfo("weverton@email.com", "11991239867", "Rua da Ponte Caída, n. 101"),
-                LocalDate.of(1990, 5, 20),
-                85.0,
-                Sex.MALE,
-                BloodType.O_POS
+
+            ContactInfo donorContactInfo = new ContactInfo(
+                    "weverton@email.com",
+                    "11991239867",
+                    "Rua da Ponte Caída, n. 101, Itaquaquecetuba/SP"
             );
-            CollectionSite site = new ColletionSite();
+
+            Donor eligibleDonor = new Donor(
+                    "Weverton",
+                    new Cpf("12345678955"),
+                    donorContactInfo,
+                    LocalDate.of(1990, 5, 20),
+                    85.0,
+                    Sex.MALE,
+                    BloodType.O_POS
+            );
+
+            ContactInfo siteContactInfo = new ContactInfo(
+              "doesangue.sorocaba@email.com",
+              "1533761530",
+              "Av. Anhanguera, n. 715, Sorocaba/SP"
+            );
+
+            CollectionSite site = new CollectionSite(
+                    "Banco de Doação de Sorocaba",
+                    siteContactInfo
+            );
+
             Appointment appointment = new Appointment(
                     LocalDateTime.now().plusDays(1),
                     AppointmentStatus.SCHEDULED,
