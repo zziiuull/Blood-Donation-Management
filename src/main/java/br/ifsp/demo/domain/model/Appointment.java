@@ -21,17 +21,17 @@ public class Appointment {
 
     @ManyToOne(optional = false)
     @Getter
-    private ColletionSite colletionSite;
+    private CollectionSite collectionSite;
 
     @Getter
     private String notes;
 
     protected Appointment() {}
 
-    public Appointment(LocalDateTime appointmentDate, AppointmentStatus status, ColletionSite colletionSite, String notes) {
+    public Appointment(LocalDateTime appointmentDate, AppointmentStatus status, CollectionSite collectionSite, String notes) {
         this.appointmentDate = appointmentDate;
         this.status = status;
-        this.colletionSite = colletionSite;
+        this.collectionSite = collectionSite;
         this.notes = notes;
     }
 }
