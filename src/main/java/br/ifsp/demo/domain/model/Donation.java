@@ -15,14 +15,19 @@ public class Donation {
     @Getter
     private Donor donor;
 
+    @OneToOne(optional = false)
+    @Getter
+    private Appointment appointment;
+
     @Enumerated(EnumType.STRING)
     @Getter
     private DonationStatus status;
 
     protected Donation() {}
 
-    public Donation(Donor donor, DonationStatus status) {
+    public Donation(Donor donor, Appointment appointment, DonationStatus status) {
         this.donor = donor;
+        this.appointment = appointment;
         this.status = status;
     }
 }
