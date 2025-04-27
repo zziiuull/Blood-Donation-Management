@@ -2,6 +2,7 @@ package br.ifsp.demo.application.service.donation;
 
 import br.ifsp.demo.domain.model.*;
 import br.ifsp.demo.domain.repository.DonationRepository;
+import br.ifsp.demo.domain.repository.DonorRepository;
 import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -27,6 +28,9 @@ class DonationRegisterServiceTest {
 
     @Mock
     private DonationRepository donationRepository;
+
+    @Mock
+    private DonorRepository donorRepository;
 
     @InjectMocks
     private DonationRegisterService donationRegisterService;
@@ -158,7 +162,6 @@ class DonationRegisterServiceTest {
                     "First donation"
             );
 
-
             assertThatThrownBy(() -> donationRegisterService.register(ineligibleDonor, appointment))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("Donor is not eligible to donate");
@@ -171,11 +174,27 @@ class DonationRegisterServiceTest {
         void shouldThrowExceptionWhenTryingToRegisterDonationForANonExistentDonor() {
             UUID nonExistentDonorId = UUID.randomUUID();
 
-            Appointment appointment = new Appointment();
+            ContactInfo siteContactInfo = new ContactInfo(
+                    "doesangue.sorocaba@email.com",
+                    "1533761530",
+                    "Av. Anhanguera, n. 715, Sorocaba/SP"
+            );
+
+            CollectionSite site = new CollectionSite(
+                    "Banco de Doação de Sorocaba",
+                    siteContactInfo
+            );
+
+            Appointment appointment = new Appointment(
+                    LocalDateTime.now().plusDays(1),
+                    AppointmentStatus.SCHEDULED,
+                    site,
+                    "First donation"
+            );
 
             when(donorRepository.findById(nonExistentDonorId)).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> donationRegisterService.registerByDonorId(nonExistentDonorId))
+            assertThatThrownBy(() -> donationRegisterService.registerByDonorId(nonExistentDonorId, appointment))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("Donor does not exist");
 
