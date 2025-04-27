@@ -39,7 +39,7 @@ class DonationRegisterServiceTest {
             Donor eligibleDonor = new Donor(
                 "Weverton",
                 new CPF("12345678955"),
-                new ContactInfo("weverton@email.com", "11991239867"),
+                new ContactInfo("weverton@email.com", "11991239867", "Rua da Ponte Caída, n. 101"),
                 LocalDate.of(1990, 5, 20),
                 85.0,
                 Sex.MALE,
