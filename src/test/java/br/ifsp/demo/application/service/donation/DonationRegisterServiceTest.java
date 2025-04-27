@@ -129,6 +129,8 @@ class DonationRegisterServiceTest {
         }
 
         @Test
+        @Tag("TDD")
+        @Tag("UnitTest")
         @DisplayName("Should throw exception when donor is not eligible to donate")
         void shouldThrowExceptionWhenDonorIsNotEligible() {
             ContactInfo donorContactInfo = new ContactInfo(
