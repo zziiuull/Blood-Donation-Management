@@ -98,8 +98,22 @@ class DonationRegisterServiceTest {
         @Test
         @DisplayName("Should throw exception when trying to register donation without donor")
         void shouldThrowExceptionWhenTryingToRegisterDonationWithoutDonor() {
-            Appointment appointment = new Appointment();
+            ContactInfo siteContactInfo = new ContactInfo(
+                    "doesangue.sorocaba@email.com",
+                    "1533761530",
+                    "Av. Anhanguera, n. 715, Sorocaba/SP"
+            );
+            CollectionSite site = new CollectionSite(
+                    "Banco de Doação de Sorocaba",
+                    siteContactInfo
+            );
 
+            Appointment appointment = new Appointment(
+                    LocalDateTime.now().plusDays(1),
+                    AppointmentStatus.SCHEDULED,
+                    site,
+                    "First donation"
+            );
             assertThatThrownBy(() -> donationRegisterService.register(null, appointment))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("Donor must not be null");
