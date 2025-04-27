@@ -29,6 +29,11 @@ public class Appointment {
     protected Appointment() {}
 
     public Appointment(LocalDateTime appointmentDate, AppointmentStatus status, CollectionSite collectionSite, String notes) {
+        if (appointmentDate == null || appointmentDate.isBefore(LocalDateTime.now()))
+            throw new IllegalArgumentException("Appointment date must be in the future");
+        if (collectionSite == null)
+            throw new IllegalArgumentException("Collection site must not be null");
+
         this.appointmentDate = appointmentDate;
         this.status = status;
         this.collectionSite = collectionSite;
