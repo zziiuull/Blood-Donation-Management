@@ -1,5 +1,6 @@
 package br.ifsp.demo.application.service.donation;
 
+import br.ifsp.demo.domain.model.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -9,6 +10,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -33,19 +36,40 @@ class DonationRegisterServiceTest {
         @Test
         @DisplayName("Should register donation when donor is eligible")
         void shouldRegisterDonationWhenDonorIsEligible() {
-            Donor eligibleDonor = new Donor();
-            Appointment appointment = new Appointment();
-            Donation expectedDonation = new Donation();
-            Mockito.when(donationRepository.save()).thenReturn(expectedDonation);
+            Donor eligibleDonor = new Donor(
+                "Weverton",
+                new CPF("12345678955"),
+                new ContactInfo("weverton@email.com", "11991239867"),
+                LocalDate.of(1990, 5, 20),
+                85.0,
+                Sex.MALE,
+                BloodType.O_POS
+            );
+            CollectionSite site = new ColletionSite();
+            Appointment appointment = new Appointment(
+                    LocalDateTime.now().plusDays(1),
+                    AppointmentStatus.SCHEDULED,
+                    site,
+                    "First donation"
+            );
+            Donation expectedDonation = new Donation(
+                    eligibleDonor,
+                    appointment,
+                    DonationStatus.EM_ANDAMENTO
+            );
+
+            when(donationRepository.save()).thenReturn(expectedDonation);
 
             Donation result = donationRegisterService.register(eligibleDonor, appointment);
 
             assertThat(result).isNotNull();
             assertThat(result.getStatus()).isEqualTo(DonationStatus.EM_ANDAMENTO);
             assertThat(result.getDonor()).isEqualTo(eligibleDonor);
+            assertThat(result.getAppointment()).isEqualTo(appointment);
 
             verify(donationRepository, times(1)).save();
-    }
+        }
+
     }
     @Nested
     @DisplayName("For invalid tests")
