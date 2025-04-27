@@ -101,6 +101,8 @@ class DonationRegisterServiceTest {
     class InvalidTests {
 
         @Test
+        @Tag("TDD")
+        @Tag("UnitTest")
         @DisplayName("Should throw exception when trying to register donation without donor")
         void shouldThrowExceptionWhenTryingToRegisterDonationWithoutDonor() {
             ContactInfo siteContactInfo = new ContactInfo(
