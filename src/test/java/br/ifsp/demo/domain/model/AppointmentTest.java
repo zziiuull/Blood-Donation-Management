@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,8 +16,31 @@ class AppointmentTest {
     @Nested
     @DisplayName("For valid tests")
     class ValidTests {
-
+        @Test
+        @Tag("UnitTest")
+        @DisplayName("Should create appointment when data is valid")
+        void shouldCreateAppointmentWhenDataIsValid() {
+            ContactInfo siteContact = new ContactInfo(
+                    "doesangue@email.com",
+                    "1533761530",
+                    "Av. Anhanguera, n. 715, Sorocaba/SP"
+            );
+            CollectionSite site = new CollectionSite(
+                    "Banco de Doação de Sangue de Sorocaba",
+                    siteContact
+            );
+            Appointment appointment = new Appointment(
+                    LocalDateTime.now().plusDays(2),
+                    AppointmentStatus.SCHEDULED,
+                    site,
+                    "First donation"
+            );
+            assertThat(appointment).isNotNull();
+            assertThat(appointment.getStatus()).isEqualTo(AppointmentStatus.SCHEDULED);
+            assertThat(appointment.getCollectionSite()).isEqualTo(site);
+        }
     }
+
     @Nested
     @DisplayName("For invalid tests")
     class InvalidTests {
