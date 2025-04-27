@@ -207,5 +207,18 @@ class DonationRegisterServiceTest {
 
             verifyNoInteractions(donationRepository);
         }
+
+        @Test
+        @Tag("UnitTest")
+        @DisplayName("Should throw exception when appointment is null")
+        void shouldThrowExceptionWhenAppointmentIsNull() {
+            Donor donor = mock(Donor.class);
+
+            assertThatThrownBy(() -> donationRegisterService.register(donor, null))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("Appointment must not be null");
+
+            verifyNoInteractions(donationRepository);
+        }
     }
 }
