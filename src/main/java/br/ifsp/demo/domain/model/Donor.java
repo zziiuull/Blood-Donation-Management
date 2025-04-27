@@ -8,19 +8,16 @@ import lombok.Getter;
 import java.time.LocalDate;
 import java.time.Period;
 
+@Getter
 @Entity
 public class Donor extends User {
-    @Getter
     private LocalDate birthDate;
-    @Getter
     private Double weight;
 
     @Enumerated(EnumType.STRING)
-    @Getter
     private Sex sex;
 
     @Enumerated(EnumType.STRING)
-    @Getter
     private BloodType bloodType;
 
     protected Donor() {}

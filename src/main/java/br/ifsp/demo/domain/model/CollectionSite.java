@@ -5,19 +5,17 @@ import lombok.Getter;
 
 import java.util.UUID;
 
+@Getter
 @Entity
 public class CollectionSite {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Getter
     private UUID id;
 
-    @Getter
     private String name;
 
     @Embedded
-    @Getter
     private ContactInfo contactInfo;
 
     protected CollectionSite() {}
