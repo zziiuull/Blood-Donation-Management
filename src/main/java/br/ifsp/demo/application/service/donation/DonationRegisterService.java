@@ -5,15 +5,20 @@ import br.ifsp.demo.domain.model.Donation;
 import br.ifsp.demo.domain.model.DonationStatus;
 import br.ifsp.demo.domain.model.Donor;
 import br.ifsp.demo.domain.repository.DonationRepository;
+import br.ifsp.demo.domain.repository.DonorRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 public class DonationRegisterService {
 
     private final DonationRepository donationRepository;
+    private final DonorRepository donorRepository;
 
-    public DonationRegisterService(DonationRepository donationRepository) {
+    public DonationRegisterService(DonationRepository donationRepository, DonorRepository donorRepository) {
         this.donationRepository = donationRepository;
+        this.donorRepository = donorRepository;
     }
 
     public Donation register(Donor donor, Appointment appointment) {
@@ -29,5 +34,11 @@ public class DonationRegisterService {
 
         Donation donation = new Donation(donor, appointment, DonationStatus.EM_ANDAMENTO);
         return donationRepository.save(donation);
+    }
+
+    public Donation registerByDonorId(UUID donorId, Appointment appointment) {
+        Donor donor = donorRepository.findById(donorId)
+                .orElseThrow(() -> new IllegalArgumentException("Donor does not exist"));
+        return register(donor, appointment);
     }
 }
