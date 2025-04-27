@@ -4,6 +4,7 @@ import br.ifsp.demo.domain.model.Appointment;
 import br.ifsp.demo.domain.model.Donation;
 import br.ifsp.demo.domain.model.DonationStatus;
 import br.ifsp.demo.domain.model.Donor;
+import br.ifsp.demo.domain.repository.DonationRepository;
 import org.springframework.stereotype.Service;
 
 @Service
