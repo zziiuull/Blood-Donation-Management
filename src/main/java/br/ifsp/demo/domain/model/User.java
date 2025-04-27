@@ -17,7 +17,7 @@ public abstract class User {
 
     @Embedded
     @Getter
-    private CPF cpf;
+    private Cpf cpf;
 
     @Embedded
     @Getter
@@ -25,7 +25,7 @@ public abstract class User {
 
     protected User() {}
 
-    protected User(String name, CPF cpf, ContactInfo contactInfo) {
+    protected User(String name, Cpf cpf, ContactInfo contactInfo) {
         this.name = name;
         this.cpf = cpf;
         this.contactInfo = contactInfo;

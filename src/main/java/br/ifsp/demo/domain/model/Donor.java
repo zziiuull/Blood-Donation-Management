@@ -25,7 +25,7 @@ public class Donor extends User {
 
     protected Donor() {}
 
-    public Donor(String name, CPF cpf, ContactInfo contactInfo, LocalDate birthDate, Double weight, Sex sex, BloodType bloodType) {
+    public Donor(String name, Cpf cpf, ContactInfo contactInfo, LocalDate birthDate, Double weight, Sex sex, BloodType bloodType) {
         super(name, cpf, contactInfo);
         this.birthDate = birthDate;
         this.weight = weight;
