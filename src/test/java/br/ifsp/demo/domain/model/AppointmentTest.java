@@ -2,6 +2,7 @@ package br.ifsp.demo.domain.model;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ class AppointmentTest {
     @DisplayName("For invalid tests")
     class InvalidTests {
         @Test
+        @Tag("UnitTest")
         @DisplayName("Should throw exception when appointment date is in the past")
         void shouldThrowExceptionWhenAppointmentDateIsInThePast() {
             ContactInfo siteContact = new ContactInfo(
@@ -43,6 +45,17 @@ class AppointmentTest {
         }
     }
 
-
+    @Test
+    @Tag("UnitTest")
+    @DisplayName("Should throw exception when colletion site is null")
+    void shouldThrowExceptionWhenCollectionSiteIsNull() {
+        assertThatThrownBy(() -> new Appointment(
+                LocalDateTime.now().plusDays(1),
+                AppointmentStatus.SCHEDULED,
+                null,
+                "first donation"
+        )).isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Collection site must not be null");
+    }
 
 }
