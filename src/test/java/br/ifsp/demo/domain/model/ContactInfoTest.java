@@ -24,6 +24,15 @@ class ContactInfoTest {
         assertThat(contactInfo.getAddress()).isEqualTo("Av. Anhanguera, n. 715, Sorocaba/SP");
     }
 
+    @Test
+    @Tag("UnitTest")
+    @DisplayName("Should throw exception when email is null")
+    void shouldThrowExceptionWhenEmailIsNull(){
+        assertThatThrownBy(() -> new ContactInfo(null, "1533761530", "Av. Anhanguera, n. 715, Sorocaba/SP"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Email must not be blank");
+    }
+
 
 
 }
