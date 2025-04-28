@@ -47,7 +47,7 @@ class ViewDonationDetailsServiceTest {
         when(exam.getPerformedAt()).thenReturn(LocalDateTime.now());
 
         Donation donation = mock(Donation.class);
-        when(donation.getId()).thenReturn(UUID.randomUUID());
+        when(donation.getId()).thenReturn(donationId);
         when(donation.getStatus()).thenReturn(DonationStatus.EM_ANDAMENTO);
         when(donation.getExams()).thenReturn(List.of(exam));
 
