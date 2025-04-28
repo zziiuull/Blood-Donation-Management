@@ -18,6 +18,13 @@ class CpfTest {
         assertThat(cpf.getNumber()).isEqualTo("71742125140");
     }
 
-
+    @Test
+    @Tag("UnitTest")
+    @DisplayName("Should throw exception when CPF is invalid")
+    void shouldThrowExceptionWhenCpfIsInvalid() {
+        assertThatThrownBy(() -> new Cpf("1234567"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Invalid CPF format");
+    }
 
 }
