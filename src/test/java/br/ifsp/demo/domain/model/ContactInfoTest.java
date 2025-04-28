@@ -42,4 +42,12 @@ class ContactInfoTest {
                 .hasMessage("Phone must not be blank");
     }
 
+    @Test
+    @Tag("UnitTest")
+    @DisplayName("Should throw exception when address is null")
+    void shouldThrowExceptionWhenAddressIsNull(){
+        assertThatThrownBy(() -> new ContactInfo("doesangue@email.com", "1533761530", null))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Address must not be blank");
+    }
 }
