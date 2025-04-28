@@ -68,20 +68,21 @@ class ViewDonationDetailsServiceTest {
         }
     }
 
+    @Nested
+    class InvalidTests {
+        @Test
+        @Tag("TDD")
+        @Tag("UnitTest")
+        @DisplayName("Should throw exception when donation does not exist")
+        void shouldThrowExceptionWhenDonationDoesNotExist() {
+            UUID donationId = UUID.randomUUID();
+            when(donationRepository.findById(donationId)).thenReturn(Optional.empty());
 
+            assertThatThrownBy(() -> viewDonationDetailsService.getDonationDetails(donationId))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("Donation does not exist");
 
-    @Test
-    @Tag("TDD")
-    @Tag("UnitTest")
-    @DisplayName("Should throw exception when donation does not exist")
-    void shouldThrowExceptionWhenDonationDoesNotExist() {
-        UUID donationId = UUID.randomUUID();
-        when(donationRepository.findById(donationId)).thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> viewDonationDetailsService.getDonationDetails(donationId))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Donation does not exist");
-
-        verify(donationRepository, times(1)).findById(donationId);
+            verify(donationRepository, times(1)).findById(donationId);
+        }
     }
 }
