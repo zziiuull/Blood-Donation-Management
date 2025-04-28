@@ -17,6 +17,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -52,4 +53,18 @@ class ViewDonationDetailsServiceTest {
         verify(donationRepository, times(1)).findById(donationId);
     }
 
+    @Test
+    @Tag("TDD")
+    @Tag("UnitTest")
+    @DisplayName("Should throw exception when donation does not exist")
+    void shouldThrowExceptionWhenDonationDoesNotExist() {
+        UUID donationId = UUID.randomUUID();
+        when(donationRepository.findById(donationId)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> viewDonationDetailsService.getDonationDetails(donationId))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Donation does not exist");
+
+        verify(donationRepository, times(1)).findById(donationId);
+    }
 }
