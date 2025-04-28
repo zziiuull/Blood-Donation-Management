@@ -1,9 +1,7 @@
 package br.ifsp.demo.application.service.donation;
 
-import br.ifsp.demo.domain.model.Appointment;
-import br.ifsp.demo.domain.model.Donation;
-import br.ifsp.demo.domain.model.DonationStatus;
-import br.ifsp.demo.domain.model.Donor;
+import br.ifsp.demo.application.service.donation.dto.DonationDetailsDTO;
+import br.ifsp.demo.domain.model.*;
 import br.ifsp.demo.domain.repository.DonationRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -13,6 +11,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -40,15 +40,25 @@ class ViewDonationDetailsServiceTest {
 
         Donor donor = mock(Donor.class);
         Appointment appointment = mock(Appointment.class);
+        Exam exam = mock(Exam.class);
 
-        Donation donation = new Donation(donor, appointment, DonationStatus.EM_ANDAMENTO);
+        when(exam.getId()).thenReturn(UUID.randomUUID());
+        when(exam.getStatus()).thenReturn(ExamStatus.UNDER_ANALYSIS);
+        when(exam.getPerformedAt()).thenReturn(LocalDateTime.now());
+
+        Donation donation = mock(Donation.class);
+        when(donation.getId()).thenReturn(UUID.randomUUID());
+        when(donation.getStatus()).thenReturn(DonationStatus.EM_ANDAMENTO);
+        when(donation.getExams()).thenReturn(List.of(exam));
 
         when(donationRepository.findById(donationId)).thenReturn(Optional.of(donation));
 
-        Donation result = viewDonationDetailsService.getDonationDetails(donationId);
+        DonationDetailsDTO result = viewDonationDetailsService.getDonationDetails(donationId);
 
         assertThat(result).isNotNull();
-        assertThat(result.getStatus()).isEqualTo(DonationStatus.EM_ANDAMENTO);
+        assertThat(result.id()).isEqualTo(donationId);
+        assertThat(result.status()).isEqualTo(DonationStatus.EM_ANDAMENTO);
+        assertThat(result.exams()).hasSize(1);
 
         verify(donationRepository, times(1)).findById(donationId);
     }
