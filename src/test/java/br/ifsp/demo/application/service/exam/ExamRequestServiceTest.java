@@ -76,6 +76,8 @@ class ExamRequestServiceTest {
 
             SerologicalScreeningExam expectedExam = new SerologicalScreeningExam(expectedDonation);
 
+            when(examRepository.save(any(SerologicalScreeningExam.class))).thenReturn(expectedExam);
+
             SerologicalScreeningExam result = sut.requestSerologicalScreeningExam(expectedDonation);
 
             assertThat(result).isNotNull();
@@ -85,6 +87,7 @@ class ExamRequestServiceTest {
             assertThat(result.getCreatedAt()).isNotNull();
             assertThat(result.getUpdatedAt()).isNotNull();
 
+            verify(examRepository, times(1)).save(any(SerologicalScreeningExam.class));
         }
     }
 }
