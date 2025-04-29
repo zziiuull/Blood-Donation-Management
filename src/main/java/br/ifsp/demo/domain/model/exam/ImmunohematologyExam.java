@@ -1,4 +1,15 @@
 package br.ifsp.demo.domain.model.exam;
-public class ImmunohematologyExam extends Exam {
 
+import br.ifsp.demo.domain.model.Donation;
+import jakarta.persistence.Entity;
+
+@Entity
+public class ImmunohematologyExam extends Exam {
+    public ImmunohematologyExam(Donation donatoin) {
+        super(donatoin, ExamStatus.UNDER_ANALYSIS);
+    }
+
+    public ImmunohematologyExam() {
+        super();
+    }
 }
