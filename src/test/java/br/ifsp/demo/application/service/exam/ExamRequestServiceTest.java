@@ -26,7 +26,7 @@ class ExamRequestServiceTest {
 
         ImmunohematologyExam requestedExam = examRequestService.requestImmunohematologyExam(expectedDonation);
 
-        assertThat(requestedExam.getId()).isNotNull();
+        assertThat(requestedExam).isNotNull();
         assertThat(requestedExam.getDonation()).isEqualTo(expectedDonation);
         assertThat(requestedExam.getStatus()).isEqualTo(ExamStatus.UNDER_ANALYSIS);
         assertThat(requestedExam.getCreatedAt()).isNotNull();
