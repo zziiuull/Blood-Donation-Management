@@ -1,4 +1,4 @@
-package br.ifsp.demo.domain.model;
+package br.ifsp.demo.domain.model.exam;
 
 public enum ExamStatus {
     APPROVED,
