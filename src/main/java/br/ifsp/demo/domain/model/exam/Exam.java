@@ -10,6 +10,7 @@ import java.util.UUID;
 
 @Getter
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Exam {
 
     @Id
