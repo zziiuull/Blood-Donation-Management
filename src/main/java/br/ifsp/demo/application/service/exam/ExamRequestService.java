@@ -19,7 +19,8 @@ public class ExamRequestService {
         return examRepository.save(immunohematologyExam);
     }
 
-    public SerologicalScreeningExam requestSerologicalScreeningExam(Donation expectedDonation) {
-        return null;
+    public SerologicalScreeningExam requestSerologicalScreeningExam(Donation donation) {
+        SerologicalScreeningExam serologicalScreeningExam = new SerologicalScreeningExam(donation);
+        return examRepository.save(serologicalScreeningExam);
     }
 }
