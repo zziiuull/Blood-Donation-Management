@@ -30,7 +30,7 @@ class ExamRequestServiceTest {
     private ExamRequestService sut;
 
     @Nested
-    @DisplayName("For valid testes")
+    @DisplayName("For valid tests")
     class ValidTests {
         @Test
         @Tag("TDD")
@@ -90,4 +90,6 @@ class ExamRequestServiceTest {
             verify(examRepository, times(1)).save(any(SerologicalScreeningExam.class));
         }
     }
+
+
 }
