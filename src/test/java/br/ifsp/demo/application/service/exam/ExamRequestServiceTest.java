@@ -6,6 +6,7 @@ import br.ifsp.demo.domain.model.DonationStatus;
 import br.ifsp.demo.domain.model.Donor;
 import br.ifsp.demo.domain.model.exam.ExamStatus;
 import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
+import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -58,6 +59,32 @@ class ExamRequestServiceTest {
             assertThat(result.getUpdatedAt()).isNotNull();
 
             verify(examRepository, times(1)).save(any(ImmunohematologyExam.class));
+        }
+
+        @Test
+        @Tag("TDD")
+        @Tag("UnitTest")
+        @DisplayName("Should request serological screening exam if donation is registered")
+        void shouldRequestSerologicalScreeningExamIfDonationIsRegistered(){
+            Donor eligibleDonor = mock(Donor.class);
+            Appointment appointment = mock(Appointment.class);
+            Donation expectedDonation = new Donation(
+                    eligibleDonor,
+                    appointment,
+                    DonationStatus.EM_ANDAMENTO
+            );
+
+            SerologicalScreeningExam expectedExam = new SerologicalScreeningExam(expectedDonation);
+
+            SerologicalScreeningExam result = sut.requestSerologicalScreeningExam(expectedDonation);
+
+            assertThat(result).isNotNull();
+            assertThat(result).isEqualTo(expectedExam);
+            assertThat(result.getDonation()).isEqualTo(expectedDonation);
+            assertThat(result.getStatus()).isEqualTo(ExamStatus.UNDER_ANALYSIS);
+            assertThat(result.getCreatedAt()).isNotNull();
+            assertThat(result.getUpdatedAt()).isNotNull();
+
         }
     }
 }
