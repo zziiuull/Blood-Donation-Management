@@ -1,5 +1,6 @@
 package br.ifsp.demo.domain.model;
 
+import br.ifsp.demo.domain.model.exam.Exam;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -23,9 +24,6 @@ public class Donation {
 
     @Enumerated(EnumType.STRING)
     private DonationStatus status;
-
-    @OneToMany(mappedBy = "donation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private final List<Exam> exams = new ArrayList<>();
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
