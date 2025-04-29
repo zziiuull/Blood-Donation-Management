@@ -2,6 +2,7 @@ package br.ifsp.demo.application.service.exam;
 
 import br.ifsp.demo.domain.model.Donation;
 import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
+import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,5 +17,9 @@ public class ExamRequestService {
     public ImmunohematologyExam requestImmunohematologyExam(Donation donation){
         ImmunohematologyExam immunohematologyExam = new ImmunohematologyExam(donation);
         return examRepository.save(immunohematologyExam);
+    }
+
+    public SerologicalScreeningExam requestSerologicalScreeningExam(Donation expectedDonation) {
+        return null;
     }
 }
