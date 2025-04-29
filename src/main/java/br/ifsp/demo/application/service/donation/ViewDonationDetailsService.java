@@ -31,7 +31,7 @@ public class ViewDonationDetailsService {
                 e.getId(),
                 e.getStatus(),
                 e.getCreatedAt()
-        )).toList();
+        )).collect(Collectors.toList());
 
         return new DonationDetailsDTO(
                 donation.getId(),
