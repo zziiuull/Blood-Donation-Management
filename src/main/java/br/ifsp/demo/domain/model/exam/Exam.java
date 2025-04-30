@@ -26,6 +26,8 @@ public abstract class Exam {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    private String observations;
+
     protected Exam() {}
 
     public Exam(Donation donation, ExamStatus status) {
