@@ -9,5 +9,5 @@ import java.util.UUID;
 
 @Repository
 public interface ExamRepository extends JpaRepository<Exam, UUID> {
-    List<Exam> findByDonationId(UUID donationId);
+    List<Exam> findAllByDonationId(UUID donationId);
 }
