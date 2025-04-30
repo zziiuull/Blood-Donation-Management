@@ -115,6 +115,7 @@ class ExamRequestServiceTest {
 
             verifyNoInteractions(examRepository);
         }
+
         @Test
         @Tag("TDD")
         @Tag("UnitTest")
@@ -173,6 +174,15 @@ class ExamRequestServiceTest {
                     .hasMessage("Cannot request a serological screening exam for a rejected donation");
 
             verifyNoInteractions(examRepository);
+        }
+
+        @Test
+        @Tag("UnitTest")
+        @DisplayName("Should throw IllegalArgumentException when requesting immunohematology exam if donation is null")
+        void shouldThrowIllegalArgumentExceptionWhenRequestingImmunohematologyExamIfDonationIsNull(){
+            assertThatThrownBy(() -> sut.requestImmunohematologyExam(null))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("Donation must not be null");
         }
     }
 }
