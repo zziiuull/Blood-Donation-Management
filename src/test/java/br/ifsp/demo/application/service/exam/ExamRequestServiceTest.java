@@ -194,6 +194,8 @@ class ExamRequestServiceTest {
             assertThatThrownBy(() -> sut.requestSerologicalScreeningExam(null))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("Donation must not be null");
+
+            verifyNoInteractions(examRepository);
         }
     }
 }
