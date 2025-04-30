@@ -151,6 +151,8 @@ class ExamRequestServiceTest {
             assertThatThrownBy(() -> sut.requestImmunohematologyExam(expectedDonation))
                     .isInstanceOf(ExamRequestNotAllowedException.class)
                     .hasMessage("Cannot request an immunohematology exam for a rejected donation");
+
+            verifyNoInteractions(examRepository);
         }
     }
 }
