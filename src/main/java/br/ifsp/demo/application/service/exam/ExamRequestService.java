@@ -23,6 +23,7 @@ public class ExamRequestService {
     }
 
     public SerologicalScreeningExam requestSerologicalScreeningExam(Donation donation) {
+        if (donation.getStatus().equals(DonationStatus.APROVADO)) throw new ExamRequestNotAllowedException("Cannot request a serological screening exam for an approved donation");
         SerologicalScreeningExam serologicalScreeningExam = new SerologicalScreeningExam(donation);
         return examRepository.save(serologicalScreeningExam);
     }
