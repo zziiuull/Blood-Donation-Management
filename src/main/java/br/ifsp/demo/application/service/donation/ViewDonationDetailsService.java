@@ -27,7 +27,7 @@ public class ViewDonationDetailsService {
         Donation donation = donationRepository.findById(donationId)
                 .orElseThrow(() -> new IllegalArgumentException("Donation does not exist"));
 
-        List<ExamDTO> exams = examRepository.findByDonationId(donationId).stream().map(e -> new ExamDTO(
+        List<ExamDTO> exams = examRepository.findAllByDonationId(donationId).stream().map(e -> new ExamDTO(
                 e.getId(),
                 e.getStatus(),
                 e.getCreatedAt()
