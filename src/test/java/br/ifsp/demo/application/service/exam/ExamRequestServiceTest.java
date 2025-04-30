@@ -134,5 +134,23 @@ class ExamRequestServiceTest {
 
             verifyNoInteractions(examRepository);
         }
+
+        @Test
+        @Tag("TDD")
+        @Tag("UnitTest")
+        @DisplayName("Should throw ExamRequestNotAllowedException when requesting immunohematology exam for rejected donation")
+        void shouldThrowExamRequestNotAllowedExceptionWhenRequestingImmunohematologyExamForRejectedDonation() {
+            Donor eligibleDonor = mock(Donor.class);
+            Appointment appointment = mock(Appointment.class);
+            Donation expectedDonation = new Donation(
+                    eligibleDonor,
+                    appointment,
+                    DonationStatus.NAO_APROVADO
+            );
+
+            assertThatThrownBy(() -> sut.requestImmunohematologyExam(expectedDonation))
+                    .isInstanceOf(ExamRequestNotAllowedException.class)
+                    .hasMessage("Cannot request an immunohematology exam for a rejected donation");
+        }
     }
 }
