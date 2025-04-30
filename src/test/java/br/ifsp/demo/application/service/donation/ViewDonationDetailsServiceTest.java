@@ -59,7 +59,7 @@ class ViewDonationDetailsServiceTest {
             when(donation.getStatus()).thenReturn(DonationStatus.EM_ANDAMENTO);
 
             when(donationRepository.findById(donationId)).thenReturn(Optional.of(donation));
-            when(examRepository.findByDonationId(donationId)).thenReturn(List.of(immunohematologyExam, serologicalScreeningExam));
+            when(examRepository.findAllByDonationId(donationId)).thenReturn(List.of(immunohematologyExam, serologicalScreeningExam));
 
             DonationDetailsDTO result = viewDonationDetailsService.getDonationDetails(donationId);
 
@@ -69,7 +69,7 @@ class ViewDonationDetailsServiceTest {
             assertThat(result.exams()).hasSize(2);
 
             verify(donationRepository, times(1)).findById(donationId);
-            verify(examRepository, times(1)).findByDonationId(donationId);
+            verify(examRepository, times(1)).findAllByDonationId(donationId);
         }
     }
 
