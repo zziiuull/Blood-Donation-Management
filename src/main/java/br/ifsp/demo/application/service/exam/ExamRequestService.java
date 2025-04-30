@@ -18,6 +18,8 @@ public class ExamRequestService {
 
     public ImmunohematologyExam requestImmunohematologyExam(Donation donation){
         if (donation.getStatus().equals(DonationStatus.APROVADO)) throw new ExamRequestNotAllowedException("Cannot request an immunohematology exam for an approved donation");
+        if (donation.getStatus().equals(DonationStatus.NAO_APROVADO)) throw new ExamRequestNotAllowedException("Cannot request an immunohematology exam for a rejected donation");
+
         ImmunohematologyExam immunohematologyExam = new ImmunohematologyExam(donation);
         return examRepository.save(immunohematologyExam);
     }
