@@ -184,5 +184,14 @@ class ExamRequestServiceTest {
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("Donation must not be null");
         }
+
+        @Test
+        @Tag("UnitTest")
+        @DisplayName("Should throw IllegalArgumentException when requesting immunohematology exam if donation is null")
+        void shouldThrowIllegalArgumentExceptionWhenRequestingSerologicalScreeningExamIfDonationIsNull(){
+            assertThatThrownBy(() -> sut.requestSerologicalScreeningExam(null))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("Donation must not be null");
+        }
     }
 }
