@@ -183,6 +183,8 @@ class ExamRequestServiceTest {
             assertThatThrownBy(() -> sut.requestImmunohematologyExam(null))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("Donation must not be null");
+
+            verifyNoInteractions(examRepository);
         }
 
         @Test
