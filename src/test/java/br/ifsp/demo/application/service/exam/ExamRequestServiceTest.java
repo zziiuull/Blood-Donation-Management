@@ -154,5 +154,23 @@ class ExamRequestServiceTest {
 
             verifyNoInteractions(examRepository);
         }
+
+        @Test
+        @Tag("TDD")
+        @Tag("UnitTest")
+        @DisplayName("Should throw ExamRequestNotAllowedException when requesting serological screening exam for rejected donation")
+        void shouldThrowExamRequestNotAllowedExceptionWhenRequestingSerologicalScreeningExamForRejectedDonation() {
+            Donor eligibleDonor = mock(Donor.class);
+            Appointment appointment = mock(Appointment.class);
+            Donation expectedDonation = new Donation(
+                    eligibleDonor,
+                    appointment,
+                    DonationStatus.NAO_APROVADO
+            );
+
+            assertThatThrownBy(() -> sut.requestSerologicalScreeningExam(expectedDonation))
+                    .isInstanceOf(ExamRequestNotAllowedException.class)
+                    .hasMessage("Cannot request a serological screening exam for a rejected donation");
+        }
     }
 }
