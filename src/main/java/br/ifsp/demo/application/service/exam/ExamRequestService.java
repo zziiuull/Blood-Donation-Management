@@ -17,6 +17,7 @@ public class ExamRequestService {
     }
 
     public ImmunohematologyExam requestImmunohematologyExam(Donation donation){
+        if (donation == null) throw new IllegalArgumentException("Donation must not be null");
         if (donation.getStatus().equals(DonationStatus.APROVADO)) throw new ExamRequestNotAllowedException("Cannot request an immunohematology exam for an approved donation");
         if (donation.getStatus().equals(DonationStatus.NAO_APROVADO)) throw new ExamRequestNotAllowedException("Cannot request an immunohematology exam for a rejected donation");
 
