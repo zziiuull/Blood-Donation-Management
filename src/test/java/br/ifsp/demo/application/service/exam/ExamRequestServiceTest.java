@@ -91,5 +91,9 @@ class ExamRequestServiceTest {
         }
     }
 
-
+    @Nested
+    @DisplayName("For invalid tests")
+    class InvalidTests {
+        
+    }
 }
