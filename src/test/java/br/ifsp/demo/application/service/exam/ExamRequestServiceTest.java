@@ -8,6 +8,7 @@ import br.ifsp.demo.domain.model.exam.ExamStatus;
 import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
+import br.ifsp.demo.exception.ExamRequestNotAllowedException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -111,6 +112,25 @@ class ExamRequestServiceTest {
             assertThatThrownBy(() -> sut.requestImmunohematologyExam(expectedDonation))
                     .isInstanceOf(ExamRequestNotAllowedException.class)
                     .hasMessage("Cannot request an immunohematology exam for an approved donation");
+
+            verifyNoInteractions(examRepository);
+        }
+        @Test
+        @Tag("TDD")
+        @Tag("UnitTest")
+        @DisplayName("Should throw ExamRequestNotAllowedException when requesting serological screening exam for approved donation")
+        void shouldThrowExamRequestNotAllowedExceptionWhenRequestingSerologicalScreeningExamForApprovedDonation() {
+            Donor eligibleDonor = mock(Donor.class);
+            Appointment appointment = mock(Appointment.class);
+            Donation expectedDonation = new Donation(
+                    eligibleDonor,
+                    appointment,
+                    DonationStatus.APROVADO
+            );
+
+            assertThatThrownBy(() -> sut.requestSerologicalScreeningExam(expectedDonation))
+                    .isInstanceOf(ExamRequestNotAllowedException.class)
+                    .hasMessage("Cannot request an serological screening exam for an approved donation");
         }
     }
 }
