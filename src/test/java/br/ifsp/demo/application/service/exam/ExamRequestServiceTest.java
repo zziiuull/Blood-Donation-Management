@@ -18,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -94,6 +95,22 @@ class ExamRequestServiceTest {
     @Nested
     @DisplayName("For invalid tests")
     class InvalidTests {
-        
+        @Test
+        @Tag("TDD")
+        @Tag("UnitTest")
+        @DisplayName("Should throw ExamRequestNotAllowedException when requesting immunohematology exam for approved donation")
+        void shouldThrowExamRequestNotAllowedExceptionWhenRequestingImmunohematologyExamForApprovedDonation() {
+            Donor eligibleDonor = mock(Donor.class);
+            Appointment appointment = mock(Appointment.class);
+            Donation expectedDonation = new Donation(
+                    eligibleDonor,
+                    appointment,
+                    DonationStatus.APROVADO
+            );
+
+            assertThatThrownBy(() -> sut.requestImmunohematologyExam(expectedDonation))
+                    .isInstanceOf(ExamRequestNotAllowedException.class)
+                    .hasMessage("Cannot request an immunohematology exam for an approved donation");
+        }
     }
 }
