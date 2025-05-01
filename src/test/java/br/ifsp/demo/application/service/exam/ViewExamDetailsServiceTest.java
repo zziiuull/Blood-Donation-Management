@@ -6,6 +6,7 @@ import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
 import br.ifsp.demo.domain.model.exam.IrregularAntibodies;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
+import br.ifsp.demo.exception.ExamNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -197,6 +198,20 @@ class ViewExamDetailsServiceTest {
             assertThatThrownBy(() -> sut.viewImmunohematologyExam(donationId))
                     .isInstanceOf(ExamNotFoundException.class)
                     .hasMessage("Immunohematology exam not found");
+        }
+
+        @Test
+        @Tag("TDD")
+        @Tag("UnitTest")
+        @DisplayName("Should throw exception when serological screening exam does not exist for donation")
+        void shouldThrowExceptionWhenSerologicalScreeningExamDoesNotExistForDonation(){
+            UUID donationId = UUID.randomUUID();
+
+            when(examRepository.findAllByDonationId(donationId)).thenReturn(List.of());
+
+            assertThatThrownBy(() -> sut.viewSerologicalScreeningExam(donationId))
+                    .isInstanceOf(ExamNotFoundException.class)
+                    .hasMessage("Serological screening exam not found");
         }
     }
 }
