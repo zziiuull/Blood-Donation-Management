@@ -5,6 +5,7 @@ import br.ifsp.demo.domain.model.Donation;
 import br.ifsp.demo.domain.model.DonationStatus;
 import br.ifsp.demo.domain.model.Donor;
 import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
+import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -56,5 +57,38 @@ class ViewExamDetailsServiceTest {
         assertThat(result.getBloodType()).isEqualTo(expectedExam.getBloodType());
         assertThat(result.getIrregularAntibodies()).isEqualTo(expectedExam.getIrregularAntibodies());
         assertThat(result.getObservations()).isEqualTo(expectedExam.getObservations());
+    }
+
+    @Test
+    @Tag("TDD")
+    @Tag("UnitTest")
+    @DisplayName("Should view exam details when donation is registered and has an serological screening exam")
+    void shouldViewExamDetailsWhenDonationIsRegisteredAndHasAnSerologicalScreeningExam(){
+        Donor eligibleDonor = mock(Donor.class);
+        Appointment appointment = mock(Appointment.class);
+        Donation expectedDonation = new Donation(
+                eligibleDonor,
+                appointment,
+                DonationStatus.EM_ANDAMENTO
+        );
+
+        UUID donationId = UUID.randomUUID();
+
+        SerologicalScreeningExam expectedExam = new SerologicalScreeningExam(expectedDonation);
+
+        when(examRepository.findAllByDonationId(donationId)).thenReturn(List.of(expectedExam));
+
+        SerologicalScreeningExam result = sut.viewSerologicalScreeningExam(donationId);
+
+        assertThat(result.getDonation()).isEqualTo(expectedExam.getDonation());
+        assertThat(result.getDonation().getStatus()).isEqualTo(expectedExam.getDonation().getStatus());
+        assertThat(result.getCreatedAt()).isEqualTo(expectedExam.getCreatedAt());
+        assertThat(result.getUpdatedAt()).isEqualTo(expectedExam.getUpdatedAt());
+        assertThat(result.getHepatitisB()).isNotNull();
+        assertThat(result.getHepatitisC()).isNotNull();
+        assertThat(result.getChagasDisease()).isNotNull();
+        assertThat(result.getSyphilis()).isNotNull();
+        assertThat(result.getAids()).isNotNull();
+        assertThat(result.getHtlv1_2()).isNotNull();
     }
 }
