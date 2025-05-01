@@ -2,6 +2,7 @@ package br.ifsp.demo.application.service.exam;
 
 import br.ifsp.demo.domain.model.Donation;
 import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
+import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.domain.repository.DonationRepository;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
 import org.springframework.stereotype.Service;
@@ -27,5 +28,9 @@ public class ViewExamDetailsService {
                 .map(exam -> (ImmunohematologyExam) exam)
                 .findFirst()
                 .orElse(null);
+    }
+
+    public SerologicalScreeningExam viewSerologicalScreeningExam(UUID donationId) {
+        return null;
     }
 }
