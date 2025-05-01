@@ -198,6 +198,8 @@ class ViewExamDetailsServiceTest {
             assertThatThrownBy(() -> sut.viewImmunohematologyExam(donationId))
                     .isInstanceOf(ExamNotFoundException.class)
                     .hasMessage("Immunohematology exam not found");
+
+            verify(examRepository, times(1)).findAllByDonationId(donationId);
         }
 
         @Test
@@ -212,6 +214,8 @@ class ViewExamDetailsServiceTest {
             assertThatThrownBy(() -> sut.viewSerologicalScreeningExam(donationId))
                     .isInstanceOf(ExamNotFoundException.class)
                     .hasMessage("Serological screening exam not found");
+            
+            verify(examRepository, times(1)).findAllByDonationId(donationId);
         }
     }
 }
