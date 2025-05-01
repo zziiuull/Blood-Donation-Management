@@ -2,8 +2,6 @@ package br.ifsp.demo.application.service.donation;
 
 import br.ifsp.demo.application.service.donation.dto.DonationDetailsDTO;
 import br.ifsp.demo.domain.model.*;
-import br.ifsp.demo.domain.model.exam.Exam;
-import br.ifsp.demo.domain.model.exam.ExamStatus;
 import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.domain.repository.donation.DonationRepository;
@@ -18,7 +16,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -57,7 +54,7 @@ class ViewDonationDetailsServiceTest {
             Donation donation = mock(Donation.class);
 
             when(donation.getId()).thenReturn(donationId);
-            when(donation.getStatus()).thenReturn(DonationStatus.EM_ANDAMENTO);
+            when(donation.getStatus()).thenReturn(DonationStatus.UNDER_ANALYSIS);
 
             when(donationRepository.findById(donationId)).thenReturn(Optional.of(donation));
             when(examRepository.findAllByDonationId(donationId)).thenReturn(List.of(immunohematologyExam, serologicalScreeningExam));
@@ -66,7 +63,7 @@ class ViewDonationDetailsServiceTest {
 
             assertThat(result).isNotNull();
             assertThat(result.id()).isEqualTo(donationId);
-            assertThat(result.status()).isEqualTo(DonationStatus.EM_ANDAMENTO);
+            assertThat(result.status()).isEqualTo(DonationStatus.UNDER_ANALYSIS);
             assertThat(result.exams()).hasSize(2);
 
             verify(donationRepository, times(1)).findById(donationId);

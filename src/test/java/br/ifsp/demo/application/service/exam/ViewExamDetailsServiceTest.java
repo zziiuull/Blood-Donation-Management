@@ -45,7 +45,7 @@ class ViewExamDetailsServiceTest {
             Donation expectedDonation = new Donation(
                     eligibleDonor,
                     appointment,
-                    DonationStatus.EM_ANDAMENTO
+                    DonationStatus.UNDER_ANALYSIS
             );
 
             UUID donationId = UUID.randomUUID();
@@ -77,7 +77,7 @@ class ViewExamDetailsServiceTest {
             Donation expectedDonation = new Donation(
                     eligibleDonor,
                     appointment,
-                    DonationStatus.EM_ANDAMENTO
+                    DonationStatus.UNDER_ANALYSIS
             );
 
             UUID donationId = UUID.randomUUID();
@@ -112,7 +112,7 @@ class ViewExamDetailsServiceTest {
             Donation expectedDonation = new Donation(
                     eligibleDonor,
                     appointment,
-                    DonationStatus.EM_ANDAMENTO
+                    DonationStatus.UNDER_ANALYSIS
             );
 
             UUID donationId = UUID.randomUUID();
@@ -149,7 +149,7 @@ class ViewExamDetailsServiceTest {
             Donation expectedDonation = new Donation(
                     eligibleDonor,
                     appointment,
-                    DonationStatus.EM_ANDAMENTO
+                    DonationStatus.UNDER_ANALYSIS
             );
 
             UUID donationId = UUID.randomUUID();

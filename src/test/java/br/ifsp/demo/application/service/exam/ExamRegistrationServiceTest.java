@@ -41,7 +41,7 @@ class ExamRegistrationServiceTest {
         Donation donation = new Donation(
                 eligibleDonor,
                 appointment,
-                DonationStatus.EM_ANDAMENTO
+                DonationStatus.UNDER_ANALYSIS
         );
         immunohematologyExam = new ImmunohematologyExam(donation);
         serologicalScreeningExam = new SerologicalScreeningExam(donation);

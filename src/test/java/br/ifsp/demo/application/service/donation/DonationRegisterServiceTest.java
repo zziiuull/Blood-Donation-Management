@@ -19,7 +19,6 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -80,7 +79,7 @@ class DonationRegisterServiceTest {
             Donation expectedDonation = new Donation(
                     eligibleDonor,
                     appointment,
-                    DonationStatus.EM_ANDAMENTO
+                    DonationStatus.UNDER_ANALYSIS
             );
 
             when(donationRepository.save(any(Donation.class))).thenReturn(expectedDonation);
@@ -88,7 +87,7 @@ class DonationRegisterServiceTest {
             Donation result = donationRegisterService.register(eligibleDonor, appointment);
 
             assertThat(result).isNotNull();
-            assertThat(result.getStatus()).isEqualTo(DonationStatus.EM_ANDAMENTO);
+            assertThat(result.getStatus()).isEqualTo(DonationStatus.UNDER_ANALYSIS);
             assertThat(result.getDonor()).isEqualTo(eligibleDonor);
             assertThat(result.getAppointment()).isEqualTo(appointment);
 

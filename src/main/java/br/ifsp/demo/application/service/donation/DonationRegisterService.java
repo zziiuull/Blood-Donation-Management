@@ -32,7 +32,7 @@ public class DonationRegisterService {
             throw new IllegalArgumentException("Donor is not eligible to donate");
         }
 
-        Donation donation = new Donation(donor, appointment, DonationStatus.EM_ANDAMENTO);
+        Donation donation = new Donation(donor, appointment, DonationStatus.UNDER_ANALYSIS);
         return donationRepository.save(donation);
     }
 
