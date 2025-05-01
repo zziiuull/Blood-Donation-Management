@@ -1,9 +1,7 @@
 package br.ifsp.demo.application.service.exam;
 
 import br.ifsp.demo.domain.model.*;
-import br.ifsp.demo.domain.model.exam.ExamStatus;
-import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
-import br.ifsp.demo.domain.model.exam.IrregularAntibodies;
+import br.ifsp.demo.domain.model.exam.*;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -36,7 +34,7 @@ class ExamRegistrationServiceTest {
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should approve immunohematology exam")
-        void shouldApproveExam() {
+        void shouldApproveImmunohematologyExam() {
             Donor eligibleDonor = mock(Donor.class);
             Appointment appointment = mock(Appointment.class);
             Donation donation = new Donation(
@@ -60,6 +58,44 @@ class ExamRegistrationServiceTest {
             assertThat(result.getIrregularAntibodies()).isEqualTo(IrregularAntibodies.NEGATIVE);
 
             verify(examRepository, times(1)).save(any(ImmunohematologyExam.class));
+        }
+
+        @Test
+        @Tag("TDD")
+        @Tag("UnitTest")
+        @DisplayName("Should approve serological screening exam")
+        void shouldApproveSerologicalScreeningExam() {
+            Donor eligibleDonor = mock(Donor.class);
+            Appointment appointment = mock(Appointment.class);
+            Donation donation = new Donation(
+                    eligibleDonor,
+                    appointment,
+                    DonationStatus.EM_ANDAMENTO
+            );
+
+            SerologicalScreeningExam serologicalScreeningExam = new SerologicalScreeningExam(donation);
+            serologicalScreeningExam.setHepatitisB(DiseaseDetection.NEGATIVE);
+            serologicalScreeningExam.setHepatitisC(DiseaseDetection.NEGATIVE);
+            serologicalScreeningExam.setChagasDisease(DiseaseDetection.NEGATIVE);
+            serologicalScreeningExam.setSyphilis(DiseaseDetection.NEGATIVE);
+            serologicalScreeningExam.setAids(DiseaseDetection.NEGATIVE);
+            serologicalScreeningExam.setHtlv1_2(DiseaseDetection.NEGATIVE);
+            LocalDateTime updatedAt = LocalDateTime.of(2025, 5, 5, 12, 0, 0);
+
+            when(examRepository.save(any(SerologicalScreeningExam.class))).thenReturn(serologicalScreeningExam);
+
+            SerologicalScreeningExam result = sut.register(serologicalScreeningExam, updatedAt);
+
+            assertThat(result.getStatus()).isEqualTo(ExamStatus.APPROVED);
+            assertThat(result.getUpdatedAt()).isEqualTo(updatedAt);
+            assertThat(result.getHepatitisB()).isEqualTo(DiseaseDetection.NEGATIVE);
+            assertThat(result.getHepatitisC()).isEqualTo(DiseaseDetection.NEGATIVE);
+            assertThat(result.getChagasDisease()).isEqualTo(DiseaseDetection.NEGATIVE);
+            assertThat(result.getSyphilis()).isEqualTo(DiseaseDetection.NEGATIVE);
+            assertThat(result.getAids()).isEqualTo(DiseaseDetection.NEGATIVE);
+            assertThat(result.getHtlv1_2()).isEqualTo(DiseaseDetection.NEGATIVE);
+
+            verify(examRepository, times(1)).save(any(SerologicalScreeningExam.class));
         }
     }
 }
