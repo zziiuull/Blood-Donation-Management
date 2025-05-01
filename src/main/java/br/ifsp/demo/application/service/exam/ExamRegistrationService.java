@@ -20,13 +20,13 @@ public class ExamRegistrationService {
         this.examRepository = examRepository;
     }
 
-    public ImmunohematologyExam register(ImmunohematologyExam immunohematologyExam, LocalDateTime updatedAt) {
+    public ImmunohematologyExam registerApprovedExam(ImmunohematologyExam immunohematologyExam, LocalDateTime updatedAt) {
         approveExam(immunohematologyExam, updatedAt);
 
         return examRepository.save(immunohematologyExam);
     }
 
-    public SerologicalScreeningExam register(SerologicalScreeningExam serologicalScreeningExam, LocalDateTime updatedAt) {
+    public SerologicalScreeningExam registerApprovedExam(SerologicalScreeningExam serologicalScreeningExam, LocalDateTime updatedAt) {
         approveExam(serologicalScreeningExam, updatedAt);
 
         return examRepository.save(serologicalScreeningExam);

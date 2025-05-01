@@ -54,7 +54,7 @@ class ExamRegistrationServiceTest {
 
             when(examRepository.save(any(ImmunohematologyExam.class))).thenReturn(immunohematologyExam);
 
-            ImmunohematologyExam result = sut.register(immunohematologyExam, updatedAt);
+            ImmunohematologyExam result = sut.registerApprovedExam(immunohematologyExam, updatedAt);
 
             assertThat(result.getStatus()).isEqualTo(ExamStatus.APPROVED);
             assertThat(result.getUpdatedAt()).isEqualTo(updatedAt);
@@ -79,7 +79,7 @@ class ExamRegistrationServiceTest {
 
             when(examRepository.save(any(SerologicalScreeningExam.class))).thenReturn(serologicalScreeningExam);
 
-            SerologicalScreeningExam result = sut.register(serologicalScreeningExam, updatedAt);
+            SerologicalScreeningExam result = sut.registerApprovedExam(serologicalScreeningExam, updatedAt);
 
             assertThat(result.getStatus()).isEqualTo(ExamStatus.APPROVED);
             assertThat(result.getUpdatedAt()).isEqualTo(updatedAt);
