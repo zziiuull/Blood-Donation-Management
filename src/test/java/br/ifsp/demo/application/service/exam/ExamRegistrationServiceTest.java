@@ -7,9 +7,12 @@ import br.ifsp.demo.domain.model.exam.IrregularAntibodies;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 
@@ -18,6 +21,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.times;
 
+@ExtendWith(MockitoExtension.class)
 class ExamRegistrationServiceTest {
     @Mock
     private ExamRepository examRepository;
@@ -29,7 +33,9 @@ class ExamRegistrationServiceTest {
     @DisplayName("For valid tests")
     class ValidTests {
         @Test
-        @DisplayName("Should approve exam")
+        @Tag("TDD")
+        @Tag("UnitTest")
+        @DisplayName("Should approve immunohematology exam")
         void shouldApproveExam() {
             Donor eligibleDonor = mock(Donor.class);
             Appointment appointment = mock(Appointment.class);
