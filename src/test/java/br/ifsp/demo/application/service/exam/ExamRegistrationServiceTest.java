@@ -3,6 +3,7 @@ package br.ifsp.demo.application.service.exam;
 import br.ifsp.demo.domain.model.*;
 import br.ifsp.demo.domain.model.exam.*;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
+import br.ifsp.demo.exception.ExamAlreadyAnalyzedException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -121,12 +122,12 @@ class ExamRegistrationServiceTest {
         @Tag("UnitTest")
         @DisplayName("Should reject serological screening exam")
         void shouldRejectSerologicalScreeningExam() {
-            serologicalScreeningExam.setHepatitisB(DiseaseDetection.NEGATIVE);
-            serologicalScreeningExam.setHepatitisC(DiseaseDetection.NEGATIVE);
-            serologicalScreeningExam.setChagasDisease(DiseaseDetection.NEGATIVE);
-            serologicalScreeningExam.setSyphilis(DiseaseDetection.NEGATIVE);
-            serologicalScreeningExam.setAids(DiseaseDetection.NEGATIVE);
-            serologicalScreeningExam.setHtlv1_2(DiseaseDetection.NEGATIVE);
+            serologicalScreeningExam.setHepatitisB(DiseaseDetection.POSITIVE);
+            serologicalScreeningExam.setHepatitisC(DiseaseDetection.POSITIVE);
+            serologicalScreeningExam.setChagasDisease(DiseaseDetection.POSITIVE);
+            serologicalScreeningExam.setSyphilis(DiseaseDetection.POSITIVE);
+            serologicalScreeningExam.setAids(DiseaseDetection.POSITIVE);
+            serologicalScreeningExam.setHtlv1_2(DiseaseDetection.POSITIVE);
             LocalDateTime updatedAt = LocalDateTime.now().plusDays(1);
 
             when(examRepository.save(any(SerologicalScreeningExam.class))).thenReturn(serologicalScreeningExam);
@@ -152,6 +153,7 @@ class ExamRegistrationServiceTest {
         @Test
         @DisplayName("Should throw ExamAlreadyAnalyzedException when exam is no longer under analysis")
         void shouldThrowExamAlreadyAnalyzedExceptionWhenExamIsNoLongerUnderAnalysis() {
+            immunohematologyExam.setStatus(ExamStatus.REJECTED);
             LocalDateTime updatedAt = LocalDateTime.now().plusDays(1);
 
             assertThatThrownBy(()->sut.registerApprovedExam(immunohematologyExam, updatedAt)).isInstanceOf(ExamAlreadyAnalyzedException.class);
