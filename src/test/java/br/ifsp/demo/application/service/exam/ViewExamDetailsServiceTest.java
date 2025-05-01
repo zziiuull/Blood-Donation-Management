@@ -63,7 +63,7 @@ class ViewExamDetailsServiceTest {
     @Tag("TDD")
     @Tag("UnitTest")
     @DisplayName("Should view exam details when donation is registered and has an serological screening exam")
-    void shouldViewExamDetailsWhenDonationIsRegisteredAndHasAnSerologicalScreeningExam(){
+    void shouldViewSerologicalScreeningExamDetailsAndReturnNullSubclassFieldsWhenSerologicalScreeningExamHasNotBeenPerformed(){
         Donor eligibleDonor = mock(Donor.class);
         Appointment appointment = mock(Appointment.class);
         Donation expectedDonation = new Donation(
@@ -90,5 +90,6 @@ class ViewExamDetailsServiceTest {
         assertThat(result.getSyphilis()).isNotNull();
         assertThat(result.getAids()).isNotNull();
         assertThat(result.getHtlv1_2()).isNotNull();
+        assertThat(result.getObservations()).isNull();
     }
 }
