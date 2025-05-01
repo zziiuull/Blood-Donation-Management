@@ -32,8 +32,8 @@ class ViewExamDetailsServiceTest {
     @Test
     @Tag("TDD")
     @Tag("UnitTest")
-    @DisplayName("Should view exam details when donation is registered and has an immunohematology exam")
-    void shouldViewExamDetailsWhenDonationIsRegisteredAndHasAnImmunohematologyExam(){
+    @DisplayName("Should view immunohematology exam details and return null subclass fields when immunohematology exam has not been performed")
+    void shouldViewImmunohematologyExamDetailsAndReturnNullSubclassFieldsWhenImmunohematologyExamHasNotBeenPerformed(){
         Donor eligibleDonor = mock(Donor.class);
         Appointment appointment = mock(Appointment.class);
         Donation expectedDonation = new Donation(
@@ -54,9 +54,9 @@ class ViewExamDetailsServiceTest {
         assertThat(result.getDonation().getStatus()).isEqualTo(expectedExam.getDonation().getStatus());
         assertThat(result.getCreatedAt()).isEqualTo(expectedExam.getCreatedAt());
         assertThat(result.getUpdatedAt()).isEqualTo(expectedExam.getUpdatedAt());
-        assertThat(result.getBloodType()).isEqualTo(expectedExam.getBloodType());
-        assertThat(result.getIrregularAntibodies()).isEqualTo(expectedExam.getIrregularAntibodies());
-        assertThat(result.getObservations()).isEqualTo(expectedExam.getObservations());
+        assertThat(result.getBloodType()).isNull();
+        assertThat(result.getIrregularAntibodies()).isNull();
+        assertThat(result.getObservations()).isNull();
     }
 
     @Test
