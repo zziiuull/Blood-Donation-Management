@@ -3,10 +3,7 @@ package br.ifsp.demo.application.service.exam;
 import br.ifsp.demo.domain.model.*;
 import br.ifsp.demo.domain.model.exam.*;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -27,6 +24,22 @@ class ExamRegistrationServiceTest {
     @InjectMocks
     private ExamRegistrationService sut;
 
+    private ImmunohematologyExam immunohematologyExam;
+    private SerologicalScreeningExam serologicalScreeningExam;
+
+    @BeforeEach
+    void setUp(){
+        Donor eligibleDonor = mock(Donor.class);
+        Appointment appointment = mock(Appointment.class);
+        Donation donation = new Donation(
+                eligibleDonor,
+                appointment,
+                DonationStatus.EM_ANDAMENTO
+        );
+        immunohematologyExam = new ImmunohematologyExam(donation);
+        serologicalScreeningExam = new SerologicalScreeningExam(donation);
+    }
+
     @Nested
     @DisplayName("For valid tests")
     class ValidTests {
@@ -35,18 +48,9 @@ class ExamRegistrationServiceTest {
         @Tag("UnitTest")
         @DisplayName("Should approve immunohematology exam")
         void shouldApproveImmunohematologyExam() {
-            Donor eligibleDonor = mock(Donor.class);
-            Appointment appointment = mock(Appointment.class);
-            Donation donation = new Donation(
-                    eligibleDonor,
-                    appointment,
-                    DonationStatus.EM_ANDAMENTO
-            );
-
-            ImmunohematologyExam immunohematologyExam = new ImmunohematologyExam(donation);
             immunohematologyExam.setBloodType(BloodType.A_POS);
             immunohematologyExam.setIrregularAntibodies(IrregularAntibodies.NEGATIVE);
-            LocalDateTime updatedAt = LocalDateTime.of(2025, 5, 5, 12, 0, 0);
+            LocalDateTime updatedAt = LocalDateTime.now().plusDays(1);
 
             when(examRepository.save(any(ImmunohematologyExam.class))).thenReturn(immunohematologyExam);
 
@@ -65,22 +69,13 @@ class ExamRegistrationServiceTest {
         @Tag("UnitTest")
         @DisplayName("Should approve serological screening exam")
         void shouldApproveSerologicalScreeningExam() {
-            Donor eligibleDonor = mock(Donor.class);
-            Appointment appointment = mock(Appointment.class);
-            Donation donation = new Donation(
-                    eligibleDonor,
-                    appointment,
-                    DonationStatus.EM_ANDAMENTO
-            );
-
-            SerologicalScreeningExam serologicalScreeningExam = new SerologicalScreeningExam(donation);
             serologicalScreeningExam.setHepatitisB(DiseaseDetection.NEGATIVE);
             serologicalScreeningExam.setHepatitisC(DiseaseDetection.NEGATIVE);
             serologicalScreeningExam.setChagasDisease(DiseaseDetection.NEGATIVE);
             serologicalScreeningExam.setSyphilis(DiseaseDetection.NEGATIVE);
             serologicalScreeningExam.setAids(DiseaseDetection.NEGATIVE);
             serologicalScreeningExam.setHtlv1_2(DiseaseDetection.NEGATIVE);
-            LocalDateTime updatedAt = LocalDateTime.of(2025, 5, 5, 12, 0, 0);
+            LocalDateTime updatedAt = LocalDateTime.now().plusDays(1);
 
             when(examRepository.save(any(SerologicalScreeningExam.class))).thenReturn(serologicalScreeningExam);
 
