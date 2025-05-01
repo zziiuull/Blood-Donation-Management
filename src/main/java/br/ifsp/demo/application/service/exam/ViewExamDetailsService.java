@@ -31,6 +31,10 @@ public class ViewExamDetailsService {
     }
 
     public SerologicalScreeningExam viewSerologicalScreeningExam(UUID donationId) {
-        return null;
+        return examRepository.findAllByDonationId(donationId)
+                .stream().filter(exam -> exam instanceof SerologicalScreeningExam)
+                .map(exam -> (SerologicalScreeningExam) exam)
+                .findFirst()
+                .orElse(null);
     }
 }
