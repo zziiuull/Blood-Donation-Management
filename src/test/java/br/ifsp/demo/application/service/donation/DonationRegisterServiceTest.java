@@ -1,8 +1,8 @@
 package br.ifsp.demo.application.service.donation;
 
 import br.ifsp.demo.domain.model.*;
-import br.ifsp.demo.domain.repository.DonationRepository;
-import br.ifsp.demo.domain.repository.DonorRepository;
+import br.ifsp.demo.domain.repository.donation.DonationRepository;
+import br.ifsp.demo.domain.repository.donor.DonorRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;

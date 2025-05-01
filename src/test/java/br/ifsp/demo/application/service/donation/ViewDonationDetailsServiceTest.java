@@ -6,7 +6,7 @@ import br.ifsp.demo.domain.model.exam.Exam;
 import br.ifsp.demo.domain.model.exam.ExamStatus;
 import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
-import br.ifsp.demo.domain.repository.DonationRepository;
+import br.ifsp.demo.domain.repository.donation.DonationRepository;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

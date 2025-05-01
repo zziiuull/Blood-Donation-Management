@@ -4,7 +4,7 @@ import br.ifsp.demo.application.service.donation.dto.DonationDetailsDTO;
 import br.ifsp.demo.application.service.donation.dto.ExamDTO;
 import br.ifsp.demo.domain.model.Donation;
 import br.ifsp.demo.domain.model.exam.Exam;
-import br.ifsp.demo.domain.repository.DonationRepository;
+import br.ifsp.demo.domain.repository.donation.DonationRepository;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
 import org.springframework.stereotype.Service;
 

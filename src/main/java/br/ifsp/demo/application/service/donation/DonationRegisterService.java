@@ -4,8 +4,8 @@ import br.ifsp.demo.domain.model.Appointment;
 import br.ifsp.demo.domain.model.Donation;
 import br.ifsp.demo.domain.model.DonationStatus;
 import br.ifsp.demo.domain.model.Donor;
-import br.ifsp.demo.domain.repository.DonationRepository;
-import br.ifsp.demo.domain.repository.DonorRepository;
+import br.ifsp.demo.domain.repository.donation.DonationRepository;
+import br.ifsp.demo.domain.repository.donor.DonorRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
