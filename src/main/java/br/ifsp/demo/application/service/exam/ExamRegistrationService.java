@@ -1,5 +1,6 @@
 package br.ifsp.demo.application.service.exam;
 
+import br.ifsp.demo.domain.model.exam.Exam;
 import br.ifsp.demo.domain.model.exam.ExamStatus;
 import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
@@ -20,16 +21,19 @@ public class ExamRegistrationService {
     }
 
     public ImmunohematologyExam register(ImmunohematologyExam immunohematologyExam, LocalDateTime updatedAt) {
-        immunohematologyExam.setStatus(ExamStatus.APPROVED);
-        immunohematologyExam.setUpdatedAt(updatedAt);
+        approveExam(immunohematologyExam, updatedAt);
 
         return examRepository.save(immunohematologyExam);
     }
 
     public SerologicalScreeningExam register(SerologicalScreeningExam serologicalScreeningExam, LocalDateTime updatedAt) {
-        serologicalScreeningExam.setStatus(ExamStatus.APPROVED);
-        serologicalScreeningExam.setUpdatedAt(updatedAt);
+        approveExam(serologicalScreeningExam, updatedAt);
 
         return examRepository.save(serologicalScreeningExam);
+    }
+
+    private void approveExam(Exam exam, LocalDateTime updatedAt) {
+        exam.setStatus(ExamStatus.APPROVED);
+        exam.setUpdatedAt(updatedAt);
     }
 }
