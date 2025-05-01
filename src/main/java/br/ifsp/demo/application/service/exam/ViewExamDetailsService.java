@@ -36,6 +36,6 @@ public class ViewExamDetailsService {
                 .stream().filter(exam -> exam instanceof SerologicalScreeningExam)
                 .map(exam -> (SerologicalScreeningExam) exam)
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new ExamNotFoundException("Serological screening exam not found"));
     }
 }
