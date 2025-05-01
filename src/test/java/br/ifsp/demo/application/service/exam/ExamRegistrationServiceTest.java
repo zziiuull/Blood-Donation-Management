@@ -92,5 +92,26 @@ class ExamRegistrationServiceTest {
 
             verify(examRepository, times(1)).save(any(SerologicalScreeningExam.class));
         }
+
+        @Test
+        @Tag("TDD")
+        @Tag("UnitTest")
+        @DisplayName("Should reject immunohematology exam")
+        void shouldRejectImmunohematologyExam() {
+            immunohematologyExam.setBloodType(BloodType.A_POS);
+            immunohematologyExam.setIrregularAntibodies(IrregularAntibodies.NEGATIVE);
+            LocalDateTime updatedAt = LocalDateTime.now().plusDays(1);
+
+            when(examRepository.save(any(ImmunohematologyExam.class))).thenReturn(immunohematologyExam);
+
+            ImmunohematologyExam result = sut.registerRejectedExam(immunohematologyExam, updatedAt);
+
+            assertThat(result.getStatus()).isEqualTo(ExamStatus.REJECTED);
+            assertThat(result.getUpdatedAt()).isEqualTo(updatedAt);
+            assertThat(result.getBloodType()).isEqualTo(BloodType.A_POS);
+            assertThat(result.getIrregularAntibodies()).isEqualTo(IrregularAntibodies.POSITIVE);
+
+            verify(examRepository, times(1)).save(any(ImmunohematologyExam.class));
+        }
     }
 }
