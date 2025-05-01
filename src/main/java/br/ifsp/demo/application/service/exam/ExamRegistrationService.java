@@ -43,6 +43,12 @@ public class ExamRegistrationService {
         return examRepository.save(immunohematologyExam);
     }
 
+    public SerologicalScreeningExam registerRejectedExam(SerologicalScreeningExam serologicalScreeningExam, LocalDateTime updatedAt) {
+        rejectExam(serologicalScreeningExam, updatedAt);
+
+        return examRepository.save(serologicalScreeningExam);
+    }
+
     private void rejectExam(Exam exam, LocalDateTime updatedAt) {
         exam.setStatus(ExamStatus.REJECTED);
         exam.setUpdatedAt(updatedAt);
