@@ -1,10 +1,13 @@
 package br.ifsp.demo.application.service.exam;
 
+import br.ifsp.demo.application.service.exam.dto.ImmunohematologyExamDTO;
+import br.ifsp.demo.application.service.exam.dto.SerologicalScreeningExamDTO;
 import br.ifsp.demo.domain.model.*;
 import br.ifsp.demo.domain.model.exam.*;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
 import br.ifsp.demo.exception.ExamAlreadyAnalyzedException;
 import br.ifsp.demo.exception.InvalidExamAnalysisException;
+import br.ifsp.demo.exception.InvalidUpdatedTimeException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -12,13 +15,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 class ExamRegistrationServiceTest {
@@ -32,7 +35,7 @@ class ExamRegistrationServiceTest {
     private SerologicalScreeningExam serologicalScreeningExam;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         Donor eligibleDonor = mock(Donor.class);
         Appointment appointment = mock(Appointment.class);
         Donation donation = new Donation(
@@ -52,13 +55,12 @@ class ExamRegistrationServiceTest {
         @Tag("UnitTest")
         @DisplayName("Should approve immunohematology exam")
         void shouldApproveImmunohematologyExam() {
-            immunohematologyExam.setBloodType(BloodType.A_POS);
-            immunohematologyExam.setIrregularAntibodies(IrregularAntibodies.NEGATIVE);
             LocalDateTime updatedAt = LocalDateTime.now().plusDays(1);
 
+            when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(immunohematologyExam));
             when(examRepository.save(any(ImmunohematologyExam.class))).thenReturn(immunohematologyExam);
 
-            ImmunohematologyExam result = sut.registerApprovedExam(immunohematologyExam, updatedAt);
+            ImmunohematologyExam result = sut.registerApprovedExam(UUID.randomUUID(), new ImmunohematologyExamDTO(BloodType.A_POS, IrregularAntibodies.NEGATIVE, updatedAt));
 
             assertThat(result.getStatus()).isEqualTo(ExamStatus.APPROVED);
             assertThat(result.getUpdatedAt()).isEqualTo(updatedAt);
@@ -73,17 +75,12 @@ class ExamRegistrationServiceTest {
         @Tag("UnitTest")
         @DisplayName("Should approve serological screening exam")
         void shouldApproveSerologicalScreeningExam() {
-            serologicalScreeningExam.setHepatitisB(DiseaseDetection.NEGATIVE);
-            serologicalScreeningExam.setHepatitisC(DiseaseDetection.NEGATIVE);
-            serologicalScreeningExam.setChagasDisease(DiseaseDetection.NEGATIVE);
-            serologicalScreeningExam.setSyphilis(DiseaseDetection.NEGATIVE);
-            serologicalScreeningExam.setAids(DiseaseDetection.NEGATIVE);
-            serologicalScreeningExam.setHtlv1_2(DiseaseDetection.NEGATIVE);
             LocalDateTime updatedAt = LocalDateTime.now().plusDays(1);
 
+            when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(serologicalScreeningExam));
             when(examRepository.save(any(SerologicalScreeningExam.class))).thenReturn(serologicalScreeningExam);
 
-            SerologicalScreeningExam result = sut.registerApprovedExam(serologicalScreeningExam, updatedAt);
+            SerologicalScreeningExam result = sut.registerApprovedExam(UUID.randomUUID(), new SerologicalScreeningExamDTO(DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, updatedAt));
 
             assertThat(result.getStatus()).isEqualTo(ExamStatus.APPROVED);
             assertThat(result.getUpdatedAt()).isEqualTo(updatedAt);
@@ -102,13 +99,12 @@ class ExamRegistrationServiceTest {
         @Tag("UnitTest")
         @DisplayName("Should reject immunohematology exam")
         void shouldRejectImmunohematologyExam() {
-            immunohematologyExam.setBloodType(BloodType.A_POS);
-            immunohematologyExam.setIrregularAntibodies(IrregularAntibodies.POSITIVE);
             LocalDateTime updatedAt = LocalDateTime.now().plusDays(1);
 
+            when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(immunohematologyExam));
             when(examRepository.save(any(ImmunohematologyExam.class))).thenReturn(immunohematologyExam);
 
-            ImmunohematologyExam result = sut.registerRejectedExam(immunohematologyExam, updatedAt);
+            ImmunohematologyExam result = sut.registerRejectedExam(UUID.randomUUID(), new ImmunohematologyExamDTO(BloodType.A_POS, IrregularAntibodies.POSITIVE, updatedAt));
 
             assertThat(result.getStatus()).isEqualTo(ExamStatus.REJECTED);
             assertThat(result.getUpdatedAt()).isEqualTo(updatedAt);
@@ -117,23 +113,18 @@ class ExamRegistrationServiceTest {
 
             verify(examRepository, times(1)).save(any(ImmunohematologyExam.class));
         }
-        
+
         @Test
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should reject serological screening exam")
         void shouldRejectSerologicalScreeningExam() {
-            serologicalScreeningExam.setHepatitisB(DiseaseDetection.POSITIVE);
-            serologicalScreeningExam.setHepatitisC(DiseaseDetection.POSITIVE);
-            serologicalScreeningExam.setChagasDisease(DiseaseDetection.POSITIVE);
-            serologicalScreeningExam.setSyphilis(DiseaseDetection.POSITIVE);
-            serologicalScreeningExam.setAids(DiseaseDetection.POSITIVE);
-            serologicalScreeningExam.setHtlv1_2(DiseaseDetection.POSITIVE);
             LocalDateTime updatedAt = LocalDateTime.now().plusDays(1);
 
+            when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(serologicalScreeningExam));
             when(examRepository.save(any(SerologicalScreeningExam.class))).thenReturn(serologicalScreeningExam);
 
-            SerologicalScreeningExam result = sut.registerRejectedExam(serologicalScreeningExam, updatedAt);
+            SerologicalScreeningExam result = sut.registerRejectedExam(UUID.randomUUID(), new SerologicalScreeningExamDTO(DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, updatedAt));
 
             assertThat(result.getStatus()).isEqualTo(ExamStatus.REJECTED);
             assertThat(result.getUpdatedAt()).isEqualTo(updatedAt);
@@ -159,7 +150,9 @@ class ExamRegistrationServiceTest {
             immunohematologyExam.setStatus(ExamStatus.REJECTED);
             LocalDateTime updatedAt = LocalDateTime.now().plusDays(1);
 
-            assertThatThrownBy(()->sut.registerApprovedExam(immunohematologyExam, updatedAt)).isInstanceOf(ExamAlreadyAnalyzedException.class);
+            when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(immunohematologyExam));
+
+            assertThatThrownBy(() -> sut.registerApprovedExam(UUID.randomUUID(), new ImmunohematologyExamDTO(BloodType.A_POS, IrregularAntibodies.NEGATIVE, updatedAt))).isInstanceOf(ExamAlreadyAnalyzedException.class);
         }
 
         @Test
@@ -168,47 +161,42 @@ class ExamRegistrationServiceTest {
         void shouldThrowInvalidUpdatedTimeExceptionWhenUpdateTimeIsNotInTheFuture() {
             LocalDateTime updatedAt = LocalDateTime.now().minusDays(1);
 
-            assertThatThrownBy(()->sut.registerApprovedExam(immunohematologyExam, updatedAt)).isInstanceOf(InvalidUpdatedTimeException.class);
+            when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(immunohematologyExam));
+
+            assertThatThrownBy(()->sut.registerApprovedExam(UUID.randomUUID(), new ImmunohematologyExamDTO(BloodType.A_POS, IrregularAntibodies.POSITIVE, updatedAt))).isInstanceOf(InvalidUpdatedTimeException.class);
         }
 
         @Test
         @Tag("UnitTest")
         @DisplayName("Should throw when analysis for approving immunohematology exam in contradictory")
         void shouldThrowWhenAnalysisForApprovingImmunohematologyExamInContradictory() {
-            immunohematologyExam.setIrregularAntibodies(IrregularAntibodies.POSITIVE);
             LocalDateTime updatedAt = LocalDateTime.now().plusDays(1);
 
-            assertThatThrownBy(()->sut.registerApprovedExam(immunohematologyExam, updatedAt)).isInstanceOf(InvalidExamAnalysisException.class);
+            when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(immunohematologyExam));
+
+            assertThatThrownBy(() -> sut.registerApprovedExam(UUID.randomUUID(), new ImmunohematologyExamDTO(BloodType.A_POS, IrregularAntibodies.POSITIVE, updatedAt))).isInstanceOf(InvalidExamAnalysisException.class);
         }
 
         @Test
         @Tag("UnitTest")
         @DisplayName("Should throw when analysis for approving serological screening exam in contradictory")
         void shouldThrowWhenAnalysisForApprovingSerologicalScreeningExamInContradictory() {
-            serologicalScreeningExam.setHepatitisB(DiseaseDetection.NEGATIVE);
-            serologicalScreeningExam.setHepatitisC(DiseaseDetection.NEGATIVE);
-            serologicalScreeningExam.setChagasDisease(DiseaseDetection.POSITIVE);
-            serologicalScreeningExam.setSyphilis(DiseaseDetection.NEGATIVE);
-            serologicalScreeningExam.setAids(DiseaseDetection.NEGATIVE);
-            serologicalScreeningExam.setHtlv1_2(DiseaseDetection.POSITIVE);
             LocalDateTime updatedAt = LocalDateTime.now().plusDays(1);
 
-            assertThatThrownBy(()->sut.registerApprovedExam(serologicalScreeningExam, updatedAt)).isInstanceOf(InvalidExamAnalysisException.class);
+            when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(serologicalScreeningExam));
+
+            assertThatThrownBy(() -> sut.registerApprovedExam(UUID.randomUUID(), new SerologicalScreeningExamDTO(DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.POSITIVE, updatedAt))).isInstanceOf(InvalidExamAnalysisException.class);
         }
 
         @Test
         @Tag("UnitTest")
         @DisplayName("Should throw when analysis for rejecting serological screening exam in contradictory")
         void shouldThrowWhenAnalysisForRejectingSerologicalScreeningExamInContradictory() {
-            serologicalScreeningExam.setHepatitisB(DiseaseDetection.NEGATIVE);
-            serologicalScreeningExam.setHepatitisC(DiseaseDetection.NEGATIVE);
-            serologicalScreeningExam.setChagasDisease(DiseaseDetection.NEGATIVE);
-            serologicalScreeningExam.setSyphilis(DiseaseDetection.NEGATIVE);
-            serologicalScreeningExam.setAids(DiseaseDetection.NEGATIVE);
-            serologicalScreeningExam.setHtlv1_2(DiseaseDetection.NEGATIVE);
             LocalDateTime updatedAt = LocalDateTime.now().plusDays(1);
 
-            assertThatThrownBy(()->sut.registerRejectedExam(serologicalScreeningExam, updatedAt)).isInstanceOf(InvalidExamAnalysisException.class);
+            when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(serologicalScreeningExam));
+
+            assertThatThrownBy(() -> sut.registerRejectedExam(UUID.randomUUID(), new SerologicalScreeningExamDTO(DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, updatedAt))).isInstanceOf(InvalidExamAnalysisException.class);
         }
     }
 }
