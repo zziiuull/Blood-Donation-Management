@@ -13,8 +13,8 @@ public class ImmunohematologyExam extends Exam {
     private BloodType bloodType;
     private IrregularAntibodies irregularAntibodies;
 
-    public ImmunohematologyExam(Donation donatoin) {
-        super(donatoin, ExamStatus.UNDER_ANALYSIS);
+    public ImmunohematologyExam(Donation donation) {
+        super(donation, ExamStatus.UNDER_ANALYSIS);
     }
 
     public ImmunohematologyExam() {
