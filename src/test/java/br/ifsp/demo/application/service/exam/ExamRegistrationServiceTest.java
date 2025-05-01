@@ -151,10 +151,22 @@ class ExamRegistrationServiceTest {
     @DisplayName("For invalid tests")
     class InvalidTests {
         @Test
+        @Tag("TDD")
+        @Tag("UnitTest")
         @DisplayName("Should throw ExamAlreadyAnalyzedException when exam is no longer under analysis")
         void shouldThrowExamAlreadyAnalyzedExceptionWhenExamIsNoLongerUnderAnalysis() {
             immunohematologyExam.setStatus(ExamStatus.REJECTED);
             LocalDateTime updatedAt = LocalDateTime.now().plusDays(1);
+
+            assertThatThrownBy(()->sut.registerApprovedExam(immunohematologyExam, updatedAt)).isInstanceOf(ExamAlreadyAnalyzedException.class);
+        }
+
+        @Test
+        @Tag("UnitTest")
+        @DisplayName("should throw InvalidUpdatedTimeException when update time is not in the future")
+        void shouldThrowInvalidUpdatedTimeExceptionWhen() {
+            immunohematologyExam.setStatus(ExamStatus.REJECTED);
+            LocalDateTime updatedAt = LocalDateTime.now().minusDays(1);
 
             assertThatThrownBy(()->sut.registerApprovedExam(immunohematologyExam, updatedAt)).isInstanceOf(ExamAlreadyAnalyzedException.class);
         }
