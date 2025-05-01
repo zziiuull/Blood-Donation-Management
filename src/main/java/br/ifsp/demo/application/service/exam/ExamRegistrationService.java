@@ -1,13 +1,18 @@
 package br.ifsp.demo.application.service.exam;
 
+import br.ifsp.demo.application.service.exam.dto.ImmunohematologyExamDTO;
+import br.ifsp.demo.application.service.exam.dto.SerologicalScreeningExamDTO;
 import br.ifsp.demo.domain.model.exam.*;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
 import br.ifsp.demo.exception.ExamAlreadyAnalyzedException;
+import br.ifsp.demo.exception.EntityNotFoundException;
 import br.ifsp.demo.exception.InvalidExamAnalysisException;
 import br.ifsp.demo.exception.InvalidUpdatedTimeException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ExamRegistrationService {
@@ -20,16 +25,21 @@ public class ExamRegistrationService {
         this.examRepository = examRepository;
     }
 
-    public ImmunohematologyExam registerApprovedExam(ImmunohematologyExam immunohematologyExam, LocalDateTime updatedAt) {
-        if (!isUnderAnalysis(immunohematologyExam)) throw new ExamAlreadyAnalyzedException("Can not approve exam already analyzed");
+    public ImmunohematologyExam registerApprovedExam(UUID examId, ImmunohematologyExamDTO examDTO) {
+        Optional<Exam> optionalExam = examRepository.findById(examId);
+        if (optionalExam.isEmpty()) throw new EntityNotFoundException("Exam not found");
+        ImmunohematologyExam exam = (ImmunohematologyExam) optionalExam.get();
 
-        if (!isInTheFuture(updatedAt)) throw new InvalidUpdatedTimeException("Updated time must be in the future");
+        if (!isUnderAnalysis(exam)) throw new ExamAlreadyAnalyzedException("Can not approve exam already analyzed");
 
-        if (!isFieldsValidForApproving(immunohematologyExam)) throw new InvalidExamAnalysisException("Immunohematology exam has invalid field(s) for approving");
+        if (!isInTheFuture(examDTO.updatedAt())) throw new InvalidUpdatedTimeException("Updated time must be in the future");
 
-        approveExam(immunohematologyExam, updatedAt);
+        if (!isFieldsValidForApproving(examDTO)) throw new InvalidExamAnalysisException("Immunohematology exam has invalid field(s) for approving");
 
-        return examRepository.save(immunohematologyExam);
+        editExamData(exam, examDTO);
+        approveExam(exam, examDTO.updatedAt());
+
+        return examRepository.save(exam);
     }
 
     private boolean isUnderAnalysis(Exam exam){
@@ -40,8 +50,14 @@ public class ExamRegistrationService {
         return updatedAt != null && (updatedAt.isEqual(LocalDateTime.now()) || updatedAt.isAfter(LocalDateTime.now()));
     }
 
-    private boolean isFieldsValidForApproving(ImmunohematologyExam exam){
-        return exam.getIrregularAntibodies() == IrregularAntibodies.NEGATIVE;
+    private boolean isFieldsValidForApproving(ImmunohematologyExamDTO exam){
+        if (exam.bloodType() == null) return false;
+        return exam.irregularAntibodies() == IrregularAntibodies.NEGATIVE;
+    }
+
+    private void editExamData(ImmunohematologyExam exam, ImmunohematologyExamDTO examDTO){
+        exam.setIrregularAntibodies(examDTO.irregularAntibodies());
+        exam.setBloodType(examDTO.bloodType());
     }
 
     private void approveExam(Exam exam, LocalDateTime updatedAt) {
@@ -49,41 +65,61 @@ public class ExamRegistrationService {
         exam.setUpdatedAt(updatedAt);
     }
 
-    public SerologicalScreeningExam registerApprovedExam(SerologicalScreeningExam serologicalScreeningExam, LocalDateTime updatedAt) {
-        if (!isUnderAnalysis(serologicalScreeningExam)) throw new ExamAlreadyAnalyzedException("Can not approve exam already analyzed");
+    public SerologicalScreeningExam registerApprovedExam(UUID examId, SerologicalScreeningExamDTO examDTO) {
+        Optional<Exam> optionalExam = examRepository.findById(examId);
+        if (optionalExam.isEmpty()) throw new EntityNotFoundException("Exam not found");
+        SerologicalScreeningExam exam = (SerologicalScreeningExam) optionalExam.get();
 
-        if (!isInTheFuture(updatedAt)) throw new InvalidUpdatedTimeException("Updated time must be in the future");
+        if (!isUnderAnalysis(exam)) throw new ExamAlreadyAnalyzedException("Can not approve exam already analyzed");
 
-        if (!isFieldsValidForApproving(serologicalScreeningExam)) throw new InvalidExamAnalysisException("Serological screening exam has invalid field(s) for approving");
+        if (!isInTheFuture(examDTO.updatedAt())) throw new InvalidUpdatedTimeException("Updated time must be in the future");
 
-        approveExam(serologicalScreeningExam, updatedAt);
+        if (!isFieldsValidForApproving(examDTO)) throw new InvalidExamAnalysisException("Serological screening exam has invalid field(s) for approving");
 
-        return examRepository.save(serologicalScreeningExam);
+        editExamData(exam, examDTO);
+        approveExam(exam, examDTO.updatedAt());
+
+        return examRepository.save(exam);
     }
 
-    private boolean isFieldsValidForApproving(SerologicalScreeningExam exam){
-        if (exam.getHepatitisB() != null && exam.getHepatitisB() == DiseaseDetection.POSITIVE) return false;
-        if (exam.getHepatitisC() != null && exam.getHepatitisC() == DiseaseDetection.POSITIVE) return false;
-        if (exam.getChagasDisease() != null && exam.getChagasDisease() == DiseaseDetection.POSITIVE) return false;
-        if (exam.getSyphilis() != null && exam.getSyphilis() == DiseaseDetection.POSITIVE) return false;
-        if (exam.getAids() != null && exam.getAids() == DiseaseDetection.POSITIVE) return false;
-        return exam.getHtlv1_2() != null && exam.getHtlv1_2() != DiseaseDetection.POSITIVE;
+    private boolean isFieldsValidForApproving(SerologicalScreeningExamDTO exam){
+        if (exam.hepatitisB() != null && exam.hepatitisB() == DiseaseDetection.POSITIVE) return false;
+        if (exam.hepatitisC() != null && exam.hepatitisC() == DiseaseDetection.POSITIVE) return false;
+        if (exam.chagasDisease() != null && exam.chagasDisease() == DiseaseDetection.POSITIVE) return false;
+        if (exam.syphilis() != null && exam.syphilis() == DiseaseDetection.POSITIVE) return false;
+        if (exam.aids() != null && exam.aids() == DiseaseDetection.POSITIVE) return false;
+        return exam.htlv1_2() != null && exam.htlv1_2() != DiseaseDetection.POSITIVE;
     }
 
-    public ImmunohematologyExam registerRejectedExam(ImmunohematologyExam immunohematologyExam, LocalDateTime updatedAt) {
-        if (!isUnderAnalysis(immunohematologyExam)) throw new ExamAlreadyAnalyzedException("Can not approve exam already analyzed");
-
-        if (!isInTheFuture(updatedAt)) throw new InvalidUpdatedTimeException("Updated time must be in the future");
-
-        if (!isFieldsValidForRejecting(immunohematologyExam)) throw new InvalidExamAnalysisException("Immunohematology exam has invalid field(s) for rejecting");
-
-        rejectExam(immunohematologyExam, updatedAt);
-
-        return examRepository.save(immunohematologyExam);
+    private void editExamData(SerologicalScreeningExam exam, SerologicalScreeningExamDTO examDTO){
+        exam.setHepatitisB(examDTO.hepatitisB());
+        exam.setHepatitisC(examDTO.hepatitisC());
+        exam.setChagasDisease(examDTO.chagasDisease());
+        exam.setSyphilis(examDTO.syphilis());
+        exam.setAids(examDTO.aids());
+        exam.setHtlv1_2(examDTO.htlv1_2());
     }
 
-    private boolean isFieldsValidForRejecting(ImmunohematologyExam exam){
-        return exam.getIrregularAntibodies() == IrregularAntibodies.POSITIVE;
+    public ImmunohematologyExam registerRejectedExam(UUID examId, ImmunohematologyExamDTO examDTO) {
+        Optional<Exam> optionalExam = examRepository.findById(examId);
+        if (optionalExam.isEmpty()) throw new EntityNotFoundException("Exam not found");
+        ImmunohematologyExam exam = (ImmunohematologyExam) optionalExam.get();
+
+        if (!isUnderAnalysis(exam)) throw new ExamAlreadyAnalyzedException("Can not approve exam already analyzed");
+
+        if (!isInTheFuture(examDTO.updatedAt())) throw new InvalidUpdatedTimeException("Updated time must be in the future");
+
+        if (!isFieldsValidForRejecting(examDTO)) throw new InvalidExamAnalysisException("Immunohematology exam has invalid field(s) for rejecting");
+
+        editExamData(exam, examDTO);
+        rejectExam(exam, examDTO.updatedAt());
+
+        return examRepository.save(exam);
+    }
+
+    private boolean isFieldsValidForRejecting(ImmunohematologyExamDTO exam){
+        if (exam.bloodType() == null) return true;
+        return exam.irregularAntibodies() == IrregularAntibodies.POSITIVE;
     }
 
     private void rejectExam(Exam exam, LocalDateTime updatedAt) {
@@ -91,24 +127,29 @@ public class ExamRegistrationService {
         exam.setUpdatedAt(updatedAt);
     }
 
-    public SerologicalScreeningExam registerRejectedExam(SerologicalScreeningExam serologicalScreeningExam, LocalDateTime updatedAt) {
-        if (!isUnderAnalysis(serologicalScreeningExam)) throw new ExamAlreadyAnalyzedException("Can not approve exam already analyzed");
+    public SerologicalScreeningExam registerRejectedExam(UUID examId, SerologicalScreeningExamDTO examDTO) {
+        Optional<Exam> optionalExam = examRepository.findById(examId);
+        if (optionalExam.isEmpty()) throw new EntityNotFoundException("Exam not found");
+        SerologicalScreeningExam exam = (SerologicalScreeningExam) optionalExam.get();
 
-        if (!isInTheFuture(updatedAt)) throw new InvalidUpdatedTimeException("Updated time must be in the future");
+        if (!isUnderAnalysis(exam)) throw new ExamAlreadyAnalyzedException("Can not approve exam already analyzed");
 
-        if (!isFieldsValidForRejecting(serologicalScreeningExam)) throw new InvalidExamAnalysisException("Serological screening exam has invalid field(s) for rejecting");
+        if (!isInTheFuture(examDTO.updatedAt())) throw new InvalidUpdatedTimeException("Updated time must be in the future");
 
-        rejectExam(serologicalScreeningExam, updatedAt);
+        if (!isFieldsValidForRejecting(examDTO)) throw new InvalidExamAnalysisException("Serological screening exam has invalid field(s) for rejecting");
 
-        return examRepository.save(serologicalScreeningExam);
+        editExamData(exam, examDTO);
+        rejectExam(exam, examDTO.updatedAt());
+
+        return examRepository.save(exam);
     }
 
-    private boolean isFieldsValidForRejecting(SerologicalScreeningExam exam){
-        if (exam.getHepatitisB() != null && exam.getHepatitisB() == DiseaseDetection.POSITIVE) return true;
-        if (exam.getHepatitisC() != null && exam.getHepatitisC() == DiseaseDetection.POSITIVE) return true;
-        if (exam.getChagasDisease() != null && exam.getChagasDisease() == DiseaseDetection.POSITIVE) return true;
-        if (exam.getSyphilis() != null && exam.getSyphilis() == DiseaseDetection.POSITIVE) return true;
-        if (exam.getAids() != null && exam.getAids() == DiseaseDetection.POSITIVE) return true;
-        return exam.getHtlv1_2() != null && exam.getHtlv1_2() == DiseaseDetection.POSITIVE;
+    private boolean isFieldsValidForRejecting(SerologicalScreeningExamDTO exam){
+        if (exam.hepatitisB() != null && exam.hepatitisB() == DiseaseDetection.POSITIVE) return true;
+        if (exam.hepatitisC() != null && exam.hepatitisC() == DiseaseDetection.POSITIVE) return true;
+        if (exam.chagasDisease() != null && exam.chagasDisease() == DiseaseDetection.POSITIVE) return true;
+        if (exam.syphilis() != null && exam.syphilis() == DiseaseDetection.POSITIVE) return true;
+        if (exam.aids() != null && exam.aids() == DiseaseDetection.POSITIVE) return true;
+        return exam.htlv1_2() != null && exam.htlv1_2() == DiseaseDetection.POSITIVE;
     }
 }
