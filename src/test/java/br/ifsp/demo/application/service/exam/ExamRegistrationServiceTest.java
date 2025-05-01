@@ -113,5 +113,34 @@ class ExamRegistrationServiceTest {
 
             verify(examRepository, times(1)).save(any(ImmunohematologyExam.class));
         }
+        
+        @Test
+        @Tag("TDD")
+        @Tag("UnitTest")
+        @DisplayName("Should reject serological screening exam")
+        void shouldRejectSerologicalScreeningExam() {
+            serologicalScreeningExam.setHepatitisB(DiseaseDetection.NEGATIVE);
+            serologicalScreeningExam.setHepatitisC(DiseaseDetection.NEGATIVE);
+            serologicalScreeningExam.setChagasDisease(DiseaseDetection.NEGATIVE);
+            serologicalScreeningExam.setSyphilis(DiseaseDetection.NEGATIVE);
+            serologicalScreeningExam.setAids(DiseaseDetection.NEGATIVE);
+            serologicalScreeningExam.setHtlv1_2(DiseaseDetection.NEGATIVE);
+            LocalDateTime updatedAt = LocalDateTime.now().plusDays(1);
+
+            when(examRepository.save(any(SerologicalScreeningExam.class))).thenReturn(serologicalScreeningExam);
+
+            SerologicalScreeningExam result = sut.registerRejectedExam(serologicalScreeningExam, updatedAt);
+
+            assertThat(result.getStatus()).isEqualTo(ExamStatus.REJECTED);
+            assertThat(result.getUpdatedAt()).isEqualTo(updatedAt);
+            assertThat(result.getHepatitisB()).isEqualTo(DiseaseDetection.POSITIVE);
+            assertThat(result.getHepatitisC()).isEqualTo(DiseaseDetection.POSITIVE);
+            assertThat(result.getChagasDisease()).isEqualTo(DiseaseDetection.POSITIVE);
+            assertThat(result.getSyphilis()).isEqualTo(DiseaseDetection.POSITIVE);
+            assertThat(result.getAids()).isEqualTo(DiseaseDetection.POSITIVE);
+            assertThat(result.getHtlv1_2()).isEqualTo(DiseaseDetection.POSITIVE);
+
+            verify(examRepository, times(1)).save(any(SerologicalScreeningExam.class));
+        }
     }
 }
