@@ -21,9 +21,12 @@ public abstract class Exam {
     private Donation donation;
 
     @Enumerated(EnumType.STRING)
+    @Setter
     private ExamStatus status;
 
     private LocalDateTime createdAt;
+
+    @Setter
     private LocalDateTime updatedAt;
 
     @Setter
