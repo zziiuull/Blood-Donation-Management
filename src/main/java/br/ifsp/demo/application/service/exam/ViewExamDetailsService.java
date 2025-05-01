@@ -5,6 +5,7 @@ import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.domain.repository.DonationRepository;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
+import br.ifsp.demo.exception.ExamNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -27,7 +28,7 @@ public class ViewExamDetailsService {
                 .stream().filter(exam -> exam instanceof ImmunohematologyExam)
                 .map(exam -> (ImmunohematologyExam) exam)
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new ExamNotFoundException("Immunohematology exam not found"));
     }
 
     public SerologicalScreeningExam viewSerologicalScreeningExam(UUID donationId) {
