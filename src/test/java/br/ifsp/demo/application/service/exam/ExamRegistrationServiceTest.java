@@ -4,6 +4,7 @@ import br.ifsp.demo.domain.model.*;
 import br.ifsp.demo.domain.model.exam.*;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
 import br.ifsp.demo.exception.ExamAlreadyAnalyzedException;
+import br.ifsp.demo.exception.InvalidExamAnalysisException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -169,6 +170,46 @@ class ExamRegistrationServiceTest {
             LocalDateTime updatedAt = LocalDateTime.now().minusDays(1);
 
             assertThatThrownBy(()->sut.registerApprovedExam(immunohematologyExam, updatedAt)).isInstanceOf(ExamAlreadyAnalyzedException.class);
+        }
+
+        @Test
+        @Tag("UnitTest")
+        @DisplayName("Should throw when analysis for approving immunohematology exam in contradictory")
+        void shouldThrowWhenAnalysisForApprovingImmunohematologyExamInContradictory() {
+            immunohematologyExam.setIrregularAntibodies(IrregularAntibodies.POSITIVE);
+            LocalDateTime updatedAt = LocalDateTime.now().plusDays(1);
+
+            assertThatThrownBy(()->sut.registerApprovedExam(immunohematologyExam, updatedAt)).isInstanceOf(InvalidExamAnalysisException.class);
+        }
+
+        @Test
+        @Tag("UnitTest")
+        @DisplayName("Should throw when analysis for approving serological screening exam in contradictory")
+        void shouldThrowWhenAnalysisForApprovingSerologicalScreeningExamInContradictory() {
+            serologicalScreeningExam.setHepatitisB(DiseaseDetection.NEGATIVE);
+            serologicalScreeningExam.setHepatitisC(DiseaseDetection.NEGATIVE);
+            serologicalScreeningExam.setChagasDisease(DiseaseDetection.POSITIVE);
+            serologicalScreeningExam.setSyphilis(DiseaseDetection.NEGATIVE);
+            serologicalScreeningExam.setAids(DiseaseDetection.NEGATIVE);
+            serologicalScreeningExam.setHtlv1_2(DiseaseDetection.POSITIVE);
+            LocalDateTime updatedAt = LocalDateTime.now().plusDays(1);
+
+            assertThatThrownBy(()->sut.registerApprovedExam(serologicalScreeningExam, updatedAt)).isInstanceOf(InvalidExamAnalysisException.class);
+        }
+
+        @Test
+        @Tag("UnitTest")
+        @DisplayName("Should throw when analysis for rejecting serological screening exam in contradictory")
+        void shouldThrowWhenAnalysisForRejectingSerologicalScreeningExamInContradictory() {
+            serologicalScreeningExam.setHepatitisB(DiseaseDetection.NEGATIVE);
+            serologicalScreeningExam.setHepatitisC(DiseaseDetection.NEGATIVE);
+            serologicalScreeningExam.setChagasDisease(DiseaseDetection.NEGATIVE);
+            serologicalScreeningExam.setSyphilis(DiseaseDetection.NEGATIVE);
+            serologicalScreeningExam.setAids(DiseaseDetection.NEGATIVE);
+            serologicalScreeningExam.setHtlv1_2(DiseaseDetection.NEGATIVE);
+            LocalDateTime updatedAt = LocalDateTime.now().plusDays(1);
+
+            assertThatThrownBy(()->sut.registerRejectedExam(serologicalScreeningExam, updatedAt)).isInstanceOf(InvalidExamAnalysisException.class);
         }
     }
 }
