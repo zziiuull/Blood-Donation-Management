@@ -98,7 +98,7 @@ class ViewExamDetailsServiceTest {
         @Test
         @Tag("TDD")
         @Tag("UnitTest")
-        @DisplayName("Should view exam details when donation is registered and has an serological screening exam")
+        @DisplayName("Should view serological screening exam details and return null subclass fields when serological screening exam has not been performed")
         void shouldViewSerologicalScreeningExamDetailsAndReturnNullSubclassFieldsWhenSerologicalScreeningExamHasNotBeenPerformed(){
             Donor eligibleDonor = mock(Donor.class);
             Appointment appointment = mock(Appointment.class);
@@ -120,12 +120,12 @@ class ViewExamDetailsServiceTest {
             assertThat(result.getDonation().getStatus()).isEqualTo(expectedExam.getDonation().getStatus());
             assertThat(result.getCreatedAt()).isEqualTo(expectedExam.getCreatedAt());
             assertThat(result.getUpdatedAt()).isEqualTo(expectedExam.getUpdatedAt());
-            assertThat(result.getHepatitisB()).isNotNull();
-            assertThat(result.getHepatitisC()).isNotNull();
-            assertThat(result.getChagasDisease()).isNotNull();
-            assertThat(result.getSyphilis()).isNotNull();
-            assertThat(result.getAids()).isNotNull();
-            assertThat(result.getHtlv1_2()).isNotNull();
+            assertThat(result.getHepatitisB()).isNull();
+            assertThat(result.getHepatitisC()).isNull();
+            assertThat(result.getChagasDisease()).isNull();
+            assertThat(result.getSyphilis()).isNull();
+            assertThat(result.getAids()).isNull();
+            assertThat(result.getHtlv1_2()).isNull();
             assertThat(result.getObservations()).isNull();
         }
     }
