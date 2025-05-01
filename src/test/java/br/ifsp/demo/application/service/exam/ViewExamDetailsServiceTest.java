@@ -128,6 +128,41 @@ class ViewExamDetailsServiceTest {
             assertThat(result.getHtlv1_2()).isNull();
             assertThat(result.getObservations()).isNull();
         }
+
+
+        @Test
+        @Tag("TDD")
+        @Tag("UnitTest")
+        @DisplayName("Should view serological screening exam exam details when serological screening exam has been performed")
+        void shouldViewSerologicalScreeningExamDetailsWhenSerologicalScreeningExamHasBeenPerformed(){
+            Donor eligibleDonor = mock(Donor.class);
+            Appointment appointment = mock(Appointment.class);
+            Donation expectedDonation = new Donation(
+                    eligibleDonor,
+                    appointment,
+                    DonationStatus.EM_ANDAMENTO
+            );
+
+            UUID donationId = UUID.randomUUID();
+
+            SerologicalScreeningExam expectedExam = new SerologicalScreeningExam(expectedDonation);
+
+            when(examRepository.findAllByDonationId(donationId)).thenReturn(List.of(expectedExam));
+
+            SerologicalScreeningExam result = sut.viewSerologicalScreeningExam(donationId);
+
+            assertThat(result.getDonation()).isEqualTo(expectedExam.getDonation());
+            assertThat(result.getDonation().getStatus()).isEqualTo(expectedExam.getDonation().getStatus());
+            assertThat(result.getCreatedAt()).isEqualTo(expectedExam.getCreatedAt());
+            assertThat(result.getUpdatedAt()).isEqualTo(expectedExam.getUpdatedAt());
+            assertThat(result.getHepatitisB()).isEqualTo(expectedExam.getHepatitisB());
+            assertThat(result.getHepatitisC()).isEqualTo(expectedExam.getHepatitisC());
+            assertThat(result.getChagasDisease()).isEqualTo(expectedExam.getChagasDisease());
+            assertThat(result.getSyphilis()).isEqualTo(expectedExam.getSyphilis());
+            assertThat(result.getAids()).isEqualTo(expectedExam.getAids());
+            assertThat(result.getHtlv1_2()).isEqualTo(expectedExam.getHtlv1_2());
+            assertThat(result.getObservations()).isEqualTo(expectedExam.getObservations());
+        }
     }
 
     @Nested
