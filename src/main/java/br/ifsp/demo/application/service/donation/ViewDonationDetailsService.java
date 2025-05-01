@@ -6,6 +6,7 @@ import br.ifsp.demo.domain.model.Donation;
 import br.ifsp.demo.domain.model.exam.Exam;
 import br.ifsp.demo.domain.repository.donation.DonationRepository;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
+import br.ifsp.demo.exception.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class ViewDonationDetailsService {
 
     public DonationDetailsDTO getDonationDetails(UUID donationId) {
         Donation donation = donationRepository.findById(donationId)
-                .orElseThrow(() -> new IllegalArgumentException("Donation does not exist"));
+                .orElseThrow(() -> new EntityNotFoundException("Donation does not exist"));
 
         List<ExamDTO> exams = examRepository.findAllByDonationId(donationId).stream().map(e -> new ExamDTO(
                 e.getId(),

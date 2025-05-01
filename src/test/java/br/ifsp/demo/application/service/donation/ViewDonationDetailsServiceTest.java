@@ -8,6 +8,7 @@ import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.domain.repository.donation.DonationRepository;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
+import br.ifsp.demo.exception.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -84,7 +85,7 @@ class ViewDonationDetailsServiceTest {
             when(donationRepository.findById(donationId)).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> viewDonationDetailsService.getDonationDetails(donationId))
-                    .isInstanceOf(IllegalArgumentException.class)
+                    .isInstanceOf(EntityNotFoundException.class)
                     .hasMessage("Donation does not exist");
 
             verify(donationRepository, times(1)).findById(donationId);
