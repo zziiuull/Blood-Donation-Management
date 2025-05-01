@@ -4,7 +4,9 @@ import br.ifsp.demo.domain.model.BloodType;
 import br.ifsp.demo.domain.model.Donation;
 import jakarta.persistence.Entity;
 import lombok.Getter;
+import lombok.Setter;
 
+@Setter
 @Entity
 @Getter
 public class ImmunohematologyExam extends Exam {

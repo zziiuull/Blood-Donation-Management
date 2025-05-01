@@ -3,6 +3,7 @@ package br.ifsp.demo.domain.model.exam;
 import br.ifsp.demo.domain.model.Donation;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,6 +27,7 @@ public abstract class Exam {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    @Setter
     private String observations;
 
     protected Exam() {}
