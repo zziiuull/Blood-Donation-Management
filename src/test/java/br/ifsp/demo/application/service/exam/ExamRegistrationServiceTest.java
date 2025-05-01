@@ -165,11 +165,10 @@ class ExamRegistrationServiceTest {
         @Test
         @Tag("UnitTest")
         @DisplayName("should throw InvalidUpdatedTimeException when update time is not in the future")
-        void shouldThrowInvalidUpdatedTimeExceptionWhen() {
-            immunohematologyExam.setStatus(ExamStatus.REJECTED);
+        void shouldThrowInvalidUpdatedTimeExceptionWhenUpdateTimeIsNotInTheFuture() {
             LocalDateTime updatedAt = LocalDateTime.now().minusDays(1);
 
-            assertThatThrownBy(()->sut.registerApprovedExam(immunohematologyExam, updatedAt)).isInstanceOf(ExamAlreadyAnalyzedException.class);
+            assertThatThrownBy(()->sut.registerApprovedExam(immunohematologyExam, updatedAt)).isInstanceOf(InvalidUpdatedTimeException.class);
         }
 
         @Test
