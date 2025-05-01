@@ -5,6 +5,7 @@ import br.ifsp.demo.application.service.exam.dto.SerologicalScreeningExamDTO;
 import br.ifsp.demo.domain.model.*;
 import br.ifsp.demo.domain.model.exam.*;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
+import br.ifsp.demo.exception.EntityNotFoundException;
 import br.ifsp.demo.exception.ExamAlreadyAnalyzedException;
 import br.ifsp.demo.exception.InvalidExamAnalysisException;
 import br.ifsp.demo.exception.InvalidUpdatedTimeException;
@@ -197,6 +198,17 @@ class ExamRegistrationServiceTest {
             when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(serologicalScreeningExam));
 
             assertThatThrownBy(() -> sut.registerRejectedExam(UUID.randomUUID(), new SerologicalScreeningExamDTO(DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, updatedAt))).isInstanceOf(InvalidExamAnalysisException.class);
+        }
+
+        @Test
+        @Tag("UnitTest")
+        @DisplayName("Should throw when exam is not found")
+        void shouldThrowWhenExamIsNotFound() {
+            LocalDateTime updatedAt = LocalDateTime.now().plusDays(1);
+
+            when(examRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> sut.registerRejectedExam(UUID.randomUUID(), new ImmunohematologyExamDTO(BloodType.A_POS, IrregularAntibodies.POSITIVE, updatedAt))).isInstanceOf(EntityNotFoundException.class);
         }
     }
 }
