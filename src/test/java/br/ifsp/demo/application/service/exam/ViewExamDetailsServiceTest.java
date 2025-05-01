@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -162,7 +163,7 @@ class ViewExamDetailsServiceTest {
             expectedExam.setObservations("No observations.");
 
             when(examRepository.findAllByDonationId(donationId)).thenReturn(List.of(expectedExam));
-            
+
             SerologicalScreeningExam result = sut.viewSerologicalScreeningExam(donationId);
 
             assertThat(result.getDonation()).isEqualTo(expectedExam.getDonation());
@@ -184,6 +185,18 @@ class ViewExamDetailsServiceTest {
     @Nested
     @DisplayName("For invalid tests")
     class InvalidTests {
+        @Test
+        @Tag("TDD")
+        @Tag("UnitTest")
+        @DisplayName("Should throw exception when immunohematology exam does not exist for donation")
+        void shouldThrowExceptionWhenImmunohematologyExamDoesNotExistForDonation(){
+            UUID donationId = UUID.randomUUID();
 
+            when(examRepository.findAllByDonationId(donationId)).thenReturn(List.of());
+
+            assertThatThrownBy(() -> sut.viewImmunohematologyExam(donationId))
+                    .isInstanceOf(ExamNotFoundException.class)
+                    .hasMessage("Immunohematology exam not found");
+        }
     }
 }
