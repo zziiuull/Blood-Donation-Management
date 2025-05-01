@@ -36,4 +36,15 @@ public class ExamRegistrationService {
         exam.setStatus(ExamStatus.APPROVED);
         exam.setUpdatedAt(updatedAt);
     }
+
+    public ImmunohematologyExam registerRejectedExam(ImmunohematologyExam immunohematologyExam, LocalDateTime updatedAt) {
+        rejectExam(immunohematologyExam, updatedAt);
+
+        return examRepository.save(immunohematologyExam);
+    }
+
+    private void rejectExam(Exam exam, LocalDateTime updatedAt) {
+        exam.setStatus(ExamStatus.REJECTED);
+        exam.setUpdatedAt(updatedAt);
+    }
 }

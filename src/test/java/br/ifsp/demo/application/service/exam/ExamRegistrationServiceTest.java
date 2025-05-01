@@ -99,7 +99,7 @@ class ExamRegistrationServiceTest {
         @DisplayName("Should reject immunohematology exam")
         void shouldRejectImmunohematologyExam() {
             immunohematologyExam.setBloodType(BloodType.A_POS);
-            immunohematologyExam.setIrregularAntibodies(IrregularAntibodies.NEGATIVE);
+            immunohematologyExam.setIrregularAntibodies(IrregularAntibodies.POSITIVE);
             LocalDateTime updatedAt = LocalDateTime.now().plusDays(1);
 
             when(examRepository.save(any(ImmunohematologyExam.class))).thenReturn(immunohematologyExam);
