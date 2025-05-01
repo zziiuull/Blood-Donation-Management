@@ -1,10 +1,8 @@
 package br.ifsp.demo.application.service.exam;
 
-import br.ifsp.demo.domain.model.Appointment;
-import br.ifsp.demo.domain.model.Donation;
-import br.ifsp.demo.domain.model.DonationStatus;
-import br.ifsp.demo.domain.model.Donor;
+import br.ifsp.demo.domain.model.*;
 import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
+import br.ifsp.demo.domain.model.exam.IrregularAntibodies;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -62,6 +60,39 @@ class ViewExamDetailsServiceTest {
             assertThat(result.getBloodType()).isNull();
             assertThat(result.getIrregularAntibodies()).isNull();
             assertThat(result.getObservations()).isNull();
+        }
+
+        @Test
+        @Tag("TDD")
+        @Tag("UnitTest")
+        @DisplayName("Should view immunohematology exam details when immunohematology exam has been performed")
+        void shouldViewImmunohematologyExamDetailsWhenImmunohematologyExamHasBeenPerformed(){
+            Donor eligibleDonor = mock(Donor.class);
+            Appointment appointment = mock(Appointment.class);
+            Donation expectedDonation = new Donation(
+                    eligibleDonor,
+                    appointment,
+                    DonationStatus.EM_ANDAMENTO
+            );
+
+            UUID donationId = UUID.randomUUID();
+
+            ImmunohematologyExam expectedExam = new ImmunohematologyExam(expectedDonation);
+            expectedExam.setBloodType(BloodType.O_POS);
+            expectedExam.setIrregularAntibodies(IrregularAntibodies.POSITIVE);
+            expectedExam.setObservations("No observations.");
+
+            when(examRepository.findAllByDonationId(donationId)).thenReturn(List.of(expectedExam));
+
+            ImmunohematologyExam result = sut.viewImmunohematologyExam(donationId);
+
+            assertThat(result.getDonation()).isEqualTo(expectedExam.getDonation());
+            assertThat(result.getDonation().getStatus()).isEqualTo(expectedExam.getDonation().getStatus());
+            assertThat(result.getCreatedAt()).isEqualTo(expectedExam.getCreatedAt());
+            assertThat(result.getUpdatedAt()).isEqualTo(expectedExam.getUpdatedAt());
+            assertThat(result.getBloodType()).isEqualTo(expectedExam.getBloodType());
+            assertThat(result.getIrregularAntibodies()).isEqualTo(expectedExam.getIrregularAntibodies());
+            assertThat(result.getObservations()).isEqualTo(expectedExam.getObservations());
         }
 
         @Test
