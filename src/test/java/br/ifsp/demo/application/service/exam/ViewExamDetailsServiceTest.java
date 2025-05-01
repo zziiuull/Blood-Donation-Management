@@ -1,6 +1,7 @@
 package br.ifsp.demo.application.service.exam;
 
 import br.ifsp.demo.domain.model.*;
+import br.ifsp.demo.domain.model.exam.DiseaseDetection;
 import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
 import br.ifsp.demo.domain.model.exam.IrregularAntibodies;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
@@ -60,6 +61,8 @@ class ViewExamDetailsServiceTest {
             assertThat(result.getBloodType()).isNull();
             assertThat(result.getIrregularAntibodies()).isNull();
             assertThat(result.getObservations()).isNull();
+
+            verify(examRepository, times(1)).findAllByDonationId(donationId);
         }
 
         @Test
@@ -93,6 +96,8 @@ class ViewExamDetailsServiceTest {
             assertThat(result.getBloodType()).isEqualTo(expectedExam.getBloodType());
             assertThat(result.getIrregularAntibodies()).isEqualTo(expectedExam.getIrregularAntibodies());
             assertThat(result.getObservations()).isEqualTo(expectedExam.getObservations());
+
+            verify(examRepository, times(1)).findAllByDonationId(donationId);
         }
 
         @Test
@@ -127,6 +132,8 @@ class ViewExamDetailsServiceTest {
             assertThat(result.getAids()).isNull();
             assertThat(result.getHtlv1_2()).isNull();
             assertThat(result.getObservations()).isNull();
+
+            verify(examRepository, times(1)).findAllByDonationId(donationId);
         }
 
 
@@ -146,9 +153,16 @@ class ViewExamDetailsServiceTest {
             UUID donationId = UUID.randomUUID();
 
             SerologicalScreeningExam expectedExam = new SerologicalScreeningExam(expectedDonation);
+            expectedExam.setHepatitisB(DiseaseDetection.POSITIVE);
+            expectedExam.setHepatitisC(DiseaseDetection.POSITIVE);
+            expectedExam.setChagasDisease(DiseaseDetection.POSITIVE);
+            expectedExam.setSyphilis(DiseaseDetection.POSITIVE);
+            expectedExam.setAids(DiseaseDetection.POSITIVE);
+            expectedExam.setHtlv1_2(DiseaseDetection.POSITIVE);
+            expectedExam.setObservations("No observations.");
 
             when(examRepository.findAllByDonationId(donationId)).thenReturn(List.of(expectedExam));
-
+            
             SerologicalScreeningExam result = sut.viewSerologicalScreeningExam(donationId);
 
             assertThat(result.getDonation()).isEqualTo(expectedExam.getDonation());
@@ -162,6 +176,8 @@ class ViewExamDetailsServiceTest {
             assertThat(result.getAids()).isEqualTo(expectedExam.getAids());
             assertThat(result.getHtlv1_2()).isEqualTo(expectedExam.getHtlv1_2());
             assertThat(result.getObservations()).isEqualTo(expectedExam.getObservations());
+
+            verify(examRepository, times(1)).findAllByDonationId(donationId);
         }
     }
 
