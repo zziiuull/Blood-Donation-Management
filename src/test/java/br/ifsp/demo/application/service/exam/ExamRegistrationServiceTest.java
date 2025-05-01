@@ -12,6 +12,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.times;
@@ -141,6 +143,18 @@ class ExamRegistrationServiceTest {
             assertThat(result.getHtlv1_2()).isEqualTo(DiseaseDetection.POSITIVE);
 
             verify(examRepository, times(1)).save(any(SerologicalScreeningExam.class));
+        }
+    }
+
+    @Nested
+    @DisplayName("For invalid tests")
+    class InvalidTests {
+        @Test
+        @DisplayName("Should throw ExamAlreadyAnalyzedException when exam is no longer under analysis")
+        void shouldThrowExamAlreadyAnalyzedExceptionWhenExamIsNoLongerUnderAnalysis() {
+            LocalDateTime updatedAt = LocalDateTime.now().plusDays(1);
+
+            assertThatThrownBy(()->sut.registerApprovedExam(immunohematologyExam, updatedAt)).isInstanceOf(ExamAlreadyAnalyzedException.class);
         }
     }
 }
