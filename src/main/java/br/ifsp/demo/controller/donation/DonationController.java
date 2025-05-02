@@ -4,13 +4,8 @@ import br.ifsp.demo.application.service.donation.DonationRegisterService;
 import br.ifsp.demo.application.service.donation.UpdateDonationService;
 import br.ifsp.demo.application.service.donation.ViewDonationDetailsService;
 import br.ifsp.demo.application.service.donation.dto.DonationDetailsDTO;
-import br.ifsp.demo.domain.model.common.ContactInfo;
-import br.ifsp.demo.domain.model.donation.Appointment;
-import br.ifsp.demo.domain.model.donation.AppointmentStatus;
-import br.ifsp.demo.domain.model.donation.CollectionSite;
 import br.ifsp.demo.domain.model.donation.Donation;
 import br.ifsp.demo.domain.repository.appointment.AppointmentRepository;
-import br.ifsp.demo.security.auth.AuthenticationInfoService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +22,6 @@ public class DonationController {
     private final DonationRegisterService donationRegisterService;
     private final ViewDonationDetailsService viewDonationDetailsService;
     private final UpdateDonationService updateDonationService;
-    private final AppointmentRepository appointmentRepository;
 
     @PostMapping
     public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest request) {

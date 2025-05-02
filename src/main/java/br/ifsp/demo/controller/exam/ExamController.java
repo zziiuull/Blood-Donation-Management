@@ -1,4 +1,5 @@
 package br.ifsp.demo.controller.exam;
+
 import br.ifsp.demo.application.service.exam.ExamRegistrationService;
 import br.ifsp.demo.application.service.exam.ExamRequestService;
 import br.ifsp.demo.application.service.exam.ViewExamDetailsService;
@@ -12,7 +13,7 @@ import br.ifsp.demo.domain.model.donation.Donation;
 import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.domain.repository.donation.DonationRepository;
-import br.ifsp.demo.exception.EntityNotFoundException;
+import br.ifsp.demo.exception.DonationNotFoundException;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -31,11 +32,11 @@ public class ExamController {
     private final ViewExamDetailsService viewExamDetailsService;
     private final DonationRepository donationRepository;
 
-    @PostMapping("request/immunohematology/{donationId}")
+    @PostMapping("/request/immunohematology/{donationId}")
     public ResponseEntity<ImmunohematologyExamResponse> requestImmunohematologyExam(
             @PathVariable UUID donationId){
         Donation donation = donationRepository.findById(donationId)
-                .orElseThrow(() -> new EntityNotFoundException("Donation not found"));
+                .orElseThrow(() -> new DonationNotFoundException("Donation not found"));
 
         ImmunohematologyExam immunohematologyExam = examRequestService.requestImmunohematologyExam(donation);
 
@@ -43,11 +44,11 @@ public class ExamController {
     }
 
 
-    @PostMapping("request/serologicalscreening/{donationId}")
+    @PostMapping("/request/serologicalscreening/{donationId}")
     public ResponseEntity<SerologicalScreeningExamResponse> requestSerologicalScreeningExam(
             @PathVariable UUID donationId){
         Donation donation = donationRepository.findById(donationId)
-                .orElseThrow(() -> new EntityNotFoundException("Donation not found"));
+                .orElseThrow(() -> new DonationNotFoundException("Donation not found"));
 
         SerologicalScreeningExam serologicalScreeningExam = examRequestService.requestSerologicalScreeningExam(donation);
 
@@ -118,7 +119,7 @@ public class ExamController {
 
     private void validateDonationExists(UUID donationId) {
         if (!donationRepository.existsById(donationId)) {
-            throw new EntityNotFoundException("Donation not found");
+            throw new DonationNotFoundException("Donation not found");
         }
     }
 }
