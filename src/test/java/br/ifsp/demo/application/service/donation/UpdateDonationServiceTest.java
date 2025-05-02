@@ -6,17 +6,29 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class UpdateDonationServiceTest {
+    @Mock
+    private DonationRepository donationRepository;
+
+    @InjectMocks
+    private UpdateDonationService sut;
+
     @Nested
     @DisplayName("For valid tests")
     class ValidTests {
@@ -32,12 +44,15 @@ class UpdateDonationServiceTest {
                     appointment,
                     DonationStatus.UNDER_ANALYSIS
             );
-            UpdateDonationService sut = new UpdateDonationService();
 
-            sut.approve(donationId);
+            when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.of(donation));
+            when(donationRepository.save(any(Donation.class))).thenReturn(donation);
 
-            assertThat(donation.getStatus()).isEqualTo(DonationStatus.APPROVED);
-            assertThat(donation.getUpdatedAt()).isNotNull();
+            Donation result = sut.approve(UUID.randomUUID());
+
+            assertThat(result.getStatus()).isEqualTo(DonationStatus.APPROVED);
+            assertThat(result.getUpdatedAt()).isNotNull();
+            verify(donationRepository, times(1)).save(any(Donation.class));
         }
     }
 
