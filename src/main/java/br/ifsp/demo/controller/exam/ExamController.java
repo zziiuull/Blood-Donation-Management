@@ -79,4 +79,12 @@ public class ExamController {
                 ImmunohematologyExamDTO.fromRequest(exam)));
     }
 
+    @PostMapping("/register/serologicalscreening/reject/{examId}")
+    public ResponseEntity<SerologicalScreeningExam> rejectSerologicalScreeningExam(
+            @PathVariable UUID examId,
+            @RequestBody @Valid SerologicalScreeningExamRequest exam) {
+        return ResponseEntity.ok(examRegistrationService.registerRejectedExam(
+                examId,
+                SerologicalScreeningExamDTO.fromRequest(exam)));
+    }
 }
