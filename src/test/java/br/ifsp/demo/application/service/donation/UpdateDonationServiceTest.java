@@ -45,6 +45,10 @@ class UpdateDonationServiceTest {
     private UpdateDonationService sut;
 
     private Donation donation;
+    private ImmunohematologyExam immunohematologyApproved;
+    private ImmunohematologyExam immunohematologyRejected;
+    private SerologicalScreeningExam serologicalScreeningApproved;
+    private SerologicalScreeningExam serologicalScreeningRejected;
 
     @BeforeEach
     void setUp() {
@@ -55,6 +59,15 @@ class UpdateDonationServiceTest {
                 appointment,
                 DonationStatus.UNDER_ANALYSIS
         );
+        immunohematologyApproved = new ImmunohematologyExam(donation);
+        immunohematologyApproved.setStatus(ExamStatus.APPROVED);
+        immunohematologyRejected = new ImmunohematologyExam(donation);
+        immunohematologyRejected.setStatus(ExamStatus.REJECTED);
+        serologicalScreeningApproved = new SerologicalScreeningExam(donation);
+        serologicalScreeningApproved.setStatus(ExamStatus.APPROVED);
+        serologicalScreeningRejected = new SerologicalScreeningExam(donation);
+        serologicalScreeningRejected.setStatus(ExamStatus.REJECTED);
+
     }
 
     @Nested
@@ -66,6 +79,7 @@ class UpdateDonationServiceTest {
         @DisplayName("Should approve donation")
         void shouldApproveDonation() {
             when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.of(donation));
+            when(examRepository.findAllByDonationId(any(UUID.class))).thenReturn(List.of(immunohematologyApproved, serologicalScreeningApproved));
             when(donationRepository.save(any(Donation.class))).thenReturn(donation);
 
             Donation result = sut.approve(UUID.randomUUID());
@@ -82,6 +96,7 @@ class UpdateDonationServiceTest {
         @DisplayName("Should reject donation")
         void shouldRejectDonation() {
             when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.of(donation));
+            when(examRepository.findAllByDonationId(any(UUID.class))).thenReturn(List.of(immunohematologyRejected, serologicalScreeningRejected));
             when(donationRepository.save(any(Donation.class))).thenReturn(donation);
 
             Donation result = sut.reject(UUID.randomUUID());
