@@ -44,7 +44,7 @@ class ExamRequestServiceTest {
             Donation expectedDonation = new Donation(
                     eligibleDonor,
                     appointment,
-                    DonationStatus.EM_ANDAMENTO
+                    DonationStatus.UNDER_ANALYSIS
             );
 
             ImmunohematologyExam expectedExam = new ImmunohematologyExam(expectedDonation);
@@ -73,7 +73,7 @@ class ExamRequestServiceTest {
             Donation expectedDonation = new Donation(
                     eligibleDonor,
                     appointment,
-                    DonationStatus.EM_ANDAMENTO
+                    DonationStatus.UNDER_ANALYSIS
             );
 
             SerologicalScreeningExam expectedExam = new SerologicalScreeningExam(expectedDonation);
@@ -106,7 +106,7 @@ class ExamRequestServiceTest {
             Donation expectedDonation = new Donation(
                     eligibleDonor,
                     appointment,
-                    DonationStatus.APROVADO
+                    DonationStatus.APPROVED
             );
 
             assertThatThrownBy(() -> sut.requestImmunohematologyExam(expectedDonation))
@@ -126,7 +126,7 @@ class ExamRequestServiceTest {
             Donation expectedDonation = new Donation(
                     eligibleDonor,
                     appointment,
-                    DonationStatus.APROVADO
+                    DonationStatus.APPROVED
             );
 
             assertThatThrownBy(() -> sut.requestSerologicalScreeningExam(expectedDonation))
@@ -146,7 +146,7 @@ class ExamRequestServiceTest {
             Donation expectedDonation = new Donation(
                     eligibleDonor,
                     appointment,
-                    DonationStatus.NAO_APROVADO
+                    DonationStatus.REJECTED
             );
 
             assertThatThrownBy(() -> sut.requestImmunohematologyExam(expectedDonation))
@@ -166,7 +166,7 @@ class ExamRequestServiceTest {
             Donation expectedDonation = new Donation(
                     eligibleDonor,
                     appointment,
-                    DonationStatus.NAO_APROVADO
+                    DonationStatus.REJECTED
             );
 
             assertThatThrownBy(() -> sut.requestSerologicalScreeningExam(expectedDonation))

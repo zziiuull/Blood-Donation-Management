@@ -1,8 +1,8 @@
 package br.ifsp.demo.application.service.donation;
 
 import br.ifsp.demo.domain.model.*;
-import br.ifsp.demo.domain.repository.DonationRepository;
-import br.ifsp.demo.domain.repository.DonorRepository;
+import br.ifsp.demo.domain.repository.donation.DonationRepository;
+import br.ifsp.demo.domain.repository.donor.DonorRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -19,7 +19,6 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -80,7 +79,7 @@ class DonationRegisterServiceTest {
             Donation expectedDonation = new Donation(
                     eligibleDonor,
                     appointment,
-                    DonationStatus.EM_ANDAMENTO
+                    DonationStatus.UNDER_ANALYSIS
             );
 
             when(donationRepository.save(any(Donation.class))).thenReturn(expectedDonation);
@@ -88,7 +87,7 @@ class DonationRegisterServiceTest {
             Donation result = donationRegisterService.register(eligibleDonor, appointment);
 
             assertThat(result).isNotNull();
-            assertThat(result.getStatus()).isEqualTo(DonationStatus.EM_ANDAMENTO);
+            assertThat(result.getStatus()).isEqualTo(DonationStatus.UNDER_ANALYSIS);
             assertThat(result.getDonor()).isEqualTo(eligibleDonor);
             assertThat(result.getAppointment()).isEqualTo(appointment);
 

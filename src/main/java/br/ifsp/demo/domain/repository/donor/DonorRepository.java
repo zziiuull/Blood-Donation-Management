@@ -1,4 +1,4 @@
-package br.ifsp.demo.domain.repository;
+package br.ifsp.demo.domain.repository.donor;
 
 import br.ifsp.demo.domain.model.Donor;
 import org.springframework.data.jpa.repository.JpaRepository;

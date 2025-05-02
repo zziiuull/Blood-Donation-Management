@@ -16,8 +16,8 @@ public class SerologicalScreeningExam extends Exam {
     private DiseaseDetection aids;
     private DiseaseDetection htlv1_2;
 
-    public SerologicalScreeningExam(Donation donatoin) {
-        super(donatoin, ExamStatus.UNDER_ANALYSIS);
+    public SerologicalScreeningExam(Donation donation) {
+        super(donation, ExamStatus.UNDER_ANALYSIS);
     }
 
     public SerologicalScreeningExam() {

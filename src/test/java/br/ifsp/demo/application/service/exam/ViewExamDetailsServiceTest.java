@@ -6,7 +6,7 @@ import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
 import br.ifsp.demo.domain.model.exam.IrregularAntibodies;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
-import br.ifsp.demo.exception.ExamNotFoundException;
+import br.ifsp.demo.exception.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -45,7 +45,7 @@ class ViewExamDetailsServiceTest {
             Donation expectedDonation = new Donation(
                     eligibleDonor,
                     appointment,
-                    DonationStatus.EM_ANDAMENTO
+                    DonationStatus.UNDER_ANALYSIS
             );
 
             UUID donationId = UUID.randomUUID();
@@ -77,7 +77,7 @@ class ViewExamDetailsServiceTest {
             Donation expectedDonation = new Donation(
                     eligibleDonor,
                     appointment,
-                    DonationStatus.EM_ANDAMENTO
+                    DonationStatus.UNDER_ANALYSIS
             );
 
             UUID donationId = UUID.randomUUID();
@@ -112,7 +112,7 @@ class ViewExamDetailsServiceTest {
             Donation expectedDonation = new Donation(
                     eligibleDonor,
                     appointment,
-                    DonationStatus.EM_ANDAMENTO
+                    DonationStatus.UNDER_ANALYSIS
             );
 
             UUID donationId = UUID.randomUUID();
@@ -149,7 +149,7 @@ class ViewExamDetailsServiceTest {
             Donation expectedDonation = new Donation(
                     eligibleDonor,
                     appointment,
-                    DonationStatus.EM_ANDAMENTO
+                    DonationStatus.UNDER_ANALYSIS
             );
 
             UUID donationId = UUID.randomUUID();
@@ -196,7 +196,7 @@ class ViewExamDetailsServiceTest {
             when(examRepository.findAllByDonationId(donationId)).thenReturn(List.of());
 
             assertThatThrownBy(() -> sut.viewImmunohematologyExam(donationId))
-                    .isInstanceOf(ExamNotFoundException.class)
+                    .isInstanceOf(EntityNotFoundException.class)
                     .hasMessage("Immunohematology exam not found");
 
             verify(examRepository, times(1)).findAllByDonationId(donationId);
@@ -212,7 +212,7 @@ class ViewExamDetailsServiceTest {
             when(examRepository.findAllByDonationId(donationId)).thenReturn(List.of());
 
             assertThatThrownBy(() -> sut.viewSerologicalScreeningExam(donationId))
-                    .isInstanceOf(ExamNotFoundException.class)
+                    .isInstanceOf(EntityNotFoundException.class)
                     .hasMessage("Serological screening exam not found");
             
             verify(examRepository, times(1)).findAllByDonationId(donationId);
