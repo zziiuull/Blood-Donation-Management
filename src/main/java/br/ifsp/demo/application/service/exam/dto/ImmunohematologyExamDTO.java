@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 
 public record ImmunohematologyExamDTO (
         BloodType bloodType,
-        IrregularAntibodies irregularAntibodies,
-        LocalDateTime updatedAt
+        IrregularAntibodies irregularAntibodies
 ) {
 }
