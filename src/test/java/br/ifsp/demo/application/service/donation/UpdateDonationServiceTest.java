@@ -5,10 +5,12 @@ import br.ifsp.demo.domain.model.Appointment;
 import br.ifsp.demo.domain.model.Donation;
 import br.ifsp.demo.domain.model.DonationStatus;
 import br.ifsp.demo.domain.model.Donor;
+import br.ifsp.demo.domain.model.exam.ExamStatus;
 import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.domain.repository.donation.DonationRepository;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
+import br.ifsp.demo.exception.CannotFinishDonationWithExamUnderAnalysisException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -103,7 +105,7 @@ class UpdateDonationServiceTest {
             when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.of(donation));
             when(examRepository.findAllByDonationId(any(UUID.class))).thenReturn(List.of(immunohematologyExam, serologicalScreeningExam));
 
-            assertThatThrownBy(() -> sut.approve(UUID.randomUUID())).isInstanceOf(IllegalStateException.class);
+            assertThatThrownBy(() -> sut.approve(UUID.randomUUID())).isInstanceOf(CannotFinishDonationWithExamUnderAnalysisException.class);
         }
 
         static Stream<Arguments> examsUnderAnalysis() {
@@ -116,8 +118,10 @@ class UpdateDonationServiceTest {
             );
             ImmunohematologyExam immunohematologyUnderAnalysis = new ImmunohematologyExam(donation);
             ImmunohematologyExam immunohematologyApproved = new ImmunohematologyExam(donation);
+            immunohematologyApproved.setStatus(ExamStatus.APPROVED);
             SerologicalScreeningExam serologicalScreeningUnderAnalysis = new SerologicalScreeningExam(donation);
             SerologicalScreeningExam serologicalScreeningRejected = new SerologicalScreeningExam(donation);
+            serologicalScreeningRejected.setStatus(ExamStatus.REJECTED);
 
             return Stream.of(
                     Arguments.of(immunohematologyUnderAnalysis, serologicalScreeningRejected),
