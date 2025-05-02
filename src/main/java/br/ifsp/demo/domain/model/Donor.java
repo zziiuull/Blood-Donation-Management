@@ -1,16 +1,30 @@
 package br.ifsp.demo.domain.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.UUID;
 
 @Getter
 @Entity
-public class Donor extends User {
+public class Donor {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID id;
+
+    @Getter
+    private String name;
+
+    @Embedded
+    @Getter
+    private Cpf cpf;
+
+    @Embedded
+    @Getter
+    private ContactInfo contactInfo;
+
     private LocalDate birthDate;
     private Double weight;
 
@@ -23,7 +37,9 @@ public class Donor extends User {
     protected Donor() {}
 
     public Donor(String name, Cpf cpf, ContactInfo contactInfo, LocalDate birthDate, Double weight, Sex sex, BloodType bloodType) {
-        super(name, cpf, contactInfo);
+        this.name = name;
+        this.cpf = cpf;
+        this.contactInfo = contactInfo;
         this.birthDate = birthDate;
         this.weight = weight;
         this.sex = sex;
