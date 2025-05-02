@@ -12,12 +12,10 @@ import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.domain.repository.donation.DonationRepository;
 import br.ifsp.demo.exception.EntityNotFoundException;
-import br.ifsp.demo.security.auth.AuthenticationInfoService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -66,10 +64,19 @@ public class ExamController {
     @PostMapping("/register/serologicalscreening/approve/{examId}")
     public ResponseEntity<SerologicalScreeningExam> approveSerologicalScreeningExam(
             @PathVariable UUID examId,
-            @RequestBody @Valid SerologicalScreeningExamRequest examDTO) {
+            @RequestBody @Valid SerologicalScreeningExamRequest exam) {
         return ResponseEntity.ok(examRegistrationService.registerApprovedExam(
                 examId,
-                SerologicalScreeningExamDTO.fromRequest(examDTO)));
+                SerologicalScreeningExamDTO.fromRequest(exam)));
+    }
+
+    @PostMapping("/register/immunohematology/reject/{examId}")
+    public ResponseEntity<ImmunohematologyExam> rejectImmunohematologyExam(
+            @PathVariable UUID examId,
+            @RequestBody @Valid ImmunohematologyExamRequest exam) {
+        return ResponseEntity.ok(examRegistrationService.registerRejectedExam(
+                examId,
+                ImmunohematologyExamDTO.fromRequest(exam)));
     }
 
 }
