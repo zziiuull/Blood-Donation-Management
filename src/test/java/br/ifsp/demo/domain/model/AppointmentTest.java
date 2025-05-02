@@ -1,5 +1,9 @@
 package br.ifsp.demo.domain.model;
 
+import br.ifsp.demo.domain.model.common.ContactInfo;
+import br.ifsp.demo.domain.model.donation.Appointment;
+import br.ifsp.demo.domain.model.donation.AppointmentStatus;
+import br.ifsp.demo.domain.model.donation.CollectionSite;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -9,7 +13,6 @@ import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 
 class AppointmentTest {
 

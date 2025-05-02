@@ -1,6 +1,6 @@
 package br.ifsp.demo.domain.repository.donation;
 
-import br.ifsp.demo.domain.model.Donation;
+import br.ifsp.demo.domain.model.donation.Donation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

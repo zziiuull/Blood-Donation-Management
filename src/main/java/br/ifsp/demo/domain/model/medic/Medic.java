@@ -1,5 +1,7 @@
-package br.ifsp.demo.domain.model;
+package br.ifsp.demo.domain.model.medic;
 
+import br.ifsp.demo.domain.model.common.ContactInfo;
+import br.ifsp.demo.domain.model.common.Cpf;
 import br.ifsp.demo.security.user.Role;
 import br.ifsp.demo.security.user.User;
 import lombok.NonNull;

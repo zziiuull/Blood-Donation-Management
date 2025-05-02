@@ -1,6 +1,10 @@
 package br.ifsp.demo.application.service.exam;
 
-import br.ifsp.demo.domain.model.*;
+import br.ifsp.demo.domain.model.common.BloodType;
+import br.ifsp.demo.domain.model.donation.Appointment;
+import br.ifsp.demo.domain.model.donation.Donation;
+import br.ifsp.demo.domain.model.donation.DonationStatus;
+import br.ifsp.demo.domain.model.donor.Donor;
 import br.ifsp.demo.domain.model.exam.DiseaseDetection;
 import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
 import br.ifsp.demo.domain.model.exam.IrregularAntibodies;

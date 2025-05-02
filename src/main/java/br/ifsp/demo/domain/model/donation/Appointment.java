@@ -1,4 +1,4 @@
-package br.ifsp.demo.domain.model;
+package br.ifsp.demo.domain.model.donation;
 
 import jakarta.persistence.*;
 import lombok.Getter;

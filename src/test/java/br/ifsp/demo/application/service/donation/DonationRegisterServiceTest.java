@@ -1,6 +1,11 @@
 package br.ifsp.demo.application.service.donation;
 
-import br.ifsp.demo.domain.model.*;
+import br.ifsp.demo.domain.model.common.BloodType;
+import br.ifsp.demo.domain.model.common.ContactInfo;
+import br.ifsp.demo.domain.model.common.Cpf;
+import br.ifsp.demo.domain.model.donation.*;
+import br.ifsp.demo.domain.model.donor.Donor;
+import br.ifsp.demo.domain.model.donor.Sex;
 import br.ifsp.demo.domain.repository.donation.DonationRepository;
 import br.ifsp.demo.domain.repository.donor.DonorRepository;
 import org.junit.jupiter.api.DisplayName;

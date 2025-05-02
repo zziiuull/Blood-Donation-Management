@@ -1,9 +1,9 @@
 package br.ifsp.demo.application.service.donation;
 
-import br.ifsp.demo.domain.model.Appointment;
-import br.ifsp.demo.domain.model.Donation;
-import br.ifsp.demo.domain.model.DonationStatus;
-import br.ifsp.demo.domain.model.Donor;
+import br.ifsp.demo.domain.model.donation.Appointment;
+import br.ifsp.demo.domain.model.donation.Donation;
+import br.ifsp.demo.domain.model.donation.DonationStatus;
+import br.ifsp.demo.domain.model.donor.Donor;
 import br.ifsp.demo.domain.repository.donation.DonationRepository;
 import br.ifsp.demo.domain.repository.donor.DonorRepository;
 import org.springframework.stereotype.Service;

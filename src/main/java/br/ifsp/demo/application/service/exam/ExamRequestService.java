@@ -1,7 +1,7 @@
 package br.ifsp.demo.application.service.exam;
 
-import br.ifsp.demo.domain.model.Donation;
-import br.ifsp.demo.domain.model.DonationStatus;
+import br.ifsp.demo.domain.model.donation.Donation;
+import br.ifsp.demo.domain.model.donation.DonationStatus;
 import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;

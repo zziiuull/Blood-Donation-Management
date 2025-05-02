@@ -2,7 +2,7 @@ package br.ifsp.demo.application.service.donation;
 
 import br.ifsp.demo.application.service.donation.dto.DonationDetailsDTO;
 import br.ifsp.demo.application.service.donation.dto.ExamDTO;
-import br.ifsp.demo.domain.model.Donation;
+import br.ifsp.demo.domain.model.donation.Donation;
 import br.ifsp.demo.domain.model.exam.Exam;
 import br.ifsp.demo.domain.repository.donation.DonationRepository;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;

@@ -1,7 +1,7 @@
 package br.ifsp.demo.domain.model.exam;
 
-import br.ifsp.demo.domain.model.BloodType;
-import br.ifsp.demo.domain.model.Donation;
+import br.ifsp.demo.domain.model.common.BloodType;
+import br.ifsp.demo.domain.model.donation.Donation;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;

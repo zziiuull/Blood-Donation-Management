@@ -1,10 +1,10 @@
 package br.ifsp.demo.application.service.donation;
 
 import br.ifsp.demo.application.service.notifier.NotifierService;
-import br.ifsp.demo.domain.model.Appointment;
-import br.ifsp.demo.domain.model.Donation;
-import br.ifsp.demo.domain.model.DonationStatus;
-import br.ifsp.demo.domain.model.Donor;
+import br.ifsp.demo.domain.model.donation.Appointment;
+import br.ifsp.demo.domain.model.donation.Donation;
+import br.ifsp.demo.domain.model.donation.DonationStatus;
+import br.ifsp.demo.domain.model.donor.Donor;
 import br.ifsp.demo.domain.model.exam.ExamStatus;
 import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;

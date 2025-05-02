@@ -1,4 +1,4 @@
-package br.ifsp.demo.domain.model;
+package br.ifsp.demo.domain.model.medic;
 
 import jakarta.persistence.Embeddable;
 import lombok.Getter;

@@ -1,6 +1,6 @@
 package br.ifsp.demo.application.service.notifier;
 
-import br.ifsp.demo.domain.model.Donor;
+import br.ifsp.demo.domain.model.donor.Donor;
 import org.springframework.stereotype.Service;
 
 @Service

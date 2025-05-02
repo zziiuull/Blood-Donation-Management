@@ -1,4 +1,4 @@
-package br.ifsp.demo.domain.model;
+package br.ifsp.demo.domain.model.common;
 
 public enum BloodType {
     A_POS, A_NEG,

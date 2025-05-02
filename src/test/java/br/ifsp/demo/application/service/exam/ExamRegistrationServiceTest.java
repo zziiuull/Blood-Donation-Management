@@ -2,7 +2,11 @@ package br.ifsp.demo.application.service.exam;
 
 import br.ifsp.demo.application.service.exam.dto.ImmunohematologyExamDTO;
 import br.ifsp.demo.application.service.exam.dto.SerologicalScreeningExamDTO;
-import br.ifsp.demo.domain.model.*;
+import br.ifsp.demo.domain.model.common.BloodType;
+import br.ifsp.demo.domain.model.donation.Appointment;
+import br.ifsp.demo.domain.model.donation.Donation;
+import br.ifsp.demo.domain.model.donation.DonationStatus;
+import br.ifsp.demo.domain.model.donor.Donor;
 import br.ifsp.demo.domain.model.exam.*;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
 import br.ifsp.demo.exception.EntityNotFoundException;

@@ -1,13 +1,11 @@
-package br.ifsp.demo.domain.model;
+package br.ifsp.demo.domain.model.donation;
 
-import br.ifsp.demo.domain.model.exam.Exam;
+import br.ifsp.demo.domain.model.donor.Donor;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Getter
