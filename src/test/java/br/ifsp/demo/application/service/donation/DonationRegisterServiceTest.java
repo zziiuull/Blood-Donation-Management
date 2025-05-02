@@ -205,7 +205,7 @@ class DonationRegisterServiceTest {
 
             when(donorRepository.findById(nonExistentDonorId)).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> donationRegisterService.registerByDonorId(nonExistentDonorId, appointment))
+            assertThatThrownBy(() -> donationRegisterService.registerByDonorId(nonExistentDonorId, UUID.randomUUID()))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("Donor does not exist");
 

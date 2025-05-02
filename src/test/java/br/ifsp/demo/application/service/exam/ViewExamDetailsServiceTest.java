@@ -10,7 +10,7 @@ import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
 import br.ifsp.demo.domain.model.exam.IrregularAntibodies;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
-import br.ifsp.demo.exception.EntityNotFoundException;
+import br.ifsp.demo.exception.ExamNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -200,7 +200,7 @@ class ViewExamDetailsServiceTest {
             when(examRepository.findAllByDonationId(donationId)).thenReturn(List.of());
 
             assertThatThrownBy(() -> sut.viewImmunohematologyExam(donationId))
-                    .isInstanceOf(EntityNotFoundException.class)
+                    .isInstanceOf(ExamNotFoundException.class)
                     .hasMessage("Immunohematology exam not found");
 
             verify(examRepository, times(1)).findAllByDonationId(donationId);
@@ -216,7 +216,7 @@ class ViewExamDetailsServiceTest {
             when(examRepository.findAllByDonationId(donationId)).thenReturn(List.of());
 
             assertThatThrownBy(() -> sut.viewSerologicalScreeningExam(donationId))
-                    .isInstanceOf(EntityNotFoundException.class)
+                    .isInstanceOf(ExamNotFoundException.class)
                     .hasMessage("Serological screening exam not found");
             
             verify(examRepository, times(1)).findAllByDonationId(donationId);

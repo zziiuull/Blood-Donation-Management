@@ -3,7 +3,7 @@ package br.ifsp.demo.application.service.exam;
 import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
-import br.ifsp.demo.exception.EntityNotFoundException;
+import br.ifsp.demo.exception.ExamNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -25,7 +25,7 @@ public class ViewExamDetailsService {
                 .filter(ImmunohematologyExam.class::isInstance)
                 .map(ImmunohematologyExam.class::cast)
                 .findFirst()
-                .orElseThrow(() -> new EntityNotFoundException("Immunohematology exam not found"));
+                .orElseThrow(() -> new ExamNotFoundException("Immunohematology exam not found"));
     }
 
     public SerologicalScreeningExam viewSerologicalScreeningExam(UUID donationId) {
@@ -34,6 +34,6 @@ public class ViewExamDetailsService {
                 .filter(SerologicalScreeningExam.class::isInstance)
                 .map(SerologicalScreeningExam.class::cast)
                 .findFirst()
-                .orElseThrow(() -> new EntityNotFoundException("Serological screening exam not found"));
+                .orElseThrow(() -> new ExamNotFoundException("Serological screening exam not found"));
     }
 }
