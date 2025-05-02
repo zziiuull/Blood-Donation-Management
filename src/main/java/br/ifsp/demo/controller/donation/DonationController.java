@@ -1,5 +1,9 @@
-package br.ifsp.demo.controller;
+package br.ifsp.demo.controller.donation;
 
+import br.ifsp.demo.application.service.donation.DonationRegisterService;
+import br.ifsp.demo.application.service.donation.UpdateDonationService;
+import br.ifsp.demo.application.service.donation.ViewDonationDetailsService;
+import br.ifsp.demo.application.service.donation.dto.DonationDetailsDTO;
 import br.ifsp.demo.security.auth.AuthenticationInfoService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -14,6 +18,9 @@ import java.util.UUID;
 @Tag(name = "Donation API")
 public class DonationController {
     private final AuthenticationInfoService authService;
+    private final DonationRegisterService donationRegisterService;
+    private final ViewDonationDetailsService viewDonationDetailsService;
+    private final UpdateDonationService updateDonationService;
 
     @PostMapping
     public ResponseEntity<String> register() {
@@ -21,10 +28,10 @@ public class DonationController {
         return ResponseEntity.ok("register: " + userId.toString());
     }
 
-    @GetMapping
-    public ResponseEntity<String> view() {
-        final UUID userId = authService.getAuthenticatedUserId();
-        return ResponseEntity.ok("view: " + userId.toString());
+    @GetMapping("/{id}")
+    public ResponseEntity<DonationDetailsDTO> view(@PathVariable UUID id) {
+        DonationDetailsDTO donationDetails = viewDonationDetailsService.getDonationDetails(id);
+        return ResponseEntity.ok(donationDetails);
     }
 
     @PutMapping
