@@ -64,6 +64,7 @@ public class DataLoader implements CommandLineRunner {
                 site,
                 "First donation"
         );
-        appointmentRepository.save(appointment);
+        Appointment savedAppointment = appointmentRepository.save(appointment);
+        System.out.println("Appointment id: " + savedAppointment.getId());
     }
 }

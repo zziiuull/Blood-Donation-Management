@@ -4,13 +4,19 @@ import br.ifsp.demo.application.service.donation.DonationRegisterService;
 import br.ifsp.demo.application.service.donation.UpdateDonationService;
 import br.ifsp.demo.application.service.donation.ViewDonationDetailsService;
 import br.ifsp.demo.application.service.donation.dto.DonationDetailsDTO;
+import br.ifsp.demo.domain.model.common.ContactInfo;
+import br.ifsp.demo.domain.model.donation.Appointment;
+import br.ifsp.demo.domain.model.donation.AppointmentStatus;
+import br.ifsp.demo.domain.model.donation.CollectionSite;
 import br.ifsp.demo.domain.model.donation.Donation;
+import br.ifsp.demo.domain.repository.appointment.AppointmentRepository;
 import br.ifsp.demo.security.auth.AuthenticationInfoService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @RestController
@@ -18,15 +24,15 @@ import java.util.UUID;
 @AllArgsConstructor
 @Tag(name = "Donation API")
 public class DonationController {
-    private final AuthenticationInfoService authService;
     private final DonationRegisterService donationRegisterService;
     private final ViewDonationDetailsService viewDonationDetailsService;
     private final UpdateDonationService updateDonationService;
+    private final AppointmentRepository appointmentRepository;
 
     @PostMapping
-    public ResponseEntity<String> register() {
-        final UUID userId = authService.getAuthenticatedUserId();
-        return ResponseEntity.ok("register: " + userId.toString());
+    public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest request) {
+        Donation donation = donationRegisterService.registerByDonorId(request.donorId(), request.appointmentId());
+        return ResponseEntity.ok(new RegisterResponse(donation));
     }
 
     @GetMapping("/{id}")
