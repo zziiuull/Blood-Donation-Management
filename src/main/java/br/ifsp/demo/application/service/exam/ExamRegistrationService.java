@@ -5,7 +5,7 @@ import br.ifsp.demo.application.service.exam.dto.SerologicalScreeningExamDTO;
 import br.ifsp.demo.domain.model.exam.*;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
 import br.ifsp.demo.exception.ExamAlreadyAnalyzedException;
-import br.ifsp.demo.exception.EntityNotFoundException;
+import br.ifsp.demo.exception.ExamNotFoundException;
 import br.ifsp.demo.exception.InvalidExamAnalysisException;
 import org.springframework.stereotype.Service;
 
@@ -15,10 +15,7 @@ import java.util.UUID;
 
 @Service
 public class ExamRegistrationService {
-    private ExamRepository examRepository;
-
-    public ExamRegistrationService() {
-    }
+    private final ExamRepository examRepository;
 
     public ExamRegistrationService(ExamRepository examRepository) {
         this.examRepository = examRepository;
@@ -26,7 +23,7 @@ public class ExamRegistrationService {
 
     public ImmunohematologyExam registerApprovedExam(UUID examId, ImmunohematologyExamDTO examDTO) {
         Optional<Exam> optionalExam = examRepository.findById(examId);
-        if (optionalExam.isEmpty()) throw new EntityNotFoundException("Exam not found");
+        if (optionalExam.isEmpty()) throw new ExamNotFoundException("Exam not found");
         ImmunohematologyExam exam = (ImmunohematologyExam) optionalExam.get();
 
         if (!isUnderAnalysis(exam)) throw new ExamAlreadyAnalyzedException("Can not approve exam already analyzed");
@@ -60,7 +57,7 @@ public class ExamRegistrationService {
 
     public SerologicalScreeningExam registerApprovedExam(UUID examId, SerologicalScreeningExamDTO examDTO) {
         Optional<Exam> optionalExam = examRepository.findById(examId);
-        if (optionalExam.isEmpty()) throw new EntityNotFoundException("Exam not found");
+        if (optionalExam.isEmpty()) throw new ExamNotFoundException("Exam not found");
         SerologicalScreeningExam exam = (SerologicalScreeningExam) optionalExam.get();
 
         if (!isUnderAnalysis(exam)) throw new ExamAlreadyAnalyzedException("Can not approve exam already analyzed");
@@ -93,7 +90,7 @@ public class ExamRegistrationService {
 
     public ImmunohematologyExam registerRejectedExam(UUID examId, ImmunohematologyExamDTO examDTO) {
         Optional<Exam> optionalExam = examRepository.findById(examId);
-        if (optionalExam.isEmpty()) throw new EntityNotFoundException("Exam not found");
+        if (optionalExam.isEmpty()) throw new ExamNotFoundException("Exam not found");
         ImmunohematologyExam exam = (ImmunohematologyExam) optionalExam.get();
 
         if (!isUnderAnalysis(exam)) throw new ExamAlreadyAnalyzedException("Can not approve exam already analyzed");
@@ -118,7 +115,7 @@ public class ExamRegistrationService {
 
     public SerologicalScreeningExam registerRejectedExam(UUID examId, SerologicalScreeningExamDTO examDTO) {
         Optional<Exam> optionalExam = examRepository.findById(examId);
-        if (optionalExam.isEmpty()) throw new EntityNotFoundException("Exam not found");
+        if (optionalExam.isEmpty()) throw new ExamNotFoundException("Exam not found");
         SerologicalScreeningExam exam = (SerologicalScreeningExam) optionalExam.get();
 
         if (!isUnderAnalysis(exam)) throw new ExamAlreadyAnalyzedException("Can not approve exam already analyzed");

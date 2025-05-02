@@ -73,4 +73,76 @@ public class ApiExceptionHandler {
                 .build();
         return new ResponseEntity<>(apiException, conflict);
     }
+
+    @ExceptionHandler(value = ExamNotFoundException.class)
+    public ResponseEntity<?> handleExamNotFoundException(ExamNotFoundException e){
+        final HttpStatus notFound = NOT_FOUND;
+        final ApiException apiException = ApiException.builder()
+                .status(notFound)
+                .message(e.getMessage())
+                .developerMessage(e.getClass().getName())
+                .timestamp(ZonedDateTime.now(ZoneId.of("Z")))
+                .build();
+        return new ResponseEntity<>(apiException, notFound);
+    }
+
+    @ExceptionHandler(value = DonationNotFoundException.class)
+    public ResponseEntity<?> handleDonationNotFoundException(DonationNotFoundException e){
+        final HttpStatus notFound = NOT_FOUND;
+        final ApiException apiException = ApiException.builder()
+                .status(notFound)
+                .message(e.getMessage())
+                .developerMessage(e.getClass().getName())
+                .timestamp(ZonedDateTime.now(ZoneId.of("Z")))
+                .build();
+        return new ResponseEntity<>(apiException, notFound);
+    }
+
+    @ExceptionHandler(value = ExamAlreadyAnalyzedException.class)
+    public ResponseEntity<?> handleExamAlreadyAnalyzedException(ExamAlreadyAnalyzedException e){
+        final HttpStatus conflict = CONFLICT;
+        final ApiException apiException = ApiException.builder()
+                .status(conflict)
+                .message(e.getMessage())
+                .developerMessage(e.getClass().getName())
+                .timestamp(ZonedDateTime.now(ZoneId.of("Z")))
+                .build();
+        return new ResponseEntity<>(apiException, conflict);
+    }
+
+    @ExceptionHandler(value = CannotFinishDonationWithExamUnderAnalysisException.class)
+    public ResponseEntity<?> handleCannotFinishDonationWithExamUnderAnalysisException(CannotFinishDonationWithExamUnderAnalysisException e){
+        final HttpStatus badRequest = BAD_REQUEST;
+        final ApiException apiException = ApiException.builder()
+                .status(badRequest)
+                .message(e.getMessage())
+                .developerMessage(e.getClass().getName())
+                .timestamp(ZonedDateTime.now(ZoneId.of("Z")))
+                .build();
+        return new ResponseEntity<>(apiException, badRequest);
+    }
+
+    @ExceptionHandler(value = InvalidExamAnalysisException.class)
+    public ResponseEntity<?> handleInvalidExamAnalysisException(InvalidExamAnalysisException e){
+        final HttpStatus badRequest = BAD_REQUEST;
+        final ApiException apiException = ApiException.builder()
+                .status(badRequest)
+                .message(e.getMessage())
+                .developerMessage(e.getClass().getName())
+                .timestamp(ZonedDateTime.now(ZoneId.of("Z")))
+                .build();
+        return new ResponseEntity<>(apiException, badRequest);
+    }
+
+    @ExceptionHandler(value = InvalidDonationAnalysisException.class)
+    public ResponseEntity<?> handleInvalidDonationAnalysisException(InvalidDonationAnalysisException e){
+        final HttpStatus badRequest = BAD_REQUEST;
+        final ApiException apiException = ApiException.builder()
+                .status(badRequest)
+                .message(e.getMessage())
+                .developerMessage(e.getClass().getName())
+                .timestamp(ZonedDateTime.now(ZoneId.of("Z")))
+                .build();
+        return new ResponseEntity<>(apiException, badRequest);
+    }
 }

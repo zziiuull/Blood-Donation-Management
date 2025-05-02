@@ -11,7 +11,7 @@ import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.domain.repository.donation.DonationRepository;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
 import br.ifsp.demo.exception.CannotFinishDonationWithExamUnderAnalysisException;
-import br.ifsp.demo.exception.EntityNotFoundException;
+import br.ifsp.demo.exception.ExamNotFoundException;
 import br.ifsp.demo.exception.InvalidDonationAnalysisException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -154,7 +154,7 @@ class UpdateDonationServiceTest {
             when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.of(donation));
             when(examRepository.findAllByDonationId(any(UUID.class))).thenReturn(List.of(immunohematologyApproved));
 
-            assertThatThrownBy(() -> sut.approve(UUID.randomUUID())).isInstanceOf(EntityNotFoundException.class);
+            assertThatThrownBy(() -> sut.approve(UUID.randomUUID())).isInstanceOf(ExamNotFoundException.class);
         }
 
         @Test

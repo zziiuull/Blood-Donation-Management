@@ -9,7 +9,7 @@ import br.ifsp.demo.domain.model.donation.DonationStatus;
 import br.ifsp.demo.domain.model.donor.Donor;
 import br.ifsp.demo.domain.model.exam.*;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
-import br.ifsp.demo.exception.EntityNotFoundException;
+import br.ifsp.demo.exception.ExamNotFoundException;
 import br.ifsp.demo.exception.ExamAlreadyAnalyzedException;
 import br.ifsp.demo.exception.InvalidExamAnalysisException;
 import org.junit.jupiter.api.*;
@@ -182,7 +182,7 @@ class ExamRegistrationServiceTest {
         void shouldThrowWhenExamIsNotFound() {
             when(examRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> sut.registerRejectedExam(UUID.randomUUID(), new ImmunohematologyExamDTO(BloodType.A_POS, IrregularAntibodies.POSITIVE))).isInstanceOf(EntityNotFoundException.class);
+            assertThatThrownBy(() -> sut.registerRejectedExam(UUID.randomUUID(), new ImmunohematologyExamDTO(BloodType.A_POS, IrregularAntibodies.POSITIVE))).isInstanceOf(ExamNotFoundException.class);
         }
     }
 }
