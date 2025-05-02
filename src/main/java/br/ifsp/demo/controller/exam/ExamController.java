@@ -25,7 +25,7 @@ public class ExamController {
     private final ExamRequestService examRequestService;
     private final DonationRepository donationRepository;
 
-    @PostMapping("/immunohematology/{donationId}")
+    @PostMapping("request/immunohematology/{donationId}")
     public ResponseEntity<ImmunohematologyExamResponse> requestImmunohematologyExam(
             @PathVariable UUID donationId){
         Donation donation = donationRepository.findById(donationId)
@@ -36,7 +36,7 @@ public class ExamController {
         return ResponseEntity.ok(new ImmunohematologyExamResponse(immunohematologyExam));
     }
 
-    @PostMapping("/serologicalscreening/{donationId}")
+    @PostMapping("request/serologicalscreening/{donationId}")
     public ResponseEntity<SerologicalScreeningExamResponse> requestSerologicalScreeningExam(
             @PathVariable UUID donationId){
         Donation donation = donationRepository.findById(donationId)
