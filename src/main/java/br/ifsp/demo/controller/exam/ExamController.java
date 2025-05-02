@@ -2,7 +2,9 @@ package br.ifsp.demo.controller.exam;
 import br.ifsp.demo.application.service.exam.ExamRegistrationService;
 import br.ifsp.demo.application.service.exam.ExamRequestService;
 import br.ifsp.demo.application.service.exam.dto.ImmunohematologyExamDTO;
+import br.ifsp.demo.application.service.exam.dto.SerologicalScreeningExamDTO;
 import br.ifsp.demo.controller.exam.request.ImmunohematologyExamRequest;
+import br.ifsp.demo.controller.exam.request.SerologicalScreeningExamRequest;
 import br.ifsp.demo.controller.exam.response.ImmunohematologyExamResponse;
 import br.ifsp.demo.controller.exam.response.SerologicalScreeningExamResponse;
 import br.ifsp.demo.domain.model.donation.Donation;
@@ -56,6 +58,18 @@ public class ExamController {
     public ResponseEntity<ImmunohematologyExam> approveImmunohematologyExam(
             @PathVariable UUID examId,
             @RequestBody @Valid ImmunohematologyExamRequest exam) {
-        return ResponseEntity.ok(examRegistrationService.registerApprovedExam(examId, ImmunohematologyExamDTO.fromRequest(exam)));
+        return ResponseEntity.ok(examRegistrationService.registerApprovedExam(
+                examId,
+                ImmunohematologyExamDTO.fromRequest(exam)));
     }
+
+    @PostMapping("/register/serologicalscreening/approve/{examId}")
+    public ResponseEntity<SerologicalScreeningExam> approveSerologicalScreeningExam(
+            @PathVariable UUID examId,
+            @RequestBody @Valid SerologicalScreeningExamRequest examDTO) {
+        return ResponseEntity.ok(examRegistrationService.registerApprovedExam(
+                examId,
+                SerologicalScreeningExamDTO.fromRequest(examDTO)));
+    }
+
 }
