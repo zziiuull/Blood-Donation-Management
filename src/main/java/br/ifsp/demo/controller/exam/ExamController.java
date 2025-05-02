@@ -1,6 +1,7 @@
 package br.ifsp.demo.controller.exam;
 import br.ifsp.demo.application.service.exam.ExamRegistrationService;
 import br.ifsp.demo.application.service.exam.ExamRequestService;
+import br.ifsp.demo.application.service.exam.ViewExamDetailsService;
 import br.ifsp.demo.application.service.exam.dto.ImmunohematologyExamDTO;
 import br.ifsp.demo.application.service.exam.dto.SerologicalScreeningExamDTO;
 import br.ifsp.demo.controller.exam.request.ImmunohematologyExamRequest;
@@ -27,6 +28,7 @@ import java.util.UUID;
 public class ExamController {
     private final ExamRequestService examRequestService;
     private final ExamRegistrationService examRegistrationService;
+    private final ViewExamDetailsService viewExamDetailsService;
     private final DonationRepository donationRepository;
 
     @PostMapping("request/immunohematology/{donationId}")
@@ -52,39 +54,71 @@ public class ExamController {
         return ResponseEntity.ok(new SerologicalScreeningExamResponse(serologicalScreeningExam));
     }
 
-    @PostMapping("/register/immunohematology/approve/{examId}")
+    @PostMapping("/register/donation/{donationId}/immunohematology/approve/{examId}")
     public ResponseEntity<ImmunohematologyExam> approveImmunohematologyExam(
+            @PathVariable UUID donationId,
             @PathVariable UUID examId,
             @RequestBody @Valid ImmunohematologyExamRequest exam) {
+
+        validateDonationExists(donationId);
         return ResponseEntity.ok(examRegistrationService.registerApprovedExam(
                 examId,
                 ImmunohematologyExamDTO.fromRequest(exam)));
     }
 
-    @PostMapping("/register/serologicalscreening/approve/{examId}")
+    @PostMapping("/register/donation/{donationId}/serologicalscreening/approve/{examId}")
     public ResponseEntity<SerologicalScreeningExam> approveSerologicalScreeningExam(
+            @PathVariable UUID donationId,
             @PathVariable UUID examId,
             @RequestBody @Valid SerologicalScreeningExamRequest exam) {
+
+        validateDonationExists(donationId);
         return ResponseEntity.ok(examRegistrationService.registerApprovedExam(
                 examId,
                 SerologicalScreeningExamDTO.fromRequest(exam)));
     }
 
-    @PostMapping("/register/immunohematology/reject/{examId}")
+    @PostMapping("/register/donation/{donationId}/immunohematology/reject/{examId}")
     public ResponseEntity<ImmunohematologyExam> rejectImmunohematologyExam(
+            @PathVariable UUID donationId,
             @PathVariable UUID examId,
             @RequestBody @Valid ImmunohematologyExamRequest exam) {
+
+        validateDonationExists(donationId);
         return ResponseEntity.ok(examRegistrationService.registerRejectedExam(
                 examId,
                 ImmunohematologyExamDTO.fromRequest(exam)));
     }
 
-    @PostMapping("/register/serologicalscreening/reject/{examId}")
+    @PostMapping("/register/donation/{donationId}/serologicalscreening/reject/{examId}")
     public ResponseEntity<SerologicalScreeningExam> rejectSerologicalScreeningExam(
+            @PathVariable UUID donationId,
             @PathVariable UUID examId,
             @RequestBody @Valid SerologicalScreeningExamRequest exam) {
+
+        validateDonationExists(donationId);
         return ResponseEntity.ok(examRegistrationService.registerRejectedExam(
                 examId,
                 SerologicalScreeningExamDTO.fromRequest(exam)));
+    }
+
+    @GetMapping("/view/immunohematology/{donationId}")
+    public ResponseEntity<ImmunohematologyExamResponse> viewImmunohematologyExam(@PathVariable UUID donationId) {
+        validateDonationExists(donationId);
+        ImmunohematologyExam immunohematologyExam = viewExamDetailsService.viewImmunohematologyExam(donationId);
+        return ResponseEntity.ok(new ImmunohematologyExamResponse(immunohematologyExam));
+    }
+
+    @GetMapping("/view/serological-screening/{donationId}")
+    public ResponseEntity<SerologicalScreeningExamResponse> viewSerologicalScreeningExam(@PathVariable UUID donationId) {
+        validateDonationExists(donationId);
+        SerologicalScreeningExam serologicalScreeningExam = viewExamDetailsService.viewSerologicalScreeningExam(donationId);
+        return ResponseEntity.ok(new SerologicalScreeningExamResponse(serologicalScreeningExam));
+    }
+
+    private void validateDonationExists(UUID donationId) {
+        if (!donationRepository.existsById(donationId)) {
+            throw new EntityNotFoundException("Donation not found");
+        }
     }
 }
