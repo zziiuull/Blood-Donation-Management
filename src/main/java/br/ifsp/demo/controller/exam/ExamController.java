@@ -2,8 +2,10 @@ package br.ifsp.demo.controller.exam;
 
 import br.ifsp.demo.application.service.exam.ExamRequestService;
 import br.ifsp.demo.controller.exam.response.ImmunohematologyExamResponse;
+import br.ifsp.demo.controller.exam.response.SerologicalScreeningExamResponse;
 import br.ifsp.demo.domain.model.donation.Donation;
 import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
+import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.domain.repository.donation.DonationRepository;
 import br.ifsp.demo.exception.EntityNotFoundException;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,8 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -34,5 +34,16 @@ public class ExamController {
         ImmunohematologyExam immunohematologyExam = examRequestService.requestImmunohematologyExam(donation);
 
         return ResponseEntity.ok(new ImmunohematologyExamResponse(immunohematologyExam));
+    }
+
+    @PostMapping("/serologicalscreening/{donationId}")
+    public ResponseEntity<SerologicalScreeningExamResponse> requestSerologicalScreeningExam(
+            @PathVariable UUID donationId){
+        Donation donation = donationRepository.findById(donationId)
+                .orElseThrow(() -> new EntityNotFoundException("Donation not found"));
+
+        SerologicalScreeningExam serologicalScreeningExam = examRequestService.requestSerologicalScreeningExam(donation);
+
+        return ResponseEntity.ok(new SerologicalScreeningExamResponse(serologicalScreeningExam));
     }
 }
