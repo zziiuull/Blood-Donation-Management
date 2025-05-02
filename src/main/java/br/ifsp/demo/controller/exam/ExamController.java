@@ -25,7 +25,7 @@ public class ExamController {
     private final ExamRequestService examRequestService;
     private final DonationRepository donationRepository;
 
-    @PostMapping("/{donationId}")
+    @PostMapping("/immunohematology/{donationId}")
     public ResponseEntity<ImmunohematologyExamResponse> requestImmunohematologyExam(
             @PathVariable UUID donationId){
         Donation donation = donationRepository.findById(donationId)
