@@ -11,6 +11,7 @@ import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.domain.repository.donation.DonationRepository;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
 import br.ifsp.demo.exception.CannotFinishDonationWithExamUnderAnalysisException;
+import br.ifsp.demo.exception.EntityNotFoundException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -27,6 +28,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -142,6 +144,16 @@ class UpdateDonationServiceTest {
                     Arguments.of(immunohematologyUnderAnalysis, serologicalScreeningRejected),
                     Arguments.of(immunohematologyApproved, serologicalScreeningUnderAnalysis)
             );
+        }
+
+        @Test
+        @Tag("UnitTest")
+        @DisplayName("should throw when at least one exam is not found")
+        void shouldThrowWhenAtLeastOneExamIsNotFound() {
+            when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.of(donation));
+            when(examRepository.findAllByDonationId(any(UUID.class))).thenReturn(List.of(immunohematologyApproved));
+
+            assertThatThrownBy(() -> sut.approve(UUID.randomUUID())).isInstanceOf(EntityNotFoundException.class);
         }
     }
 }
