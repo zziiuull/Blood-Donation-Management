@@ -37,6 +37,8 @@ public class ViewDonationDetailsService {
         return new DonationDetailsDTO(
                 donation.getId(),
                 donation.getStatus(),
+                donation.getCreatedAt(),
+                donation.getUpdatedAt(),
                 exams
         );
     }
