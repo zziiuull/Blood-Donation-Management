@@ -12,6 +12,7 @@ import br.ifsp.demo.domain.repository.donation.DonationRepository;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
 import br.ifsp.demo.exception.CannotFinishDonationWithExamUnderAnalysisException;
 import br.ifsp.demo.exception.EntityNotFoundException;
+import br.ifsp.demo.exception.InvalidDonationAnalysisException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
