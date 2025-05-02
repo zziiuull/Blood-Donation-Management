@@ -2,12 +2,11 @@ package br.ifsp.demo.application.service.donation;
 
 import br.ifsp.demo.application.service.notifier.NotifierService;
 import br.ifsp.demo.domain.model.*;
+import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
+import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.domain.repository.donation.DonationRepository;
 import br.ifsp.demo.exception.EntityNotFoundException;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -34,6 +33,19 @@ class UpdateDonationServiceTest {
     @InjectMocks
     private UpdateDonationService sut;
 
+    private Donation donation;
+
+    @BeforeEach
+    void setUp() {
+        Donor eligibleDonor = mock(Donor.class);
+        Appointment appointment = mock(Appointment.class);
+        donation = new Donation(
+                eligibleDonor,
+                appointment,
+                DonationStatus.UNDER_ANALYSIS
+        );
+    }
+
     @Nested
     @DisplayName("For valid tests")
     class ValidTests {
@@ -42,14 +54,6 @@ class UpdateDonationServiceTest {
         @Tag("UnitTest")
         @DisplayName("Should approve donation")
         void shouldApproveDonation() {
-            Donor eligibleDonor = mock(Donor.class);
-            Appointment appointment = mock(Appointment.class);
-            Donation donation = new Donation(
-                    eligibleDonor,
-                    appointment,
-                    DonationStatus.UNDER_ANALYSIS
-            );
-
             when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.of(donation));
             when(donationRepository.save(any(Donation.class))).thenReturn(donation);
 
@@ -66,14 +70,6 @@ class UpdateDonationServiceTest {
         @Tag("UnitTest")
         @DisplayName("Should reject donation")
         void shouldRejectDonation() {
-            Donor eligibleDonor = mock(Donor.class);
-            Appointment appointment = mock(Appointment.class);
-            Donation donation = new Donation(
-                    eligibleDonor,
-                    appointment,
-                    DonationStatus.UNDER_ANALYSIS
-            );
-
             when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.of(donation));
             when(donationRepository.save(any(Donation.class))).thenReturn(donation);
 
