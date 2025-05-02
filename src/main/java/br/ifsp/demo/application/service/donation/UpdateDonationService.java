@@ -28,6 +28,18 @@ public class UpdateDonationService {
 
         donation.setStatus(DonationStatus.APPROVED);
         donation.setUpdatedAt(LocalDateTime.now());
+        
+        return donationRepository.save(donation);
+    }
+
+    public Donation reject(UUID donationId){
+        Optional<Donation> optionalDonation = donationRepository.findById(donationId);
+        if (optionalDonation.isEmpty()) throw new EntityNotFoundException("Donation not found");
+        Donation donation = optionalDonation.get();
+
+        donation.setStatus(DonationStatus.REJECTED);
+        donation.setUpdatedAt(LocalDateTime.now());
+
 
         return donationRepository.save(donation);
     }
