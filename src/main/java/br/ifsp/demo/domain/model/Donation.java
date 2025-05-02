@@ -3,6 +3,7 @@ package br.ifsp.demo.domain.model;
 import br.ifsp.demo.domain.model.exam.Exam;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,9 +24,12 @@ public class Donation {
     private Appointment appointment;
 
     @Enumerated(EnumType.STRING)
+    @Setter
     private DonationStatus status;
 
     private LocalDateTime createdAt;
+
+    @Setter
     private LocalDateTime updatedAt;
 
     protected Donation() {}

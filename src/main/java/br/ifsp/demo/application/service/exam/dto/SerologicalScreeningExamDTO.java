@@ -10,7 +10,6 @@ public record SerologicalScreeningExamDTO(
         DiseaseDetection chagasDisease,
         DiseaseDetection syphilis,
         DiseaseDetection aids,
-        DiseaseDetection htlv1_2,
-        LocalDateTime updatedAt
+        DiseaseDetection htlv1_2
 ) {
 }
