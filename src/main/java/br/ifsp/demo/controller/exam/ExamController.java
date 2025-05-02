@@ -109,7 +109,7 @@ public class ExamController {
         return ResponseEntity.ok(new ImmunohematologyExamResponse(immunohematologyExam));
     }
 
-    @GetMapping("/view/serological-screening/{donationId}")
+    @GetMapping("/view/serologicalscreening/{donationId}")
     public ResponseEntity<SerologicalScreeningExamResponse> viewSerologicalScreeningExam(@PathVariable UUID donationId) {
         validateDonationExists(donationId);
         SerologicalScreeningExam serologicalScreeningExam = viewExamDetailsService.viewSerologicalScreeningExam(donationId);
