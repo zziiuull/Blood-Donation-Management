@@ -4,6 +4,7 @@ import br.ifsp.demo.application.service.donation.DonationRegisterService;
 import br.ifsp.demo.application.service.donation.UpdateDonationService;
 import br.ifsp.demo.application.service.donation.ViewDonationDetailsService;
 import br.ifsp.demo.application.service.donation.dto.DonationDetailsDTO;
+import br.ifsp.demo.domain.model.donation.Donation;
 import br.ifsp.demo.security.auth.AuthenticationInfoService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -34,9 +35,15 @@ public class DonationController {
         return ResponseEntity.ok(donationDetails);
     }
 
-    @PutMapping
-    public ResponseEntity<String> update() {
-        final UUID userId = authService.getAuthenticatedUserId();
-        return ResponseEntity.ok("update: " + userId.toString());
+    @PutMapping("/approve/{id}")
+    public ResponseEntity<DonationResponse> approve(@PathVariable UUID id) {
+        Donation donation = updateDonationService.approve(id);
+        return ResponseEntity.ok(new DonationResponse(donation));
+    }
+
+    @PutMapping("/reject/{id}")
+    public ResponseEntity<DonationResponse> reject(@PathVariable UUID id) {
+        Donation donation = updateDonationService.reject(id);
+        return ResponseEntity.ok(new DonationResponse(donation));
     }
 }
