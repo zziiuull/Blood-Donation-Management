@@ -11,8 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -54,6 +52,28 @@ class UpdateDonationServiceTest {
             assertThat(result.getUpdatedAt()).isNotNull();
             verify(donationRepository, times(1)).save(any(Donation.class));
         }
-    }
 
+        @Test
+        @Tag("TDD")
+        @Tag("UnitTest")
+        @DisplayName("Should reject donation")
+        void shouldRejectDonation() {
+            Donor eligibleDonor = mock(Donor.class);
+            Appointment appointment = mock(Appointment.class);
+            Donation donation = new Donation(
+                    eligibleDonor,
+                    appointment,
+                    DonationStatus.UNDER_ANALYSIS
+            );
+
+            when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.of(donation));
+            when(donationRepository.save(any(Donation.class))).thenReturn(donation);
+
+            Donation result = sut.reject(UUID.randomUUID());
+
+            assertThat(result.getStatus()).isEqualTo(DonationStatus.REJECTED);
+            assertThat(result.getUpdatedAt()).isNotNull();
+            verify(donationRepository, times(1)).save(any(Donation.class));
+        }
+    }
 }
