@@ -155,5 +155,25 @@ class UpdateDonationServiceTest {
 
             assertThatThrownBy(() -> sut.approve(UUID.randomUUID())).isInstanceOf(EntityNotFoundException.class);
         }
+
+        @Test
+        @Tag("UnitTest")
+        @DisplayName("should throw when analysis is contradictory for approval")
+        void shouldThrowWhenAnalysisIsContradictoryForApproval() {
+            when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.of(donation));
+            when(examRepository.findAllByDonationId(any(UUID.class))).thenReturn(List.of(immunohematologyRejected, serologicalScreeningApproved));
+
+            assertThatThrownBy(() -> sut.approve(UUID.randomUUID())).isInstanceOf(InvalidDonationAnalysisException.class);
+        }
+
+        @Test
+        @Tag("UnitTest")
+        @DisplayName("should throw when analysis is contradictory for rejection")
+        void shouldThrowWhenAnalysisIsContradictoryForRejection() {
+            when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.of(donation));
+            when(examRepository.findAllByDonationId(any(UUID.class))).thenReturn(List.of(immunohematologyApproved, serologicalScreeningRejected));
+
+            assertThatThrownBy(() -> sut.approve(UUID.randomUUID())).isInstanceOf(InvalidDonationAnalysisException.class);
+        }
     }
 }
