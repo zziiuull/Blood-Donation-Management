@@ -11,6 +11,7 @@ import br.ifsp.demo.domain.repository.donation.DonationRepository;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
 import br.ifsp.demo.exception.CannotFinishDonationWithExamUnderAnalysisException;
 import br.ifsp.demo.exception.EntityNotFoundException;
+import br.ifsp.demo.exception.InvalidDonationAnalysisException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -38,7 +39,7 @@ public class UpdateDonationService {
         if (optionalDonation.isEmpty()) throw new EntityNotFoundException("Donation not found");
         Donation donation = optionalDonation.get();
 
-        isExamsAnalyzed(donationId);
+        isExamsAnalyzed(donationId, ExamStatus.APPROVED);
 
         donation.setStatus(DonationStatus.APPROVED);
         donation.setUpdatedAt(LocalDateTime.now());
@@ -50,7 +51,7 @@ public class UpdateDonationService {
         return saved;
     }
 
-    private void isExamsAnalyzed(UUID donationId) {
+    private void isExamsAnalyzed(UUID donationId, ExamStatus expectedExamStatus) {
         List<Exam> exams = examRepository.findAllByDonationId(donationId);
         ImmunohematologyExam immunohematologyExam = exams.stream()
                 .filter(ImmunohematologyExam.class::isInstance)
@@ -59,6 +60,8 @@ public class UpdateDonationService {
                 .orElseThrow(() -> new EntityNotFoundException("Immunohematology exam not found"));
         if (immunohematologyExam.getStatus() == ExamStatus.UNDER_ANALYSIS)
             throw new CannotFinishDonationWithExamUnderAnalysisException("Cannot finish donation with immunohematology exam under analysis");
+        if (immunohematologyExam.getStatus() != expectedExamStatus)
+            throw new InvalidDonationAnalysisException("Immunohematology exam doesn't have correct status for this donation analysis");
 
         SerologicalScreeningExam serologicalScreeningExam = examRepository.findAllByDonationId(donationId)
                 .stream()
@@ -68,6 +71,8 @@ public class UpdateDonationService {
                 .orElseThrow(() -> new EntityNotFoundException("Serological screening exam not found"));
         if (serologicalScreeningExam.getStatus() == ExamStatus.UNDER_ANALYSIS)
             throw new CannotFinishDonationWithExamUnderAnalysisException("Cannot finish donation with serological screening exam under analysis");
+        if (serologicalScreeningExam.getStatus() != expectedExamStatus)
+            throw new InvalidDonationAnalysisException("Serological screening exam doesn't have correct status for this donation analysis");
     }
 
     public Donation reject(UUID donationId){
@@ -75,7 +80,7 @@ public class UpdateDonationService {
         if (optionalDonation.isEmpty()) throw new EntityNotFoundException("Donation not found");
         Donation donation = optionalDonation.get();
 
-        isExamsAnalyzed(donationId);
+        isExamsAnalyzed(donationId, ExamStatus.REJECTED);
 
         donation.setStatus(DonationStatus.REJECTED);
         donation.setUpdatedAt(LocalDateTime.now());
