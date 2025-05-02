@@ -5,10 +5,10 @@ import br.ifsp.demo.domain.model.exam.IrregularAntibodies;
 import jakarta.validation.constraints.NotNull;
 
 public record ImmunohematologyExamRequest(
-        @NotNull(message = "Blood type field is required")
+        @NotNull(message = "bloodType field is required")
         BloodType bloodType,
 
-        @NotNull(message = "Irregular antibodies field is required")
+        @NotNull(message = "irregularAntibodies field is required")
         IrregularAntibodies irregularAntibodies
 ) {
 }
