@@ -142,7 +142,6 @@ class ViewExamDetailsServiceTest {
             verify(examRepository, times(1)).findAllByDonationId(donationId);
         }
 
-
         @Test
         @Tag("TDD")
         @Tag("UnitTest")
@@ -184,6 +183,24 @@ class ViewExamDetailsServiceTest {
             assertThat(result.getObservations()).isEqualTo(expectedExam.getObservations());
 
             verify(examRepository, times(1)).findAllByDonationId(donationId);
+        }
+
+        @Test
+        @Tag("UnitTest")
+        @DisplayName("Should return the first immunohematology exam if multiple exist")
+        void shouldReturnTheFirstImmunohematologyExamIfMultipleExist(){
+            UUID donationId = UUID.randomUUID();
+            Donation donation = mock(Donation.class);
+
+            ImmunohematologyExam firstExam = new ImmunohematologyExam(donation);
+            ImmunohematologyExam secondExam = new ImmunohematologyExam(donation);
+
+            when(examRepository.findAllByDonationId(donationId))
+                    .thenReturn(List.of(firstExam, secondExam));
+
+            ImmunohematologyExam result = sut.viewImmunohematologyExam(donationId);
+
+            assertThat(result).isEqualTo(firstExam);
         }
     }
 
