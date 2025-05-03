@@ -42,6 +42,40 @@ class DonationRegisterServiceTest {
     @InjectMocks
     private DonationRegisterService donationRegisterService;
 
+    private Donor createEligibleDonor() {
+        ContactInfo contactInfo = new ContactInfo(
+                "weverton@email.com",
+                "11991239867",
+                "Rua da Ponte Caída, n. 101, Itaquaquecetuba/SP"
+        );
+        return new Donor(
+                "Weverton",
+                new Cpf("12345678955"),
+                contactInfo,
+                LocalDate.of(1990, 5, 20),
+                85.0,
+                Sex.MALE,
+                BloodType.O_POS
+        );
+    }
+
+    private Donor createIneligibleDonor() {
+        ContactInfo contactInfo = new ContactInfo(
+                "enzo@email.com",
+                "11991239867",
+                "Rua da Ponte Caída, n. 101, Itaquaquecetuba/SP"
+        );
+        return new Donor(
+                "Enzo",
+                new Cpf("12345678955"),
+                contactInfo,
+                LocalDate.of(2008, 5, 20),
+                50.0,
+                Sex.MALE,
+                BloodType.O_POS
+        );
+    }
+
     @Nested
     @DisplayName("For valid tests")
     class ValidTests {
@@ -52,21 +86,7 @@ class DonationRegisterServiceTest {
         @DisplayName("Should register donation when donor is eligible")
         void shouldRegisterDonationWhenDonorIsEligible() {
 
-            ContactInfo donorContactInfo = new ContactInfo(
-                    "weverton@email.com",
-                    "11991239867",
-                    "Rua da Ponte Caída, n. 101, Itaquaquecetuba/SP"
-            );
-
-            Donor eligibleDonor = new Donor(
-                    "Weverton",
-                    new Cpf("12345678955"),
-                    donorContactInfo,
-                    LocalDate.of(1990, 5, 20),
-                    85.0,
-                    Sex.MALE,
-                    BloodType.O_POS
-            );
+            Donor eligibleDonor = createEligibleDonor();
 
             ContactInfo siteContactInfo = new ContactInfo(
               "doesangue.sorocaba@email.com",
@@ -141,21 +161,8 @@ class DonationRegisterServiceTest {
         @Tag("UnitTest")
         @DisplayName("Should throw exception when donor is not eligible to donate")
         void shouldThrowExceptionWhenDonorIsNotEligible() {
-            ContactInfo donorContactInfo = new ContactInfo(
-                    "enzo@email.com",
-                    "11991239867",
-                    "Rua da Ponte Caída, n. 101, Itaquaquecetuba/SP"
-            );
 
-            Donor ineligibleDonor = new Donor(
-                    "Enzo",
-                    new Cpf("12345678955"),
-                    donorContactInfo,
-                    LocalDate.of(2008, 5, 20),
-                    50.0,
-                    Sex.MALE,
-                    BloodType.O_POS
-            );
+            Donor ineligibleDonor = createIneligibleDonor();
 
             ContactInfo siteContactInfo = new ContactInfo(
                     "doesangue.sorocaba@email.com",
