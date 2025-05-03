@@ -11,6 +11,8 @@ import br.ifsp.demo.domain.model.donor.Sex;
 import br.ifsp.demo.domain.repository.appointment.AppointmentRepository;
 import br.ifsp.demo.domain.repository.collectionSite.CollectionSiteRepository;
 import br.ifsp.demo.domain.repository.donor.DonorRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +21,9 @@ import java.time.LocalDateTime;
 
 @Component
 public class DataLoader implements CommandLineRunner {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataLoader.class);
+
+
     private final DonorRepository donorRepository;
     private final AppointmentRepository appointmentRepository;
     private final CollectionSiteRepository collectionSiteRepository;
@@ -45,7 +50,7 @@ public class DataLoader implements CommandLineRunner {
                 Sex.MALE,
                 BloodType.O_POS
         ));
-        System.out.println("Donor id: " + savedDonor.getId());
+        LOGGER.info("Donor id: {}", savedDonor.getId());
 
         ContactInfo siteContactInfo = new ContactInfo(
                 "doesangue.sorocaba@email.com",
@@ -65,6 +70,6 @@ public class DataLoader implements CommandLineRunner {
                 "First donation"
         );
         Appointment savedAppointment = appointmentRepository.save(appointment);
-        System.out.println("Appointment id: " + savedAppointment.getId());
+        LOGGER.info("Appointment id: {}", savedAppointment.getId());
     }
 }
