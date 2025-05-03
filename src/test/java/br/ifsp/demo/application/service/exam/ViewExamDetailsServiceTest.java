@@ -35,6 +35,17 @@ class ViewExamDetailsServiceTest {
     @InjectMocks
     private ViewExamDetailsService sut;
 
+    private SerologicalScreeningExam createPerformedSerologicalScreeningExam(Donation donation) {
+        SerologicalScreeningExam exam = new SerologicalScreeningExam(donation);
+        exam.setHepatitisB(DiseaseDetection.POSITIVE);
+        exam.setHepatitisC(DiseaseDetection.POSITIVE);
+        exam.setChagasDisease(DiseaseDetection.POSITIVE);
+        exam.setSyphilis(DiseaseDetection.POSITIVE);
+        exam.setAids(DiseaseDetection.POSITIVE);
+        exam.setHtlv1_2(DiseaseDetection.POSITIVE);
+        exam.setObservations("No observations.");
+        return exam;
+    }
 
     @Nested
     @DisplayName("For valid tests")
@@ -157,7 +168,7 @@ class ViewExamDetailsServiceTest {
 
             UUID donationId = UUID.randomUUID();
 
-            SerologicalScreeningExam expectedExam = new SerologicalScreeningExam(expectedDonation);
+            SerologicalScreeningExam expectedExam = createPerformedSerologicalScreeningExam(expectedDonation);
             expectedExam.setHepatitisB(DiseaseDetection.POSITIVE);
             expectedExam.setHepatitisC(DiseaseDetection.POSITIVE);
             expectedExam.setChagasDisease(DiseaseDetection.POSITIVE);
