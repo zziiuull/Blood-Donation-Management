@@ -1,22 +1,29 @@
 package br.ifsp.demo.domain.model.medic;
 
-import br.ifsp.demo.domain.model.common.ContactInfo;
 import br.ifsp.demo.domain.model.common.Cpf;
 import br.ifsp.demo.security.user.Role;
 import br.ifsp.demo.security.user.User;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import java.util.UUID;
-
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@DiscriminatorValue("MEDIC")
 public class Medic extends User {
+    @Embedded
     Cpf cpf;
-    ContactInfo contactInfo;
+    @Embedded
     Crm crm;
 
-    public Medic(@NonNull UUID id, @NonNull String name, @NonNull String lastname, @NonNull String email, @NonNull String password, Role role, Cpf cpf, ContactInfo contactInfo, Crm crm) {
+    public Medic(@NonNull UUID id, @NonNull String name, @NonNull String lastname, @NonNull String email, @NonNull String password, Role role, Cpf cpf, Crm crm) {
         super(id, name, lastname, email, password, role);
         this.cpf = cpf;
-        this.contactInfo = contactInfo;
         this.crm = crm;
     }
 }

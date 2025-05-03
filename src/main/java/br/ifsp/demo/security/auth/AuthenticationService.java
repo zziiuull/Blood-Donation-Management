@@ -1,5 +1,10 @@
 package br.ifsp.demo.security.auth;
 
+import br.ifsp.demo.domain.model.common.ContactInfo;
+import br.ifsp.demo.domain.model.common.Cpf;
+import br.ifsp.demo.domain.model.medic.Crm;
+import br.ifsp.demo.domain.model.medic.Medic;
+import br.ifsp.demo.domain.model.medic.State;
 import br.ifsp.demo.exception.EntityAlreadyExistsException;
 import br.ifsp.demo.security.config.JwtService;
 import br.ifsp.demo.security.user.JpaUserRepository;
@@ -42,13 +47,34 @@ public class AuthenticationService {
         return new RegisterUserResponse(id);
     }
 
+    public RegisterUserResponse registerMedic(RegisterMedicRequest request) {
+        userRepository.findByEmail(request.email()).ifPresent(unused -> {
+            throw new EntityAlreadyExistsException("Email already registered: " + request.email());});
+
+        final UUID id = UUID.randomUUID();
+        final Medic medic = new Medic(
+                id,
+                request.name(),
+                request.lastname(),
+                request.email(),
+                passwordEncoder.encode(request.password()),
+                Role.MEDIC,
+                new Cpf(request.cpf()),
+                new Crm(request.crmNumber(), State.valueOf(request.crmState()))
+        );
+
+        userRepository.save(medic);
+        return new RegisterUserResponse(id);
+    }
+
     public AuthResponse authenticate(AuthRequest request) {
         final var authentication = new UsernamePasswordAuthenticationToken(request.username(), request.password());
         authenticationManager.authenticate(authentication);
 
         final User user = userRepository.findByEmail(request.username()).orElseThrow();
         final String token = jwtService.generateToken(user);
+        final Role role = user.getRole();
 
-        return new AuthResponse(token);
+        return new AuthResponse(token, role);
     }
 }

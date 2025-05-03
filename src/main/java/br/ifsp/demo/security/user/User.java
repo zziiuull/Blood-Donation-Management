@@ -18,6 +18,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @Entity
 @Table(name = "app_user")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "user_type")
+@DiscriminatorValue("USER")
 public class User implements UserDetails {
     @Id
     @JdbcTypeCode(Types.VARCHAR)

@@ -52,6 +52,35 @@ public class UserController {
     }
 
     @Operation(
+            summary = "Register a new medic.",
+            description = "Returns the new medic id."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "201", description = "Successful operation.",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = RegisterMedicRequest.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Authentication fails.",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Medic email is already registered.",
+                    content = @Content(schema = @Schema(hidden = true))
+            )
+    })
+    @PostMapping("/register/medic")
+    public ResponseEntity<?> registerMedic(@RequestBody RegisterMedicRequest request) {
+        final RegisterUserResponse response = authenticationService.registerMedic(request);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @Operation(
             summary = "Authenticates the user using email and password.",
             description = "Returns a JWT credential to be used in future requests."
     )
