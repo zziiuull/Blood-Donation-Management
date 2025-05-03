@@ -1,10 +1,8 @@
 package br.ifsp.demo.application.service.exam.dto;
 
-import br.ifsp.demo.controller.exam.request.ImmunohematologyExamRequest;
 import br.ifsp.demo.controller.exam.request.SerologicalScreeningExamRequest;
 import br.ifsp.demo.domain.model.exam.DiseaseDetection;
 
-import java.time.LocalDateTime;
 
 public record SerologicalScreeningExamDTO(
         DiseaseDetection hepatitisB,
