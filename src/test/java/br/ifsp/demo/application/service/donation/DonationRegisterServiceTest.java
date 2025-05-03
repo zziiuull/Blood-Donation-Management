@@ -227,5 +227,22 @@ class DonationRegisterServiceTest {
 
             verifyNoInteractions(donationRepository);
         }
+
+        @Test
+        @Tag("TDD")
+        @Tag("UnitTest")
+        @DisplayName("Should throw exception when donation already exists for this appointment")
+        void shouldThrowExceptionWhenDonationAlreadyExistsForThisAppointment() {
+            Donor donor = mock(Donor.class);
+            Appointment appointment = mock(Appointment.class);
+
+            when(donor.isEligibleForDonation()).thenReturn(true);
+            when(donationRepository.existsByDonorAndAppointment(donor, appointment)).thenReturn(true);
+            assertThatThrownBy(() -> donationRegisterService.register(donor, appointment))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("Donation already exists for this appointment");
+
+            verify(donationRepository, never()).save(any());
+        }
     }
 }
