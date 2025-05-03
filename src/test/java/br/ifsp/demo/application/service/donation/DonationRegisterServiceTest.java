@@ -6,6 +6,7 @@ import br.ifsp.demo.domain.model.common.Cpf;
 import br.ifsp.demo.domain.model.donation.*;
 import br.ifsp.demo.domain.model.donor.Donor;
 import br.ifsp.demo.domain.model.donor.Sex;
+import br.ifsp.demo.domain.repository.appointment.AppointmentRepository;
 import br.ifsp.demo.domain.repository.donation.DonationRepository;
 import br.ifsp.demo.domain.repository.donor.DonorRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -34,6 +35,9 @@ class DonationRegisterServiceTest {
 
     @Mock
     private DonorRepository donorRepository;
+
+    @Mock
+    private AppointmentRepository appointmentRepository;
 
     @InjectMocks
     private DonationRegisterService donationRegisterService;
@@ -185,7 +189,6 @@ class DonationRegisterServiceTest {
         void shouldThrowExceptionWhenTryingToRegisterDonationForANonExistentDonor() {
             UUID nonExistentDonorId = UUID.randomUUID();
 
-            
             when(donorRepository.findById(nonExistentDonorId)).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> donationRegisterService.registerByDonorId(nonExistentDonorId, UUID.randomUUID()))
@@ -204,6 +207,23 @@ class DonationRegisterServiceTest {
             assertThatThrownBy(() -> donationRegisterService.register(donor, null))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("Appointment must not be null");
+
+            verifyNoInteractions(donationRepository);
+        }
+
+        @Test
+        @Tag("UnitTest")
+        @DisplayName("Should throw exception when appointment does not exist")
+        void shouldThrowExceptionWhenAppointmentDoesNotExist() {
+            UUID donorId = UUID.randomUUID();
+            UUID nonExistentAppointmentId = UUID.randomUUID();
+
+            Donor donor = mock(Donor.class);
+            when(donorRepository.findById(donorId)).thenReturn(Optional.of(donor));
+            when(appointmentRepository.findById(nonExistentAppointmentId)).thenReturn(Optional.empty());
+            assertThatThrownBy(() -> donationRegisterService.registerByDonorId(donorId, nonExistentAppointmentId))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("Appointment does not exist");
 
             verifyNoInteractions(donationRepository);
         }
