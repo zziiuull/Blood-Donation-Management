@@ -188,10 +188,11 @@ class DonationRegisterServiceTest {
         @DisplayName("Should throw exception when trying to register donation for a non-existent donor")
         void shouldThrowExceptionWhenTryingToRegisterDonationForANonExistentDonor() {
             UUID nonExistentDonorId = UUID.randomUUID();
+            UUID appointmentId = UUID.randomUUID();
 
             when(donorRepository.findById(nonExistentDonorId)).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> donationRegisterService.registerByDonorId(nonExistentDonorId, UUID.randomUUID()))
+            assertThatThrownBy(() -> donationRegisterService.registerByDonorId(nonExistentDonorId, appointmentId))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("Donor does not exist");
 
