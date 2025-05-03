@@ -191,11 +191,6 @@ class DonationRegisterServiceTest {
                     "Av. Anhanguera, n. 715, Sorocaba/SP"
             );
 
-            CollectionSite site = new CollectionSite(
-                    "Banco de Doação de Sorocaba",
-                    siteContactInfo
-            );
-
 
             when(donorRepository.findById(nonExistentDonorId)).thenReturn(Optional.empty());
 
