@@ -1,10 +1,8 @@
 package br.ifsp.demo.application.service.donation;
 
 import br.ifsp.demo.application.service.donation.dto.DonationDetailsDTO;
-import br.ifsp.demo.domain.model.donation.Appointment;
 import br.ifsp.demo.domain.model.donation.Donation;
 import br.ifsp.demo.domain.model.donation.DonationStatus;
-import br.ifsp.demo.domain.model.donor.Donor;
 import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.domain.repository.donation.DonationRepository;
@@ -50,8 +48,6 @@ class ViewDonationDetailsServiceTest {
 
             UUID donationId = UUID.randomUUID();
 
-            Donor donor = mock(Donor.class);
-            Appointment appointment = mock(Appointment.class);
             ImmunohematologyExam immunohematologyExam = mock(ImmunohematologyExam.class);
             SerologicalScreeningExam serologicalScreeningExam = mock(SerologicalScreeningExam.class);
             Donation donation = mock(Donation.class);
