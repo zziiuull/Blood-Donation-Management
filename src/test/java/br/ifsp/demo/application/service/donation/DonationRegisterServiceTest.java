@@ -185,13 +185,7 @@ class DonationRegisterServiceTest {
         void shouldThrowExceptionWhenTryingToRegisterDonationForANonExistentDonor() {
             UUID nonExistentDonorId = UUID.randomUUID();
 
-            ContactInfo siteContactInfo = new ContactInfo(
-                    "doesangue.sorocaba@email.com",
-                    "1533761530",
-                    "Av. Anhanguera, n. 715, Sorocaba/SP"
-            );
-
-
+            
             when(donorRepository.findById(nonExistentDonorId)).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> donationRegisterService.registerByDonorId(nonExistentDonorId, UUID.randomUUID()))
