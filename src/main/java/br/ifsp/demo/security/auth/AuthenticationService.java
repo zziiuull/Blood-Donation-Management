@@ -1,6 +1,5 @@
 package br.ifsp.demo.security.auth;
 
-import br.ifsp.demo.domain.model.common.ContactInfo;
 import br.ifsp.demo.domain.model.common.Cpf;
 import br.ifsp.demo.domain.model.medic.Crm;
 import br.ifsp.demo.domain.model.medic.Medic;
