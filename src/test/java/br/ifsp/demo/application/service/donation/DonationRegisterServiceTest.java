@@ -196,12 +196,6 @@ class DonationRegisterServiceTest {
                     siteContactInfo
             );
 
-            Appointment appointment = new Appointment(
-                    LocalDateTime.now().plusDays(1),
-                    AppointmentStatus.SCHEDULED,
-                    site,
-                    "First donation"
-            );
 
             when(donorRepository.findById(nonExistentDonorId)).thenReturn(Optional.empty());
 
