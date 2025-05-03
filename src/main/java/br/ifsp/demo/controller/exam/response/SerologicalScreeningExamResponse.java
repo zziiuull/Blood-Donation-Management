@@ -1,6 +1,5 @@
 package br.ifsp.demo.controller.exam.response;
 
-import br.ifsp.demo.domain.model.common.BloodType;
 import br.ifsp.demo.domain.model.exam.DiseaseDetection;
 import br.ifsp.demo.domain.model.exam.ExamStatus;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
