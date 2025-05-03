@@ -5,13 +5,10 @@ import br.ifsp.demo.application.service.donation.UpdateDonationService;
 import br.ifsp.demo.application.service.donation.ViewDonationDetailsService;
 import br.ifsp.demo.application.service.donation.dto.DonationDetailsDTO;
 import br.ifsp.demo.domain.model.donation.Donation;
-import br.ifsp.demo.domain.repository.appointment.AppointmentRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @RestController
