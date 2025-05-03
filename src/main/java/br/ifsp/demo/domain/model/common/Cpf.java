@@ -2,10 +2,11 @@ package br.ifsp.demo.domain.model.common;
 
 import jakarta.persistence.Embeddable;
 import lombok.Getter;
+import java.io.Serializable;
 
 @Getter
 @Embeddable
-public class Cpf {
+public class Cpf implements Serializable {
     private String number;
 
     protected Cpf() {}
