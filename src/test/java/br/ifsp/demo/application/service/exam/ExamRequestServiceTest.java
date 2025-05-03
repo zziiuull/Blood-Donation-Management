@@ -53,8 +53,9 @@ class ExamRequestServiceTest {
 
             ImmunohematologyExam result = sut.requestImmunohematologyExam(expectedDonation);
 
-            assertThat(result).isNotNull();
-            assertThat(result).isEqualTo(expectedExam);
+            assertThat(result)
+                    .isNotNull()
+                    .isEqualTo(expectedExam);
             assertThat(result.getDonation()).isEqualTo(expectedDonation);
             assertThat(result.getStatus()).isEqualTo(ExamStatus.UNDER_ANALYSIS);
             assertThat(result.getCreatedAt()).isNotNull();
@@ -82,8 +83,9 @@ class ExamRequestServiceTest {
 
             SerologicalScreeningExam result = sut.requestSerologicalScreeningExam(expectedDonation);
 
-            assertThat(result).isNotNull();
-            assertThat(result).isEqualTo(expectedExam);
+            assertThat(result)
+                    .isNotNull()
+                    .isEqualTo(expectedExam);
             assertThat(result.getDonation()).isEqualTo(expectedDonation);
             assertThat(result.getStatus()).isEqualTo(ExamStatus.UNDER_ANALYSIS);
             assertThat(result.getCreatedAt()).isNotNull();
