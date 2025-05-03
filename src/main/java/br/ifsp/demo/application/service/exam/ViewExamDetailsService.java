@@ -10,10 +10,7 @@ import java.util.UUID;
 
 @Service
 public class ViewExamDetailsService {
-    private ExamRepository examRepository;
-
-    public ViewExamDetailsService() {
-    }
+    private final ExamRepository examRepository;
 
     public ViewExamDetailsService(ExamRepository examRepository) {
         this.examRepository = examRepository;
