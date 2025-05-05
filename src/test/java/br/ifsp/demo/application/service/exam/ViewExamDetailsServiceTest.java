@@ -11,10 +11,7 @@ import br.ifsp.demo.domain.model.exam.IrregularAntibodies;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
 import br.ifsp.demo.exception.ExamNotFoundException;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -35,16 +32,26 @@ class ViewExamDetailsServiceTest {
     @InjectMocks
     private ViewExamDetailsService sut;
 
-    private SerologicalScreeningExam createPerformedSerologicalScreeningExam(Donation donation) {
-        SerologicalScreeningExam exam = new SerologicalScreeningExam(donation);
-        exam.setHepatitisB(DiseaseDetection.POSITIVE);
-        exam.setHepatitisC(DiseaseDetection.POSITIVE);
-        exam.setChagasDisease(DiseaseDetection.POSITIVE);
-        exam.setSyphilis(DiseaseDetection.POSITIVE);
-        exam.setAids(DiseaseDetection.POSITIVE);
-        exam.setHtlv1_2(DiseaseDetection.POSITIVE);
-        exam.setObservations("No observations.");
-        return exam;
+    private UUID donationId;
+    private ImmunohematologyExam firstExam;
+    private ImmunohematologyExam secondExam;
+    private ImmunohematologyExam expectedImuExam;
+    private SerologicalScreeningExam expectedSeroExam;
+
+    @BeforeEach
+    void setUp() {
+        donationId = UUID.randomUUID();
+        Donor eligibleDonor = mock(Donor.class);
+        Appointment appointment = mock(Appointment.class);
+        Donation expectedDonation = new Donation(
+                eligibleDonor,
+                appointment,
+                DonationStatus.UNDER_ANALYSIS
+        );
+        firstExam = new ImmunohematologyExam(expectedDonation);
+        secondExam = new ImmunohematologyExam(expectedDonation);
+        expectedImuExam = new ImmunohematologyExam(expectedDonation);
+        expectedSeroExam = new SerologicalScreeningExam(expectedDonation);
     }
 
     @Nested
@@ -55,26 +62,14 @@ class ViewExamDetailsServiceTest {
         @Tag("UnitTest")
         @DisplayName("Should view immunohematology exam details and return null subclass fields when immunohematology exam has not been performed")
         void shouldViewImmunohematologyExamDetailsAndReturnNullSubclassFieldsWhenImmunohematologyExamHasNotBeenPerformed(){
-            Donor eligibleDonor = mock(Donor.class);
-            Appointment appointment = mock(Appointment.class);
-            Donation expectedDonation = new Donation(
-                    eligibleDonor,
-                    appointment,
-                    DonationStatus.UNDER_ANALYSIS
-            );
-
-            UUID donationId = UUID.randomUUID();
-
-            ImmunohematologyExam expectedExam = new ImmunohematologyExam(expectedDonation);
-
-            when(examRepository.findAllByDonationId(donationId)).thenReturn(List.of(expectedExam));
+            when(examRepository.findAllByDonationId(donationId)).thenReturn(List.of(expectedImuExam));
 
             ImmunohematologyExam result = sut.viewImmunohematologyExam(donationId);
 
-            assertThat(result.getDonation()).isEqualTo(expectedExam.getDonation());
-            assertThat(result.getDonation().getStatus()).isEqualTo(expectedExam.getDonation().getStatus());
-            assertThat(result.getCreatedAt()).isEqualTo(expectedExam.getCreatedAt());
-            assertThat(result.getUpdatedAt()).isEqualTo(expectedExam.getUpdatedAt());
+            assertThat(result.getDonation()).isEqualTo(expectedImuExam.getDonation());
+            assertThat(result.getDonation().getStatus()).isEqualTo(expectedImuExam.getDonation().getStatus());
+            assertThat(result.getCreatedAt()).isEqualTo(expectedImuExam.getCreatedAt());
+            assertThat(result.getUpdatedAt()).isEqualTo(expectedImuExam.getUpdatedAt());
             assertThat(result.getBloodType()).isNull();
             assertThat(result.getIrregularAntibodies()).isNull();
             assertThat(result.getObservations()).isNull();
@@ -87,32 +82,21 @@ class ViewExamDetailsServiceTest {
         @Tag("UnitTest")
         @DisplayName("Should view immunohematology exam details when immunohematology exam has been performed")
         void shouldViewImmunohematologyExamDetailsWhenImmunohematologyExamHasBeenPerformed(){
-            Donor eligibleDonor = mock(Donor.class);
-            Appointment appointment = mock(Appointment.class);
-            Donation expectedDonation = new Donation(
-                    eligibleDonor,
-                    appointment,
-                    DonationStatus.UNDER_ANALYSIS
-            );
+            expectedImuExam.setBloodType(BloodType.O_POS);
+            expectedImuExam.setIrregularAntibodies(IrregularAntibodies.POSITIVE);
+            expectedImuExam.setObservations("No observations.");
 
-            UUID donationId = UUID.randomUUID();
-
-            ImmunohematologyExam expectedExam = new ImmunohematologyExam(expectedDonation);
-            expectedExam.setBloodType(BloodType.O_POS);
-            expectedExam.setIrregularAntibodies(IrregularAntibodies.POSITIVE);
-            expectedExam.setObservations("No observations.");
-
-            when(examRepository.findAllByDonationId(donationId)).thenReturn(List.of(expectedExam));
+            when(examRepository.findAllByDonationId(donationId)).thenReturn(List.of(expectedImuExam));
 
             ImmunohematologyExam result = sut.viewImmunohematologyExam(donationId);
 
-            assertThat(result.getDonation()).isEqualTo(expectedExam.getDonation());
-            assertThat(result.getDonation().getStatus()).isEqualTo(expectedExam.getDonation().getStatus());
-            assertThat(result.getCreatedAt()).isEqualTo(expectedExam.getCreatedAt());
-            assertThat(result.getUpdatedAt()).isEqualTo(expectedExam.getUpdatedAt());
-            assertThat(result.getBloodType()).isEqualTo(expectedExam.getBloodType());
-            assertThat(result.getIrregularAntibodies()).isEqualTo(expectedExam.getIrregularAntibodies());
-            assertThat(result.getObservations()).isEqualTo(expectedExam.getObservations());
+            assertThat(result.getDonation()).isEqualTo(expectedImuExam.getDonation());
+            assertThat(result.getDonation().getStatus()).isEqualTo(expectedImuExam.getDonation().getStatus());
+            assertThat(result.getCreatedAt()).isEqualTo(expectedImuExam.getCreatedAt());
+            assertThat(result.getUpdatedAt()).isEqualTo(expectedImuExam.getUpdatedAt());
+            assertThat(result.getBloodType()).isEqualTo(expectedImuExam.getBloodType());
+            assertThat(result.getIrregularAntibodies()).isEqualTo(expectedImuExam.getIrregularAntibodies());
+            assertThat(result.getObservations()).isEqualTo(expectedImuExam.getObservations());
 
             verify(examRepository, times(1)).findAllByDonationId(donationId);
         }
@@ -122,26 +106,14 @@ class ViewExamDetailsServiceTest {
         @Tag("UnitTest")
         @DisplayName("Should view serological screening exam details and return null subclass fields when serological screening exam has not been performed")
         void shouldViewSerologicalScreeningExamDetailsAndReturnNullSubclassFieldsWhenSerologicalScreeningExamHasNotBeenPerformed(){
-            Donor eligibleDonor = mock(Donor.class);
-            Appointment appointment = mock(Appointment.class);
-            Donation expectedDonation = new Donation(
-                    eligibleDonor,
-                    appointment,
-                    DonationStatus.UNDER_ANALYSIS
-            );
-
-            UUID donationId = UUID.randomUUID();
-
-            SerologicalScreeningExam expectedExam = new SerologicalScreeningExam(expectedDonation);
-
-            when(examRepository.findAllByDonationId(donationId)).thenReturn(List.of(expectedExam));
+            when(examRepository.findAllByDonationId(donationId)).thenReturn(List.of(expectedSeroExam));
 
             SerologicalScreeningExam result = sut.viewSerologicalScreeningExam(donationId);
 
-            assertThat(result.getDonation()).isEqualTo(expectedExam.getDonation());
-            assertThat(result.getDonation().getStatus()).isEqualTo(expectedExam.getDonation().getStatus());
-            assertThat(result.getCreatedAt()).isEqualTo(expectedExam.getCreatedAt());
-            assertThat(result.getUpdatedAt()).isEqualTo(expectedExam.getUpdatedAt());
+            assertThat(result.getDonation()).isEqualTo(expectedSeroExam.getDonation());
+            assertThat(result.getDonation().getStatus()).isEqualTo(expectedSeroExam.getDonation().getStatus());
+            assertThat(result.getCreatedAt()).isEqualTo(expectedSeroExam.getCreatedAt());
+            assertThat(result.getUpdatedAt()).isEqualTo(expectedSeroExam.getUpdatedAt());
             assertThat(result.getHepatitisB()).isNull();
             assertThat(result.getHepatitisC()).isNull();
             assertThat(result.getChagasDisease()).isNull();
@@ -158,54 +130,38 @@ class ViewExamDetailsServiceTest {
         @Tag("UnitTest")
         @DisplayName("Should view serological screening exam exam details when serological screening exam has been performed")
         void shouldViewSerologicalScreeningExamDetailsWhenSerologicalScreeningExamHasBeenPerformed(){
-            Donor eligibleDonor = mock(Donor.class);
-            Appointment appointment = mock(Appointment.class);
-            Donation expectedDonation = new Donation(
-                    eligibleDonor,
-                    appointment,
-                    DonationStatus.UNDER_ANALYSIS
-            );
+            expectedSeroExam.setHepatitisB(DiseaseDetection.POSITIVE);
+            expectedSeroExam.setHepatitisC(DiseaseDetection.POSITIVE);
+            expectedSeroExam.setChagasDisease(DiseaseDetection.POSITIVE);
+            expectedSeroExam.setSyphilis(DiseaseDetection.POSITIVE);
+            expectedSeroExam.setAids(DiseaseDetection.POSITIVE);
+            expectedSeroExam.setHtlv1_2(DiseaseDetection.POSITIVE);
+            expectedSeroExam.setObservations("No observations.");
 
-            UUID donationId = UUID.randomUUID();
-
-            SerologicalScreeningExam expectedExam = createPerformedSerologicalScreeningExam(expectedDonation);
-            expectedExam.setHepatitisB(DiseaseDetection.POSITIVE);
-            expectedExam.setHepatitisC(DiseaseDetection.POSITIVE);
-            expectedExam.setChagasDisease(DiseaseDetection.POSITIVE);
-            expectedExam.setSyphilis(DiseaseDetection.POSITIVE);
-            expectedExam.setAids(DiseaseDetection.POSITIVE);
-            expectedExam.setHtlv1_2(DiseaseDetection.POSITIVE);
-            expectedExam.setObservations("No observations.");
-
-            when(examRepository.findAllByDonationId(donationId)).thenReturn(List.of(expectedExam));
+            when(examRepository.findAllByDonationId(donationId)).thenReturn(List.of(expectedSeroExam));
 
             SerologicalScreeningExam result = sut.viewSerologicalScreeningExam(donationId);
 
-            assertThat(result.getDonation()).isEqualTo(expectedExam.getDonation());
-            assertThat(result.getDonation().getStatus()).isEqualTo(expectedExam.getDonation().getStatus());
-            assertThat(result.getCreatedAt()).isEqualTo(expectedExam.getCreatedAt());
-            assertThat(result.getUpdatedAt()).isEqualTo(expectedExam.getUpdatedAt());
-            assertThat(result.getHepatitisB()).isEqualTo(expectedExam.getHepatitisB());
-            assertThat(result.getHepatitisC()).isEqualTo(expectedExam.getHepatitisC());
-            assertThat(result.getChagasDisease()).isEqualTo(expectedExam.getChagasDisease());
-            assertThat(result.getSyphilis()).isEqualTo(expectedExam.getSyphilis());
-            assertThat(result.getAids()).isEqualTo(expectedExam.getAids());
-            assertThat(result.getHtlv1_2()).isEqualTo(expectedExam.getHtlv1_2());
-            assertThat(result.getObservations()).isEqualTo(expectedExam.getObservations());
+            assertThat(result.getDonation()).isEqualTo(expectedSeroExam.getDonation());
+            assertThat(result.getDonation().getStatus()).isEqualTo(expectedSeroExam.getDonation().getStatus());
+            assertThat(result.getCreatedAt()).isEqualTo(expectedSeroExam.getCreatedAt());
+            assertThat(result.getUpdatedAt()).isEqualTo(expectedSeroExam.getUpdatedAt());
+            assertThat(result.getHepatitisB()).isEqualTo(expectedSeroExam.getHepatitisB());
+            assertThat(result.getHepatitisC()).isEqualTo(expectedSeroExam.getHepatitisC());
+            assertThat(result.getChagasDisease()).isEqualTo(expectedSeroExam.getChagasDisease());
+            assertThat(result.getSyphilis()).isEqualTo(expectedSeroExam.getSyphilis());
+            assertThat(result.getAids()).isEqualTo(expectedSeroExam.getAids());
+            assertThat(result.getHtlv1_2()).isEqualTo(expectedSeroExam.getHtlv1_2());
+            assertThat(result.getObservations()).isEqualTo(expectedSeroExam.getObservations());
 
             verify(examRepository, times(1)).findAllByDonationId(donationId);
         }
 
         @Test
         @Tag("UnitTest")
+        @Tag("FunctionalTest")
         @DisplayName("Should return the first immunohematology exam if multiple exist")
         void shouldReturnTheFirstImmunohematologyExamIfMultipleExist(){
-            UUID donationId = UUID.randomUUID();
-            Donation donation = mock(Donation.class);
-
-            ImmunohematologyExam firstExam = new ImmunohematologyExam(donation);
-            ImmunohematologyExam secondExam = new ImmunohematologyExam(donation);
-
             when(examRepository.findAllByDonationId(donationId))
                     .thenReturn(List.of(firstExam, secondExam));
 
@@ -223,8 +179,6 @@ class ViewExamDetailsServiceTest {
         @Tag("UnitTest")
         @DisplayName("Should throw exception when immunohematology exam does not exist for donation")
         void shouldThrowExceptionWhenImmunohematologyExamDoesNotExistForDonation(){
-            UUID donationId = UUID.randomUUID();
-
             when(examRepository.findAllByDonationId(donationId)).thenReturn(List.of());
 
             assertThatThrownBy(() -> sut.viewImmunohematologyExam(donationId))
@@ -239,8 +193,6 @@ class ViewExamDetailsServiceTest {
         @Tag("UnitTest")
         @DisplayName("Should throw exception when serological screening exam does not exist for donation")
         void shouldThrowExceptionWhenSerologicalScreeningExamDoesNotExistForDonation(){
-            UUID donationId = UUID.randomUUID();
-
             when(examRepository.findAllByDonationId(donationId)).thenReturn(List.of());
 
             assertThatThrownBy(() -> sut.viewSerologicalScreeningExam(donationId))

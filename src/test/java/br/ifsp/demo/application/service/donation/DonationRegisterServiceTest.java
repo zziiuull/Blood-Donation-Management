@@ -9,10 +9,7 @@ import br.ifsp.demo.domain.model.donor.Sex;
 import br.ifsp.demo.domain.repository.appointment.AppointmentRepository;
 import br.ifsp.demo.domain.repository.donation.DonationRepository;
 import br.ifsp.demo.domain.repository.donor.DonorRepository;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -40,15 +37,31 @@ class DonationRegisterServiceTest {
     private AppointmentRepository appointmentRepository;
 
     @InjectMocks
-    private DonationRegisterService donationRegisterService;
+    private DonationRegisterService sut;
 
-    private Donor createEligibleDonor() {
+    private UUID eligibleDonorId;
+    private UUID ineligibleDonorId;
+    private UUID appointmentId;
+    private Donor eligibleDonor;
+    private Donor ineligibleDonor;
+    private UUID nonExistentAppointmentId;
+    private UUID nonExistentDonorId;
+    private Appointment appointment;
+
+    @BeforeEach
+    void setUp(){
+        eligibleDonorId = UUID.randomUUID();
+        ineligibleDonorId = UUID.randomUUID();
+        appointmentId = UUID.randomUUID();
+        nonExistentAppointmentId = UUID.randomUUID();
+        nonExistentDonorId = UUID.randomUUID();
+
         ContactInfo contactInfo = new ContactInfo(
                 "weverton@email.com",
                 "11991239867",
                 "Rua da Ponte Caída, n. 101, Itaquaquecetuba/SP"
         );
-        return new Donor(
+        eligibleDonor = new Donor(
                 "Weverton",
                 new Cpf("12345678955"),
                 contactInfo,
@@ -57,15 +70,7 @@ class DonationRegisterServiceTest {
                 Sex.MALE,
                 BloodType.O_POS
         );
-    }
-
-    private Donor createIneligibleDonor() {
-        ContactInfo contactInfo = new ContactInfo(
-                "enzo@email.com",
-                "11991239867",
-                "Rua da Ponte Caída, n. 101, Itaquaquecetuba/SP"
-        );
-        return new Donor(
+        ineligibleDonor = new Donor(
                 "Enzo",
                 new Cpf("12345678955"),
                 contactInfo,
@@ -74,46 +79,43 @@ class DonationRegisterServiceTest {
                 Sex.MALE,
                 BloodType.O_POS
         );
+
+        ContactInfo siteContactInfo = new ContactInfo(
+                "doesangue.sorocaba@email.com",
+                "1533761530",
+                "Av. Anhanguera, n. 715, Sorocaba/SP"
+        );
+        CollectionSite site = new CollectionSite(
+                "Banco de Doação de Sorocaba",
+                siteContactInfo
+        );
+        appointment = new Appointment(
+                LocalDateTime.now().plusDays(1),
+                AppointmentStatus.SCHEDULED,
+                site,
+                "First donation"
+        );
     }
 
     @Nested
     @DisplayName("For valid tests")
     class ValidTests {
-
         @Test
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should register donation when donor is eligible")
         void shouldRegisterDonationWhenDonorIsEligible() {
-
-            Donor eligibleDonor = createEligibleDonor();
-
-            ContactInfo siteContactInfo = new ContactInfo(
-              "doesangue.sorocaba@email.com",
-              "1533761530",
-              "Av. Anhanguera, n. 715, Sorocaba/SP"
-            );
-
-            CollectionSite site = new CollectionSite(
-                    "Banco de Doação de Sorocaba",
-                    siteContactInfo
-            );
-
-            Appointment appointment = new Appointment(
-                    LocalDateTime.now().plusDays(1),
-                    AppointmentStatus.SCHEDULED,
-                    site,
-                    "First donation"
-            );
             Donation expectedDonation = new Donation(
                     eligibleDonor,
                     appointment,
                     DonationStatus.UNDER_ANALYSIS
             );
 
+            when(donorRepository.findById(eligibleDonorId)).thenReturn(Optional.of(eligibleDonor));
+            when(appointmentRepository.findById(appointmentId)).thenReturn(Optional.of(appointment));
             when(donationRepository.save(any(Donation.class))).thenReturn(expectedDonation);
 
-            Donation result = donationRegisterService.register(eligibleDonor, appointment);
+            Donation result = sut.registerByDonorId(eligibleDonorId, appointmentId);
 
             assertThat(result).isNotNull();
             assertThat(result.getStatus()).isEqualTo(DonationStatus.UNDER_ANALYSIS);
@@ -122,36 +124,20 @@ class DonationRegisterServiceTest {
 
             verify(donationRepository, times(1)).save(any(Donation.class));
         }
-
     }
+
     @Nested
     @DisplayName("For invalid tests")
     class InvalidTests {
-
         @Test
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should throw exception when trying to register donation without donor")
         void shouldThrowExceptionWhenTryingToRegisterDonationWithoutDonor() {
-            ContactInfo siteContactInfo = new ContactInfo(
-                    "doesangue.sorocaba@email.com",
-                    "1533761530",
-                    "Av. Anhanguera, n. 715, Sorocaba/SP"
-            );
-            CollectionSite site = new CollectionSite(
-                    "Banco de Doação de Sorocaba",
-                    siteContactInfo
-            );
-
-            Appointment appointment = new Appointment(
-                    LocalDateTime.now().plusDays(1),
-                    AppointmentStatus.SCHEDULED,
-                    site,
-                    "First donation"
-            );
-            assertThatThrownBy(() -> donationRegisterService.register(null, appointment))
+            when(donorRepository.findById(any())).thenReturn(Optional.empty());
+            assertThatThrownBy(() -> sut.registerByDonorId(null, appointmentId))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("Donor must not be null");
+                    .hasMessage("Donor does not exist");
 
             verifyNoInteractions(donationRepository);
         }
@@ -161,28 +147,9 @@ class DonationRegisterServiceTest {
         @Tag("UnitTest")
         @DisplayName("Should throw exception when donor is not eligible to donate")
         void shouldThrowExceptionWhenDonorIsNotEligible() {
-
-            Donor ineligibleDonor = createIneligibleDonor();
-
-            ContactInfo siteContactInfo = new ContactInfo(
-                    "doesangue.sorocaba@email.com",
-                    "1533761530",
-                    "Av. Anhanguera, n. 715, Sorocaba/SP"
-            );
-
-            CollectionSite site = new CollectionSite(
-                    "Banco de Doação de Sorocaba",
-                    siteContactInfo
-            );
-
-            Appointment appointment = new Appointment(
-                    LocalDateTime.now().plusDays(1),
-                    AppointmentStatus.SCHEDULED,
-                    site,
-                    "First donation"
-            );
-
-            assertThatThrownBy(() -> donationRegisterService.register(ineligibleDonor, appointment))
+            when(donorRepository.findById(ineligibleDonorId)).thenReturn(Optional.of(ineligibleDonor));
+            when(appointmentRepository.findById(appointmentId)).thenReturn(Optional.of(appointment));
+            assertThatThrownBy(() -> sut.registerByDonorId(ineligibleDonorId, appointmentId))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("Donor is not eligible to donate");
 
@@ -194,12 +161,9 @@ class DonationRegisterServiceTest {
         @Tag("UnitTest")
         @DisplayName("Should throw exception when trying to register donation for a non-existent donor")
         void shouldThrowExceptionWhenTryingToRegisterDonationForANonExistentDonor() {
-            UUID nonExistentDonorId = UUID.randomUUID();
-            UUID appointmentId = UUID.randomUUID();
-
             when(donorRepository.findById(nonExistentDonorId)).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> donationRegisterService.registerByDonorId(nonExistentDonorId, appointmentId))
+            assertThatThrownBy(() -> sut.registerByDonorId(nonExistentDonorId, appointmentId))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("Donor does not exist");
 
@@ -208,28 +172,27 @@ class DonationRegisterServiceTest {
 
         @Test
         @Tag("UnitTest")
+        @Tag("FunctionalTest")
         @DisplayName("Should throw exception when appointment is null")
         void shouldThrowExceptionWhenAppointmentIsNull() {
-            Donor donor = mock(Donor.class);
+            when(donorRepository.findById(eligibleDonorId)).thenReturn(Optional.of(eligibleDonor));
+            when(appointmentRepository.findById(any())).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> donationRegisterService.register(donor, null))
+            assertThatThrownBy(() -> sut.registerByDonorId(eligibleDonorId, null))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("Appointment must not be null");
+                    .hasMessage("Appointment does not exist");
 
             verifyNoInteractions(donationRepository);
         }
 
         @Test
         @Tag("UnitTest")
+        @Tag("FunctionalTest")
         @DisplayName("Should throw exception when appointment does not exist")
         void shouldThrowExceptionWhenAppointmentDoesNotExist() {
-            UUID donorId = UUID.randomUUID();
-            UUID nonExistentAppointmentId = UUID.randomUUID();
-
-            Donor donor = mock(Donor.class);
-            when(donorRepository.findById(donorId)).thenReturn(Optional.of(donor));
+            when(donorRepository.findById(eligibleDonorId)).thenReturn(Optional.of(eligibleDonor));
             when(appointmentRepository.findById(nonExistentAppointmentId)).thenReturn(Optional.empty());
-            assertThatThrownBy(() -> donationRegisterService.registerByDonorId(donorId, nonExistentAppointmentId))
+            assertThatThrownBy(() -> sut.registerByDonorId(eligibleDonorId, nonExistentAppointmentId))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("Appointment does not exist");
 
@@ -241,12 +204,10 @@ class DonationRegisterServiceTest {
         @Tag("UnitTest")
         @DisplayName("Should throw exception when donation already exists for this appointment")
         void shouldThrowExceptionWhenDonationAlreadyExistsForThisAppointment() {
-            Donor donor = mock(Donor.class);
-            Appointment appointment = mock(Appointment.class);
-
-            when(donor.isEligibleForDonation()).thenReturn(true);
-            when(donationRepository.existsByDonorAndAppointment(donor, appointment)).thenReturn(true);
-            assertThatThrownBy(() -> donationRegisterService.register(donor, appointment))
+            when(donorRepository.findById(eligibleDonorId)).thenReturn(Optional.of(eligibleDonor));
+            when(appointmentRepository.findById(appointmentId)).thenReturn(Optional.of(appointment));
+            when(donationRepository.existsByDonorAndAppointment(eligibleDonor, appointment)).thenReturn(true);
+            assertThatThrownBy(() -> sut.registerByDonorId(eligibleDonorId, appointmentId))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("Donation already exists for this appointment");
 

@@ -9,10 +9,7 @@ import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
 import br.ifsp.demo.exception.ExamRequestNotAllowedException;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -31,6 +28,19 @@ class ExamRequestServiceTest {
     @InjectMocks
     private ExamRequestService sut;
 
+    private Donation expectedDonation;
+
+    @BeforeEach
+    void setUp() {
+        Donor eligibleDonor = mock(Donor.class);
+        Appointment appointment = mock(Appointment.class);
+        expectedDonation = new Donation(
+                eligibleDonor,
+                appointment,
+                DonationStatus.UNDER_ANALYSIS
+        );
+    }
+
     @Nested
     @DisplayName("For valid tests")
     class ValidTests {
@@ -39,14 +49,6 @@ class ExamRequestServiceTest {
         @Tag("UnitTest")
         @DisplayName("Should request immunohematology exam if donation is registered")
         void shouldRequestImmunohematologyExamIfDonationIsRegistered(){
-            Donor eligibleDonor = mock(Donor.class);
-            Appointment appointment = mock(Appointment.class);
-            Donation expectedDonation = new Donation(
-                    eligibleDonor,
-                    appointment,
-                    DonationStatus.UNDER_ANALYSIS
-            );
-
             ImmunohematologyExam expectedExam = new ImmunohematologyExam(expectedDonation);
 
             when(examRepository.save(any(ImmunohematologyExam.class))).thenReturn(expectedExam);
@@ -69,14 +71,6 @@ class ExamRequestServiceTest {
         @Tag("UnitTest")
         @DisplayName("Should request serological screening exam if donation is registered")
         void shouldRequestSerologicalScreeningExamIfDonationIsRegistered(){
-            Donor eligibleDonor = mock(Donor.class);
-            Appointment appointment = mock(Appointment.class);
-            Donation expectedDonation = new Donation(
-                    eligibleDonor,
-                    appointment,
-                    DonationStatus.UNDER_ANALYSIS
-            );
-
             SerologicalScreeningExam expectedExam = new SerologicalScreeningExam(expectedDonation);
 
             when(examRepository.save(any(SerologicalScreeningExam.class))).thenReturn(expectedExam);
@@ -103,13 +97,7 @@ class ExamRequestServiceTest {
         @Tag("UnitTest")
         @DisplayName("Should throw ExamRequestNotAllowedException when requesting immunohematology exam for approved donation")
         void shouldThrowExamRequestNotAllowedExceptionWhenRequestingImmunohematologyExamForApprovedDonation() {
-            Donor eligibleDonor = mock(Donor.class);
-            Appointment appointment = mock(Appointment.class);
-            Donation expectedDonation = new Donation(
-                    eligibleDonor,
-                    appointment,
-                    DonationStatus.APPROVED
-            );
+            expectedDonation.setStatus(DonationStatus.APPROVED);
 
             assertThatThrownBy(() -> sut.requestImmunohematologyExam(expectedDonation))
                     .isInstanceOf(ExamRequestNotAllowedException.class)
@@ -123,13 +111,7 @@ class ExamRequestServiceTest {
         @Tag("UnitTest")
         @DisplayName("Should throw ExamRequestNotAllowedException when requesting serological screening exam for approved donation")
         void shouldThrowExamRequestNotAllowedExceptionWhenRequestingSerologicalScreeningExamForApprovedDonation() {
-            Donor eligibleDonor = mock(Donor.class);
-            Appointment appointment = mock(Appointment.class);
-            Donation expectedDonation = new Donation(
-                    eligibleDonor,
-                    appointment,
-                    DonationStatus.APPROVED
-            );
+            expectedDonation.setStatus(DonationStatus.APPROVED);
 
             assertThatThrownBy(() -> sut.requestSerologicalScreeningExam(expectedDonation))
                     .isInstanceOf(ExamRequestNotAllowedException.class)
@@ -143,13 +125,7 @@ class ExamRequestServiceTest {
         @Tag("UnitTest")
         @DisplayName("Should throw ExamRequestNotAllowedException when requesting immunohematology exam for rejected donation")
         void shouldThrowExamRequestNotAllowedExceptionWhenRequestingImmunohematologyExamForRejectedDonation() {
-            Donor eligibleDonor = mock(Donor.class);
-            Appointment appointment = mock(Appointment.class);
-            Donation expectedDonation = new Donation(
-                    eligibleDonor,
-                    appointment,
-                    DonationStatus.REJECTED
-            );
+            expectedDonation.setStatus(DonationStatus.REJECTED);
 
             assertThatThrownBy(() -> sut.requestImmunohematologyExam(expectedDonation))
                     .isInstanceOf(ExamRequestNotAllowedException.class)
@@ -163,13 +139,7 @@ class ExamRequestServiceTest {
         @Tag("UnitTest")
         @DisplayName("Should throw ExamRequestNotAllowedException when requesting serological screening exam for rejected donation")
         void shouldThrowExamRequestNotAllowedExceptionWhenRequestingSerologicalScreeningExamForRejectedDonation() {
-            Donor eligibleDonor = mock(Donor.class);
-            Appointment appointment = mock(Appointment.class);
-            Donation expectedDonation = new Donation(
-                    eligibleDonor,
-                    appointment,
-                    DonationStatus.REJECTED
-            );
+            expectedDonation.setStatus(DonationStatus.REJECTED);
 
             assertThatThrownBy(() -> sut.requestSerologicalScreeningExam(expectedDonation))
                     .isInstanceOf(ExamRequestNotAllowedException.class)
@@ -180,6 +150,7 @@ class ExamRequestServiceTest {
 
         @Test
         @Tag("UnitTest")
+        @Tag("FunctionalTest")
         @DisplayName("Should throw IllegalArgumentException when requesting immunohematology exam if donation is null")
         void shouldThrowIllegalArgumentExceptionWhenRequestingImmunohematologyExamIfDonationIsNull(){
             assertThatThrownBy(() -> sut.requestImmunohematologyExam(null))
@@ -191,6 +162,7 @@ class ExamRequestServiceTest {
 
         @Test
         @Tag("UnitTest")
+        @Tag("FunctionalTest")
         @DisplayName("Should throw IllegalArgumentException when requesting immunohematology exam if donation is null")
         void shouldThrowIllegalArgumentExceptionWhenRequestingSerologicalScreeningExamIfDonationIsNull(){
             assertThatThrownBy(() -> sut.requestSerologicalScreeningExam(null))

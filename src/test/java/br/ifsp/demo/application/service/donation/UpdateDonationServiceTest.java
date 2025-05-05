@@ -69,7 +69,6 @@ class UpdateDonationServiceTest {
         serologicalScreeningApproved.setStatus(ExamStatus.APPROVED);
         serologicalScreeningRejected = new SerologicalScreeningExam(donation);
         serologicalScreeningRejected.setStatus(ExamStatus.REJECTED);
-
     }
 
     @Nested
@@ -148,6 +147,7 @@ class UpdateDonationServiceTest {
 
         @Test
         @Tag("UnitTest")
+        @Tag("FunctionalTest")
         @DisplayName("should throw when at least one exam is not found")
         void shouldThrowWhenAtLeastOneExamIsNotFound() {
             when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.of(donation));
@@ -158,6 +158,7 @@ class UpdateDonationServiceTest {
 
         @Test
         @Tag("UnitTest")
+        @Tag("FunctionalTest")
         @DisplayName("should throw when analysis is contradictory for approval")
         void shouldThrowWhenAnalysisIsContradictoryForApproval() {
             when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.of(donation));
@@ -168,6 +169,7 @@ class UpdateDonationServiceTest {
 
         @Test
         @Tag("UnitTest")
+        @Tag("FunctionalTest")
         @DisplayName("should throw when analysis is contradictory for rejection")
         void shouldThrowWhenAnalysisIsContradictoryForRejection() {
             when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.of(donation));

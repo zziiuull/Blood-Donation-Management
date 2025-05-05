@@ -27,7 +27,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ViewDonationDetailsServiceTest {
-
     @Mock
     private DonationRepository donationRepository;
 
@@ -35,7 +34,7 @@ class ViewDonationDetailsServiceTest {
     private ExamRepository examRepository;
 
     @InjectMocks
-    private ViewDonationDetailsService viewDonationDetailsService;
+    private ViewDonationDetailsService sut;
 
     @Nested
     @DisplayName("For valid tests")
@@ -45,7 +44,6 @@ class ViewDonationDetailsServiceTest {
         @Tag("UnitTest")
         @DisplayName("Should return donation details when donation exists")
         void shouldReturnDonationDetailsWhenDonationExists() {
-
             UUID donationId = UUID.randomUUID();
 
             ImmunohematologyExam immunohematologyExam = mock(ImmunohematologyExam.class);
@@ -58,7 +56,7 @@ class ViewDonationDetailsServiceTest {
             when(donationRepository.findById(donationId)).thenReturn(Optional.of(donation));
             when(examRepository.findAllByDonationId(donationId)).thenReturn(List.of(immunohematologyExam, serologicalScreeningExam));
 
-            DonationDetailsDTO result = viewDonationDetailsService.getDonationDetails(donationId);
+            DonationDetailsDTO result = sut.getDonationDetails(donationId);
 
             assertThat(result).isNotNull();
             assertThat(result.id()).isEqualTo(donationId);
@@ -80,7 +78,7 @@ class ViewDonationDetailsServiceTest {
             UUID donationId = UUID.randomUUID();
             when(donationRepository.findById(donationId)).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> viewDonationDetailsService.getDonationDetails(donationId))
+            assertThatThrownBy(() -> sut.getDonationDetails(donationId))
                     .isInstanceOf(DonationNotFoundException.class)
                     .hasMessage("Donation does not exist");
 

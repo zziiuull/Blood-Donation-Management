@@ -151,6 +151,7 @@ class ExamRegistrationServiceTest {
 
         @Test
         @Tag("UnitTest")
+        @Tag("FunctionalTest")
         @DisplayName("Should throw when analysis for approving immunohematology exam in contradictory")
         void shouldThrowWhenAnalysisForApprovingImmunohematologyExamInContradictory() {
             when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(immunohematologyExam));
@@ -160,6 +161,7 @@ class ExamRegistrationServiceTest {
 
         @Test
         @Tag("UnitTest")
+        @Tag("FunctionalTest")
         @DisplayName("Should throw when analysis for approving serological screening exam in contradictory")
         void shouldThrowWhenAnalysisForApprovingSerologicalScreeningExamInContradictory() {
             when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(serologicalScreeningExam));
@@ -169,6 +171,7 @@ class ExamRegistrationServiceTest {
 
         @Test
         @Tag("UnitTest")
+        @Tag("FunctionalTest")
         @DisplayName("Should throw when analysis for rejecting serological screening exam in contradictory")
         void shouldThrowWhenAnalysisForRejectingSerologicalScreeningExamInContradictory() {
             when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(serologicalScreeningExam));
@@ -178,6 +181,7 @@ class ExamRegistrationServiceTest {
 
         @Test
         @Tag("UnitTest")
+        @Tag("FunctionalTest")
         @DisplayName("Should throw when exam is not found")
         void shouldThrowWhenExamIsNotFound() {
             when(examRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
