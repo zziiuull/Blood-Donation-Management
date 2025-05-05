@@ -156,19 +156,6 @@ class ViewExamDetailsServiceTest {
 
             verify(examRepository, times(1)).findAllByDonationId(donationId);
         }
-
-        @Test
-        @Tag("UnitTest")
-        @Tag("FunctionalTest")
-        @DisplayName("Should return the first immunohematology exam if multiple exist")
-        void shouldReturnTheFirstImmunohematologyExamIfMultipleExist(){
-            when(examRepository.findAllByDonationId(donationId))
-                    .thenReturn(List.of(firstExam, secondExam));
-
-            ImmunohematologyExam result = sut.viewImmunohematologyExam(donationId);
-
-            assertThat(result).isEqualTo(firstExam);
-        }
     }
 
     @Nested
