@@ -34,7 +34,7 @@ public abstract class Exam {
 
     protected Exam() {}
 
-    public Exam(Donation donation, ExamStatus status) {
+    protected Exam(Donation donation, ExamStatus status) {
         if (donation == null) throw new IllegalArgumentException("Donation must not be null");
         if (status == null) throw new IllegalArgumentException("Status must not be null");
 

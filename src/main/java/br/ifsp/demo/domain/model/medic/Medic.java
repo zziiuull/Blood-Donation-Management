@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
+import java.util.Objects;
 import java.util.UUID;
 @Entity
 @AllArgsConstructor
@@ -25,5 +26,17 @@ public class Medic extends User {
         super(id, name, lastname, email, password, role);
         this.cpf = cpf;
         this.crm = crm;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Medic medic)) return false;
+        return getId().equals(medic.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 }

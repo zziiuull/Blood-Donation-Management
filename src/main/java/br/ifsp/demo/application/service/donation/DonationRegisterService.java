@@ -34,6 +34,9 @@ public class DonationRegisterService {
         if (!donor.isEligibleForDonation()) {
             throw new IllegalArgumentException("Donor is not eligible to donate");
         }
+        if (donationRepository.existsByDonorAndAppointment(donor, appointment)) {
+            throw new IllegalArgumentException("Donation already exists for this appointment");
+        }
 
         Donation donation = new Donation(donor, appointment, DonationStatus.UNDER_ANALYSIS);
         return donationRepository.save(donation);

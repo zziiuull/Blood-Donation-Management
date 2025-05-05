@@ -2,10 +2,11 @@ package br.ifsp.demo.domain.model.medic;
 
 import jakarta.persistence.Embeddable;
 import lombok.Getter;
+import java.io.Serializable;
 
 @Getter
 @Embeddable
-public class Crm {
+public class Crm implements Serializable {
     String value;
     State state;
 

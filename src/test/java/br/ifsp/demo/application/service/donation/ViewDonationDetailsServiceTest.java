@@ -1,16 +1,13 @@
 package br.ifsp.demo.application.service.donation;
 
 import br.ifsp.demo.application.service.donation.dto.DonationDetailsDTO;
-import br.ifsp.demo.domain.model.donation.Appointment;
 import br.ifsp.demo.domain.model.donation.Donation;
 import br.ifsp.demo.domain.model.donation.DonationStatus;
-import br.ifsp.demo.domain.model.donor.Donor;
 import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.domain.repository.donation.DonationRepository;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
 import br.ifsp.demo.exception.DonationNotFoundException;
-import br.ifsp.demo.exception.ExamNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -51,8 +48,6 @@ class ViewDonationDetailsServiceTest {
 
             UUID donationId = UUID.randomUUID();
 
-            Donor donor = mock(Donor.class);
-            Appointment appointment = mock(Appointment.class);
             ImmunohematologyExam immunohematologyExam = mock(ImmunohematologyExam.class);
             SerologicalScreeningExam serologicalScreeningExam = mock(SerologicalScreeningExam.class);
             Donation donation = mock(Donation.class);
