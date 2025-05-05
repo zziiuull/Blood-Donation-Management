@@ -42,12 +42,4 @@ public class ViewDonationDetailsService {
                 exams
         );
     }
-
-    private ExamDTO toExamDTO(Exam exam) {
-        return new ExamDTO(
-                exam.getId(),
-                exam.getStatus(),
-                exam.getCreatedAt()
-        );
-    }
 }
