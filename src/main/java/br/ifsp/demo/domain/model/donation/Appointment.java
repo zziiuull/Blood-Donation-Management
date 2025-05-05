@@ -2,6 +2,7 @@ package br.ifsp.demo.domain.model.donation;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -13,6 +14,7 @@ public class Appointment {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    @Setter
     private LocalDateTime appointmentDate;
 
     @Enumerated(EnumType.STRING)
