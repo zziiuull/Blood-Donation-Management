@@ -151,6 +151,7 @@ class ExamRequestServiceTest {
         }
 
         @Test
+        @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should throw ExamRequestNotAllowedException when immunohematology exam already exists for donation")
         void shouldThrowExamRequestNotAllowedExceptionWhenImmunohematologyExamAlreadyExistsForDonation(){
@@ -165,6 +166,7 @@ class ExamRequestServiceTest {
         }
 
         @Test
+        @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should throw ExamRequestNotAllowedException when immunohematology exam already exists for donation")
         void shouldThrowExamRequestNotAllowedExceptionWhenSerologicalScreeningExamAlreadyExistsForDonation(){
