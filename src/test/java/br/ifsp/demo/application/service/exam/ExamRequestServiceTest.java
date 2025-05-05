@@ -166,6 +166,20 @@ class ExamRequestServiceTest {
 
         @Test
         @Tag("UnitTest")
+        @DisplayName("Should throw ExamRequestNotAllowedException when immunohematology exam already exists for donation")
+        void shouldThrowExamRequestNotAllowedExceptionWhenSerologicalScreeningExamAlreadyExistsForDonation(){
+            SerologicalScreeningExam existingExam = mock(SerologicalScreeningExam.class);
+            when(examRepository.findAllByDonationId(expectedDonation.getId())).thenReturn(List.of(existingExam));
+
+            assertThatThrownBy(() -> sut.requestSerologicalScreeningExam(expectedDonation))
+                    .isInstanceOf(ExamRequestNotAllowedException.class)
+                    .hasMessage("A serological screening exam already exists for this donation");
+
+            verify(examRepository, times(1)).findAllByDonationId(expectedDonation.getId());
+        }
+
+        @Test
+        @Tag("UnitTest")
         @Tag("FunctionalTest")
         @DisplayName("Should throw IllegalArgumentException when requesting immunohematology exam if donation is null")
         void shouldThrowIllegalArgumentExceptionWhenRequestingImmunohematologyExamIfDonationIsNull(){
