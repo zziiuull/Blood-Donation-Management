@@ -5,8 +5,12 @@ import br.ifsp.demo.domain.model.donation.DonationStatus;
 import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
+import br.ifsp.demo.exception.ExamNotFoundException;
 import br.ifsp.demo.exception.ExamRequestNotAllowedException;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ExamRequestService {
@@ -20,6 +24,15 @@ public class ExamRequestService {
         if (donation == null) throw new IllegalArgumentException("Donation must not be null");
         if (donation.getStatus().equals(DonationStatus.APPROVED)) throw new ExamRequestNotAllowedException("Cannot request an immunohematology exam for an approved donation");
         if (donation.getStatus().equals(DonationStatus.REJECTED)) throw new ExamRequestNotAllowedException("Cannot request an immunohematology exam for a rejected donation");
+
+        List<ImmunohematologyExam> exams = examRepository.findAllByDonationId(donation.getId())
+                .stream()
+                .filter(ImmunohematologyExam.class::isInstance)
+                .map(ImmunohematologyExam.class::cast).toList();
+
+        if(!exams.isEmpty()){
+            throw new ExamRequestNotAllowedException("An immunohematology exam already exists for this donation");
+        }
 
         ImmunohematologyExam immunohematologyExam = new ImmunohematologyExam(donation);
         return examRepository.save(immunohematologyExam);
