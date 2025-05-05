@@ -12,7 +12,7 @@ public record AuthResponse(
 
         @Schema(
                 description = "User role",
-                example = "MEDIC"
+                example = "PHYSICIAN"
         )
         Role role
 ){ }

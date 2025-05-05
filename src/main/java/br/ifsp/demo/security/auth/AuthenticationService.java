@@ -1,9 +1,9 @@
 package br.ifsp.demo.security.auth;
 
 import br.ifsp.demo.domain.model.common.Cpf;
-import br.ifsp.demo.domain.model.medic.Crm;
-import br.ifsp.demo.domain.model.medic.Medic;
-import br.ifsp.demo.domain.model.medic.State;
+import br.ifsp.demo.domain.model.physician.Crm;
+import br.ifsp.demo.domain.model.physician.Physician;
+import br.ifsp.demo.domain.model.physician.State;
 import br.ifsp.demo.exception.EntityAlreadyExistsException;
 import br.ifsp.demo.security.config.JwtService;
 import br.ifsp.demo.security.user.JpaUserRepository;
@@ -46,23 +46,23 @@ public class AuthenticationService {
         return new RegisterUserResponse(id);
     }
 
-    public RegisterUserResponse registerMedic(RegisterMedicRequest request) {
+    public RegisterUserResponse registerPhysician(RegisterPhysicianRequest request) {
         userRepository.findByEmail(request.email()).ifPresent(unused -> {
             throw new EntityAlreadyExistsException("Email already registered: " + request.email());});
 
         final UUID id = UUID.randomUUID();
-        final Medic medic = new Medic(
+        final Physician physician = new Physician(
                 id,
                 request.name(),
                 request.lastname(),
                 request.email(),
                 passwordEncoder.encode(request.password()),
-                Role.MEDIC,
+                Role.PHYSICIAN,
                 new Cpf(request.cpf()),
                 new Crm(request.crmNumber(), State.valueOf(request.crmState()))
         );
 
-        userRepository.save(medic);
+        userRepository.save(physician);
         return new RegisterUserResponse(id);
     }
 
