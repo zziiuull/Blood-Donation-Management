@@ -52,15 +52,15 @@ public class UserController {
     }
 
     @Operation(
-            summary = "Register a new medic.",
-            description = "Returns the new medic id."
+            summary = "Register a new physician.",
+            description = "Returns the new physician id."
     )
     @ApiResponses({
             @ApiResponse(
                     responseCode = "201", description = "Successful operation.",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = RegisterMedicRequest.class)
+                            schema = @Schema(implementation = RegisterPhysicianRequest.class)
                     )
             ),
             @ApiResponse(
@@ -70,13 +70,13 @@ public class UserController {
             ),
             @ApiResponse(
                     responseCode = "409",
-                    description = "Medic email is already registered.",
+                    description = "Physician email is already registered.",
                     content = @Content(schema = @Schema(hidden = true))
             )
     })
-    @PostMapping("/register/medic")
-    public ResponseEntity<?> registerMedic(@RequestBody RegisterMedicRequest request) {
-        final RegisterUserResponse response = authenticationService.registerMedic(request);
+    @PostMapping("/register/physician")
+    public ResponseEntity<?> registerPhysician(@RequestBody RegisterPhysicianRequest request) {
+        final RegisterUserResponse response = authenticationService.registerPhysician(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
