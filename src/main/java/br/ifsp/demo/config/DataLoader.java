@@ -23,7 +23,6 @@ import java.time.LocalDateTime;
 public class DataLoader implements CommandLineRunner {
     private static final Logger LOGGER = LoggerFactory.getLogger(DataLoader.class);
 
-
     private final DonorRepository donorRepository;
     private final AppointmentRepository appointmentRepository;
     private final CollectionSiteRepository collectionSiteRepository;
