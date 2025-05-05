@@ -11,6 +11,7 @@ import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.domain.repository.donation.DonationRepository;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
 import br.ifsp.demo.exception.CannotFinishDonationWithExamUnderAnalysisException;
+import br.ifsp.demo.exception.DonationNotFoundException;
 import br.ifsp.demo.exception.ExamNotFoundException;
 import br.ifsp.demo.exception.InvalidDonationAnalysisException;
 import org.junit.jupiter.api.*;
@@ -174,6 +175,16 @@ class UpdateDonationServiceTest {
             when(examRepository.findAllByDonationId(any(UUID.class))).thenReturn(List.of(immunohematologyApproved, serologicalScreeningRejected));
 
             assertThatThrownBy(() -> sut.approve(UUID.randomUUID())).isInstanceOf(InvalidDonationAnalysisException.class);
+        }
+
+        @Test
+        @Tag("UnitTest")
+        @Tag("FunctionalTest")
+        @DisplayName("should throw when donation is not found")
+        void shouldThrowWhenDonationIsNotFound() {
+            when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> sut.approve(UUID.randomUUID())).isInstanceOf(DonationNotFoundException.class);
         }
     }
 }
