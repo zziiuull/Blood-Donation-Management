@@ -15,6 +15,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -146,6 +148,20 @@ class ExamRequestServiceTest {
                     .hasMessage("Cannot request a serological screening exam for a rejected donation");
 
             verifyNoInteractions(examRepository);
+        }
+
+        @Test
+        @Tag("UnitTest")
+        @DisplayName("Should throw ExamRequestNotAllowedException when immunohematology exam already exists for donation")
+        void shouldThrowExamRequestNotAllowedExceptionWhenImmunohematologyExamAlreadyExistsForDonation(){
+            ImmunohematologyExam existingExam = mock(ImmunohematologyExam.class);
+            when(examRepository.findAllByDonationId(expectedDonation.getId())).thenReturn(List.of(existingExam));
+
+            assertThatThrownBy(() -> sut.requestImmunohematologyExam(expectedDonation))
+                    .isInstanceOf(ExamRequestNotAllowedException.class)
+                    .hasMessage("An immunohematology exam already exists for this donation");
+
+            verify(examRepository, times(1)).findAllByDonationId(expectedDonation.getId());
         }
 
         @Test
