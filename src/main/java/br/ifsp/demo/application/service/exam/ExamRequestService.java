@@ -43,6 +43,15 @@ public class ExamRequestService {
         if (donation.getStatus().equals(DonationStatus.APPROVED)) throw new ExamRequestNotAllowedException("Cannot request a serological screening exam for an approved donation");
         if (donation.getStatus().equals(DonationStatus.REJECTED)) throw new ExamRequestNotAllowedException("Cannot request a serological screening exam for a rejected donation");
 
+        List<SerologicalScreeningExam> exams = examRepository.findAllByDonationId(donation.getId())
+                .stream()
+                .filter(SerologicalScreeningExam.class::isInstance)
+                .map(SerologicalScreeningExam.class::cast).toList();
+
+        if(!exams.isEmpty()){
+            throw new ExamRequestNotAllowedException("A serological screening exam already exists for this donation");
+        }
+
         SerologicalScreeningExam serologicalScreeningExam = new SerologicalScreeningExam(donation);
         return examRepository.save(serologicalScreeningExam);
     }
