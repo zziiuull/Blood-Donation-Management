@@ -24,13 +24,11 @@ public class DonationRegisterService {
         this.appointmentRepository = appointmentRepository;
     }
 
-    public Donation register(Donor donor, Appointment appointment) {
-        if (donor == null) {
-            throw new IllegalArgumentException("Donor must not be null");
-        }
-        if (appointment == null) {
-            throw new IllegalArgumentException("Appointment must not be null");
-        }
+    public Donation registerByDonorId(UUID donorId, UUID appointmentId) {
+        Donor donor = donorRepository.findById(donorId)
+                .orElseThrow(() -> new IllegalArgumentException("Donor does not exist"));
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new IllegalArgumentException("Appointment does not exist"));
         if (!donor.isEligibleForDonation()) {
             throw new IllegalArgumentException("Donor is not eligible to donate");
         }
@@ -40,13 +38,5 @@ public class DonationRegisterService {
 
         Donation donation = new Donation(donor, appointment, DonationStatus.UNDER_ANALYSIS);
         return donationRepository.save(donation);
-    }
-
-    public Donation registerByDonorId(UUID donorId, UUID appointmentId) {
-        Donor donor = donorRepository.findById(donorId)
-                .orElseThrow(() -> new IllegalArgumentException("Donor does not exist"));
-        Appointment appointment = appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new IllegalArgumentException("Appointment does not exist"));
-        return register(donor, appointment);
     }
 }
