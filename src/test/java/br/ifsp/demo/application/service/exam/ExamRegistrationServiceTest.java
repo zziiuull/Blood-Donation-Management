@@ -200,6 +200,24 @@ class ExamRegistrationServiceTest {
         }
 
         @ParameterizedTest
+        @MethodSource("invalidImmunohematologyExamForRejection")
+        @Tag("UnitTest")
+        @Tag("StructuralTest")
+        @DisplayName("Should throw when analysis for rejecting immunohematology exam is invalid")
+        void shouldThrowWhenAnalysisForRejectingImmunohematologyExamIsInvalid(ImmunohematologyExamDTO exam) {
+            when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(immunohematologyExam));
+
+            assertThatThrownBy(() -> sut.registerRejectedExam(UUID.randomUUID(), exam)).isInstanceOf(InvalidExamAnalysisException.class);
+        }
+
+        static Stream<Arguments> invalidImmunohematologyExamForRejection() {
+            return Stream.of(
+                    Arguments.of(new ImmunohematologyExamDTO(BloodType.A_POS, IrregularAntibodies.NEGATIVE)),
+                    Arguments.of(new ImmunohematologyExamDTO(null, IrregularAntibodies.POSITIVE))
+            );
+        }
+
+        @ParameterizedTest
         @MethodSource("invalidSerologicalScreeningExamForApproval")
         @Tag("UnitTest")
         @Tag("StructuralTest")
