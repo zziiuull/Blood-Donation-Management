@@ -133,11 +133,11 @@ public class ExamRegistrationService {
     }
 
     private boolean isFieldsValidForRejecting(SerologicalScreeningExamDTO exam){
-        if (exam.hepatitisB() != null && exam.hepatitisB() == DiseaseDetection.POSITIVE) return true;
-        if (exam.hepatitisC() != null && exam.hepatitisC() == DiseaseDetection.POSITIVE) return true;
-        if (exam.chagasDisease() != null && exam.chagasDisease() == DiseaseDetection.POSITIVE) return true;
-        if (exam.syphilis() != null && exam.syphilis() == DiseaseDetection.POSITIVE) return true;
-        if (exam.aids() != null && exam.aids() == DiseaseDetection.POSITIVE) return true;
-        return exam.htlv1_2() != null && exam.htlv1_2() == DiseaseDetection.POSITIVE;
+        if (exam.hepatitisB() == null || exam.hepatitisB() == DiseaseDetection.NEGATIVE) return false;
+        if (exam.hepatitisC() == null || exam.hepatitisC() == DiseaseDetection.NEGATIVE) return false;
+        if (exam.chagasDisease() == null || exam.chagasDisease() == DiseaseDetection.NEGATIVE) return false;
+        if (exam.syphilis() == null || exam.syphilis() == DiseaseDetection.NEGATIVE) return false;
+        if (exam.aids() == null || exam.aids() == DiseaseDetection.NEGATIVE) return false;
+        return exam.htlv1_2() != null && exam.htlv1_2() != DiseaseDetection.NEGATIVE;
     }
 }
