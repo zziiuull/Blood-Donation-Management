@@ -26,7 +26,7 @@ public class ExamRegistrationService {
         if (optionalExam.isEmpty()) throw new ExamNotFoundException("Exam not found");
         ImmunohematologyExam exam = (ImmunohematologyExam) optionalExam.get();
 
-        if (!isUnderAnalysis(exam)) throw new ExamAlreadyAnalyzedException("Can not approve exam already analyzed");
+        isUnderAnalysis(exam);
 
         if (!isFieldsValidForApproving(examDTO)) throw new InvalidExamAnalysisException("Immunohematology exam has invalid field(s) for approving");
 
@@ -36,8 +36,8 @@ public class ExamRegistrationService {
         return examRepository.save(exam);
     }
 
-    private boolean isUnderAnalysis(Exam exam){
-        return exam.getStatus() == ExamStatus.UNDER_ANALYSIS;
+    private void isUnderAnalysis(Exam exam){
+        if (exam.getStatus() != ExamStatus.UNDER_ANALYSIS) throw new ExamAlreadyAnalyzedException("Can not approve exam already analyzed");
     }
 
     private boolean isFieldsValidForApproving(ImmunohematologyExamDTO exam){
@@ -60,7 +60,7 @@ public class ExamRegistrationService {
         if (optionalExam.isEmpty()) throw new ExamNotFoundException("Exam not found");
         SerologicalScreeningExam exam = (SerologicalScreeningExam) optionalExam.get();
 
-        if (!isUnderAnalysis(exam)) throw new ExamAlreadyAnalyzedException("Can not approve exam already analyzed");
+        isUnderAnalysis(exam);
 
         if (!isFieldsValidForApproving(examDTO)) throw new InvalidExamAnalysisException("Serological screening exam has invalid field(s) for approving");
 
@@ -93,7 +93,7 @@ public class ExamRegistrationService {
         if (optionalExam.isEmpty()) throw new ExamNotFoundException("Exam not found");
         ImmunohematologyExam exam = (ImmunohematologyExam) optionalExam.get();
 
-        if (!isUnderAnalysis(exam)) throw new ExamAlreadyAnalyzedException("Can not approve exam already analyzed");
+        isUnderAnalysis(exam);
 
         if (!isFieldsValidForRejecting(examDTO)) throw new InvalidExamAnalysisException("Immunohematology exam has invalid field(s) for rejecting");
 
@@ -118,7 +118,7 @@ public class ExamRegistrationService {
         if (optionalExam.isEmpty()) throw new ExamNotFoundException("Exam not found");
         SerologicalScreeningExam exam = (SerologicalScreeningExam) optionalExam.get();
 
-        if (!isUnderAnalysis(exam)) throw new ExamAlreadyAnalyzedException("Can not approve exam already analyzed");
+        isUnderAnalysis(exam);
 
         if (!isFieldsValidForRejecting(examDTO)) throw new InvalidExamAnalysisException("Serological screening exam has invalid field(s) for rejecting");
 
