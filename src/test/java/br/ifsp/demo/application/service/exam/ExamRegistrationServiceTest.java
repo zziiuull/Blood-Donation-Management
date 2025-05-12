@@ -148,11 +148,21 @@ class ExamRegistrationServiceTest {
         @Test
         @Tag("UnitTest")
         @Tag("FunctionalTest")
-        @DisplayName("Should throw when exam is not found")
-        void shouldThrowWhenExamIsNotFound() {
+        @DisplayName("Should throw when immunohematology exam is not found")
+        void shouldThrowWhenImmunohematologyExamIsNotFound() {
             when(examRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> sut.registerRejectedExam(UUID.randomUUID(), rejectedImmunohematologyExamDTO)).isInstanceOf(ExamNotFoundException.class);
+        }
+
+        @Test
+        @Tag("UnitTest")
+        @Tag("StructuralTest")
+        @DisplayName("Should throw when serological screening exam is not found")
+        void shouldThrowWhenSerologicalScreeningExamIsNotFound() {
+            when(examRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> sut.registerApprovedExam(UUID.randomUUID(), approvedSerologicalScreeningExamDTO)).isInstanceOf(ExamNotFoundException.class);
         }
 
         @Test
