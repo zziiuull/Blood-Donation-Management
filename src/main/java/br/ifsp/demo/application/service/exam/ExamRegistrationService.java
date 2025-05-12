@@ -22,9 +22,7 @@ public class ExamRegistrationService {
     }
 
     public ImmunohematologyExam registerApprovedExam(UUID examId, ImmunohematologyExamDTO examDTO) {
-        Optional<Exam> optionalExam = examRepository.findById(examId);
-        if (optionalExam.isEmpty()) throw new ExamNotFoundException("Exam not found");
-        ImmunohematologyExam exam = (ImmunohematologyExam) optionalExam.get();
+        ImmunohematologyExam exam = retrieveImmunohematologyExam(examId);
 
         isUnderAnalysis(exam);
 
@@ -34,6 +32,12 @@ public class ExamRegistrationService {
         approveExam(exam);
 
         return examRepository.save(exam);
+    }
+
+    private ImmunohematologyExam retrieveImmunohematologyExam(UUID examId){
+        Optional<Exam> optionalExam = examRepository.findById(examId);
+        if (optionalExam.isEmpty()) throw new ExamNotFoundException("Exam not found");
+        return (ImmunohematologyExam) optionalExam.get();
     }
 
     private void isUnderAnalysis(Exam exam){
@@ -56,9 +60,7 @@ public class ExamRegistrationService {
     }
 
     public SerologicalScreeningExam registerApprovedExam(UUID examId, SerologicalScreeningExamDTO examDTO) {
-        Optional<Exam> optionalExam = examRepository.findById(examId);
-        if (optionalExam.isEmpty()) throw new ExamNotFoundException("Exam not found");
-        SerologicalScreeningExam exam = (SerologicalScreeningExam) optionalExam.get();
+        SerologicalScreeningExam exam = retrieveSerologicalScreeningExam(examId);
 
         isUnderAnalysis(exam);
 
@@ -68,6 +70,12 @@ public class ExamRegistrationService {
         approveExam(exam);
 
         return examRepository.save(exam);
+    }
+
+    private SerologicalScreeningExam retrieveSerologicalScreeningExam(UUID examId){
+        Optional<Exam> optionalExam = examRepository.findById(examId);
+        if (optionalExam.isEmpty()) throw new ExamNotFoundException("Exam not found");
+        return (SerologicalScreeningExam) optionalExam.get();
     }
 
     private boolean isFieldsValidForApproving(SerologicalScreeningExamDTO exam){
@@ -89,9 +97,7 @@ public class ExamRegistrationService {
     }
 
     public ImmunohematologyExam registerRejectedExam(UUID examId, ImmunohematologyExamDTO examDTO) {
-        Optional<Exam> optionalExam = examRepository.findById(examId);
-        if (optionalExam.isEmpty()) throw new ExamNotFoundException("Exam not found");
-        ImmunohematologyExam exam = (ImmunohematologyExam) optionalExam.get();
+        ImmunohematologyExam exam = retrieveImmunohematologyExam(examId);
 
         isUnderAnalysis(exam);
 
@@ -114,9 +120,7 @@ public class ExamRegistrationService {
     }
 
     public SerologicalScreeningExam registerRejectedExam(UUID examId, SerologicalScreeningExamDTO examDTO) {
-        Optional<Exam> optionalExam = examRepository.findById(examId);
-        if (optionalExam.isEmpty()) throw new ExamNotFoundException("Exam not found");
-        SerologicalScreeningExam exam = (SerologicalScreeningExam) optionalExam.get();
+        SerologicalScreeningExam exam = retrieveSerologicalScreeningExam(examId);
 
         isUnderAnalysis(exam);
 
