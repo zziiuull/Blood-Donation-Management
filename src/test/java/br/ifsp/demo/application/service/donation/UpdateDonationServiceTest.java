@@ -197,11 +197,21 @@ class UpdateDonationServiceTest {
         @Test
         @Tag("UnitTest")
         @Tag("FunctionalTest")
-        @DisplayName("should throw DonationNotFoundException when donation is not found")
-        void shouldThrowDonationNotFoundExceptionWhenDonationIsNotFound() {
+        @DisplayName("should throw DonationNotFoundException when donation is not found for approval")
+        void shouldThrowDonationNotFoundExceptionWhenDonationIsNotFoundForApproval() {
             when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> sut.approve(UUID.randomUUID())).isInstanceOf(DonationNotFoundException.class);
+        }
+
+        @Test
+        @Tag("UnitTest")
+        @Tag("StructuralTest")
+        @DisplayName("should throw DonationNotFoundException when donation is not found for rejection")
+        void shouldThrowDonationNotFoundExceptionWhenDonationIsNotFoundForRejection() {
+            when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> sut.reject(UUID.randomUUID())).isInstanceOf(DonationNotFoundException.class);
         }
     }
 }
