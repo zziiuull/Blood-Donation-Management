@@ -14,12 +14,16 @@ import br.ifsp.demo.exception.ExamAlreadyAnalyzedException;
 import br.ifsp.demo.exception.InvalidExamAnalysisException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -177,14 +181,22 @@ class ExamRegistrationServiceTest {
             assertThatThrownBy(() -> sut.registerApprovedExam(UUID.randomUUID(), approvedImmunohematologyExamDTO)).isInstanceOf(ExamAlreadyAnalyzedException.class);
         }
 
-        @Test
+        @ParameterizedTest
+        @MethodSource("invalidImmunohematologyExamForApproval")
         @Tag("UnitTest")
         @Tag("FunctionalTest")
-        @DisplayName("Should throw when analysis for approving immunohematology exam in contradictory")
-        void shouldThrowWhenAnalysisForApprovingImmunohematologyExamInContradictory() {
+        @DisplayName("Should throw when analysis for approving immunohematology exam is invalid")
+        void shouldThrowWhenAnalysisForApprovingImmunohematologyExamIsInvalid(ImmunohematologyExamDTO exam) {
             when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(immunohematologyExam));
 
-            assertThatThrownBy(() -> sut.registerApprovedExam(UUID.randomUUID(), new ImmunohematologyExamDTO(BloodType.A_POS, IrregularAntibodies.POSITIVE))).isInstanceOf(InvalidExamAnalysisException.class);
+            assertThatThrownBy(() -> sut.registerApprovedExam(UUID.randomUUID(), exam)).isInstanceOf(InvalidExamAnalysisException.class);
+        }
+
+        static Stream<Arguments> invalidImmunohematologyExamForApproval() {
+            return Stream.of(
+                    Arguments.of(new ImmunohematologyExamDTO(BloodType.A_POS, IrregularAntibodies.POSITIVE)),
+                    Arguments.of(new ImmunohematologyExamDTO(null, IrregularAntibodies.NEGATIVE))
+            );
         }
 
         @Test
