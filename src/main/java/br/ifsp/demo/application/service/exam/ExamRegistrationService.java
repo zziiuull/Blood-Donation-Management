@@ -110,7 +110,7 @@ public class ExamRegistrationService {
     }
 
     private boolean isFieldsValidForRejecting(ImmunohematologyExamDTO exam){
-        if (exam.bloodType() == null) return true;
+        if (exam.bloodType() == null) return false;
         return exam.irregularAntibodies() == IrregularAntibodies.POSITIVE;
     }
 
