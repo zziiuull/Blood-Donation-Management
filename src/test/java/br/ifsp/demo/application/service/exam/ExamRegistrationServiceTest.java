@@ -210,6 +210,17 @@ class ExamRegistrationServiceTest {
             assertThatThrownBy(() -> sut.registerApprovedExam(UUID.randomUUID(), exam)).isInstanceOf(InvalidExamAnalysisException.class);
         }
 
+        @ParameterizedTest
+        @MethodSource("invalidSerologicalScreeningExamForRejection")
+        @Tag("UnitTest")
+        @Tag("StructuralTest")
+        @DisplayName("Should throw when analysis for rejecting serological screening exam is invalid")
+        void shouldThrowWhenAnalysisForRejectingSerologicalScreeningExamIsInvalid(SerologicalScreeningExamDTO exam) {
+            when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(serologicalScreeningExam));
+
+            assertThatThrownBy(() -> sut.registerRejectedExam(UUID.randomUUID(), exam)).isInstanceOf(InvalidExamAnalysisException.class);
+        }
+
         static Stream<Arguments> invalidSerologicalScreeningExamForApproval() {
             return Stream.of(
                     Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.POSITIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE)),
@@ -227,14 +238,21 @@ class ExamRegistrationServiceTest {
             );
         }
 
-        @Test
-        @Tag("UnitTest")
-        @Tag("FunctionalTest")
-        @DisplayName("Should throw when exam is not found")
-        void shouldThrowWhenExamIsNotFound() {
-            when(examRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
-
-            assertThatThrownBy(() -> sut.registerRejectedExam(UUID.randomUUID(), new ImmunohematologyExamDTO(BloodType.A_POS, IrregularAntibodies.POSITIVE))).isInstanceOf(ExamNotFoundException.class);
+        static Stream<Arguments> invalidSerologicalScreeningExamForRejection() {
+            return Stream.of(
+                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.NEGATIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE)),
+                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.POSITIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE)),
+                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE)),
+                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE)),
+                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.POSITIVE)),
+                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.NEGATIVE)),
+                    Arguments.of(new SerologicalScreeningExamDTO(null, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE)),
+                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.POSITIVE, null, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE)),
+                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, null, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE)),
+                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, null, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE)),
+                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, null, DiseaseDetection.POSITIVE)),
+                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, null))
+            );
         }
     }
 }
