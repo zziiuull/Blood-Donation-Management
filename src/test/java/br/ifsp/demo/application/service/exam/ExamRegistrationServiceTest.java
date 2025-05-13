@@ -172,13 +172,49 @@ class ExamRegistrationServiceTest {
         @Test
         @Tag("TDD")
         @Tag("UnitTest")
-        @DisplayName("Should throw ExamAlreadyAnalyzedException when exam is no longer under analysis")
-        void shouldThrowExamAlreadyAnalyzedExceptionWhenExamIsNoLongerUnderAnalysis() {
+        @DisplayName("Should throw when immunohematology exam is no longer under analysis for approval")
+        void shouldThrowWhenImmunohematologyExamIsNoLongerUnderAnalysisForApproval() {
             immunohematologyExam.setStatus(ExamStatus.REJECTED);
 
             when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(immunohematologyExam));
 
             assertThatThrownBy(() -> sut.registerApprovedExam(UUID.randomUUID(), approvedImmunohematologyExamDTO)).isInstanceOf(ExamAlreadyAnalyzedException.class);
+        }
+
+        @Test
+        @Tag("MutationTest")
+        @Tag("UnitTest")
+        @DisplayName("Should throw when immunohematology exam is no longer under analysis for rejection")
+        void shouldThrowWhenImmunohematologyExamIsNoLongerUnderAnalysisForRejection() {
+            immunohematologyExam.setStatus(ExamStatus.REJECTED);
+
+            when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(immunohematologyExam));
+
+            assertThatThrownBy(() -> sut.registerRejectedExam(UUID.randomUUID(), rejectedImmunohematologyExamDTO)).isInstanceOf(ExamAlreadyAnalyzedException.class);
+        }
+
+        @Test
+        @Tag("MutationTest")
+        @Tag("UnitTest")
+        @DisplayName("Should throw when serological screening exam is no longer under analysis for approval")
+        void shouldThrowWhenSerologicalScreeningExamIsNoLongerUnderAnalysisForApproval() {
+            serologicalScreeningExam.setStatus(ExamStatus.REJECTED);
+
+            when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(serologicalScreeningExam));
+
+            assertThatThrownBy(() -> sut.registerApprovedExam(UUID.randomUUID(), approvedSerologicalScreeningExamDTO)).isInstanceOf(ExamAlreadyAnalyzedException.class);
+        }
+
+        @Test
+        @Tag("MutationTest")
+        @Tag("UnitTest")
+        @DisplayName("Should throw when serological screening exam is no longer under analysis for rejection")
+        void shouldThrowWhenSerologicalScreeningExamIsNoLongerUnderAnalysisForRejection() {
+            serologicalScreeningExam.setStatus(ExamStatus.REJECTED);
+
+            when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(serologicalScreeningExam));
+
+            assertThatThrownBy(() -> sut.registerRejectedExam(UUID.randomUUID(), rejectedSerologicalScreeningExamDTO)).isInstanceOf(ExamAlreadyAnalyzedException.class);
         }
 
         @ParameterizedTest
