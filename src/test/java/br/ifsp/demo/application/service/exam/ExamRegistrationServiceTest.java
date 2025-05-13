@@ -21,6 +21,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -44,6 +45,7 @@ class ExamRegistrationServiceTest {
     private ImmunohematologyExamDTO rejectedImmunohematologyExamDTO;
     private SerologicalScreeningExamDTO approvedSerologicalScreeningExamDTO;
     private SerologicalScreeningExamDTO rejectedSerologicalScreeningExamDTO;
+    private LocalDateTime updatedAt;
 
     @BeforeEach
     void setUp() {
@@ -60,6 +62,7 @@ class ExamRegistrationServiceTest {
         rejectedImmunohematologyExamDTO = new ImmunohematologyExamDTO(BloodType.A_POS, IrregularAntibodies.POSITIVE);
         approvedSerologicalScreeningExamDTO = new SerologicalScreeningExamDTO(DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE);
         rejectedSerologicalScreeningExamDTO = new SerologicalScreeningExamDTO(DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE);
+        updatedAt = LocalDateTime.of(2020, 5, 10, 10, 10, 10);
     }
 
     @Nested
@@ -73,10 +76,10 @@ class ExamRegistrationServiceTest {
             when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(immunohematologyExam));
             when(examRepository.save(any(ImmunohematologyExam.class))).thenReturn(immunohematologyExam);
 
-            ImmunohematologyExam result = sut.registerApprovedExam(UUID.randomUUID(), approvedImmunohematologyExamDTO);
+            ImmunohematologyExam result = sut.registerApprovedExam(UUID.randomUUID(), approvedImmunohematologyExamDTO, updatedAt);
 
             assertThat(result.getStatus()).isEqualTo(ExamStatus.APPROVED);
-            assertThat(result.getUpdatedAt()).isNotNull();
+            assertThat(result.getUpdatedAt()).isEqualTo(updatedAt);
             assertThat(result.getBloodType()).isEqualTo(BloodType.A_POS);
             assertThat(result.getIrregularAntibodies()).isEqualTo(IrregularAntibodies.NEGATIVE);
 
@@ -91,10 +94,10 @@ class ExamRegistrationServiceTest {
             when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(serologicalScreeningExam));
             when(examRepository.save(any(SerologicalScreeningExam.class))).thenReturn(serologicalScreeningExam);
 
-            SerologicalScreeningExam result = sut.registerApprovedExam(UUID.randomUUID(), approvedSerologicalScreeningExamDTO);
+            SerologicalScreeningExam result = sut.registerApprovedExam(UUID.randomUUID(), approvedSerologicalScreeningExamDTO, updatedAt);
 
             assertThat(result.getStatus()).isEqualTo(ExamStatus.APPROVED);
-            assertThat(result.getUpdatedAt()).isNotNull();
+            assertThat(result.getUpdatedAt()).isEqualTo(updatedAt);
             assertThat(result.getHepatitisB()).isEqualTo(DiseaseDetection.NEGATIVE);
             assertThat(result.getHepatitisC()).isEqualTo(DiseaseDetection.NEGATIVE);
             assertThat(result.getChagasDisease()).isEqualTo(DiseaseDetection.NEGATIVE);
@@ -113,10 +116,10 @@ class ExamRegistrationServiceTest {
             when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(immunohematologyExam));
             when(examRepository.save(any(ImmunohematologyExam.class))).thenReturn(immunohematologyExam);
 
-            ImmunohematologyExam result = sut.registerRejectedExam(UUID.randomUUID(), rejectedImmunohematologyExamDTO);
+            ImmunohematologyExam result = sut.registerRejectedExam(UUID.randomUUID(), rejectedImmunohematologyExamDTO, updatedAt);
 
             assertThat(result.getStatus()).isEqualTo(ExamStatus.REJECTED);
-            assertThat(result.getUpdatedAt()).isNotNull();
+            assertThat(result.getUpdatedAt()).isEqualTo(updatedAt);
             assertThat(result.getBloodType()).isEqualTo(BloodType.A_POS);
             assertThat(result.getIrregularAntibodies()).isEqualTo(IrregularAntibodies.POSITIVE);
 
@@ -131,10 +134,10 @@ class ExamRegistrationServiceTest {
             when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(serologicalScreeningExam));
             when(examRepository.save(any(SerologicalScreeningExam.class))).thenReturn(serologicalScreeningExam);
 
-            SerologicalScreeningExam result = sut.registerRejectedExam(UUID.randomUUID(), rejectedSerologicalScreeningExamDTO);
+            SerologicalScreeningExam result = sut.registerRejectedExam(UUID.randomUUID(), rejectedSerologicalScreeningExamDTO, updatedAt);
 
             assertThat(result.getStatus()).isEqualTo(ExamStatus.REJECTED);
-            assertThat(result.getUpdatedAt()).isNotNull();
+            assertThat(result.getUpdatedAt()).isEqualTo(updatedAt);
             assertThat(result.getHepatitisB()).isEqualTo(DiseaseDetection.POSITIVE);
             assertThat(result.getHepatitisC()).isEqualTo(DiseaseDetection.POSITIVE);
             assertThat(result.getChagasDisease()).isEqualTo(DiseaseDetection.POSITIVE);
@@ -156,7 +159,7 @@ class ExamRegistrationServiceTest {
         void shouldThrowWhenImmunohematologyExamIsNotFound() {
             when(examRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> sut.registerRejectedExam(UUID.randomUUID(), rejectedImmunohematologyExamDTO)).isInstanceOf(ExamNotFoundException.class);
+            assertThatThrownBy(() -> sut.registerRejectedExam(UUID.randomUUID(), rejectedImmunohematologyExamDTO, updatedAt)).isInstanceOf(ExamNotFoundException.class);
         }
 
         @Test
@@ -166,7 +169,7 @@ class ExamRegistrationServiceTest {
         void shouldThrowWhenSerologicalScreeningExamIsNotFound() {
             when(examRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> sut.registerApprovedExam(UUID.randomUUID(), approvedSerologicalScreeningExamDTO)).isInstanceOf(ExamNotFoundException.class);
+            assertThatThrownBy(() -> sut.registerApprovedExam(UUID.randomUUID(), approvedSerologicalScreeningExamDTO, updatedAt)).isInstanceOf(ExamNotFoundException.class);
         }
 
         @Test
@@ -178,7 +181,7 @@ class ExamRegistrationServiceTest {
 
             when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(immunohematologyExam));
 
-            assertThatThrownBy(() -> sut.registerApprovedExam(UUID.randomUUID(), approvedImmunohematologyExamDTO)).isInstanceOf(ExamAlreadyAnalyzedException.class);
+            assertThatThrownBy(() -> sut.registerApprovedExam(UUID.randomUUID(), approvedImmunohematologyExamDTO, updatedAt)).isInstanceOf(ExamAlreadyAnalyzedException.class);
         }
 
         @Test
@@ -190,7 +193,7 @@ class ExamRegistrationServiceTest {
 
             when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(immunohematologyExam));
 
-            assertThatThrownBy(() -> sut.registerRejectedExam(UUID.randomUUID(), rejectedImmunohematologyExamDTO)).isInstanceOf(ExamAlreadyAnalyzedException.class);
+            assertThatThrownBy(() -> sut.registerRejectedExam(UUID.randomUUID(), rejectedImmunohematologyExamDTO, updatedAt)).isInstanceOf(ExamAlreadyAnalyzedException.class);
         }
 
         @Test
@@ -202,7 +205,7 @@ class ExamRegistrationServiceTest {
 
             when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(serologicalScreeningExam));
 
-            assertThatThrownBy(() -> sut.registerApprovedExam(UUID.randomUUID(), approvedSerologicalScreeningExamDTO)).isInstanceOf(ExamAlreadyAnalyzedException.class);
+            assertThatThrownBy(() -> sut.registerApprovedExam(UUID.randomUUID(), approvedSerologicalScreeningExamDTO, updatedAt)).isInstanceOf(ExamAlreadyAnalyzedException.class);
         }
 
         @Test
@@ -214,7 +217,7 @@ class ExamRegistrationServiceTest {
 
             when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(serologicalScreeningExam));
 
-            assertThatThrownBy(() -> sut.registerRejectedExam(UUID.randomUUID(), rejectedSerologicalScreeningExamDTO)).isInstanceOf(ExamAlreadyAnalyzedException.class);
+            assertThatThrownBy(() -> sut.registerRejectedExam(UUID.randomUUID(), rejectedSerologicalScreeningExamDTO, updatedAt)).isInstanceOf(ExamAlreadyAnalyzedException.class);
         }
 
         @ParameterizedTest
@@ -225,7 +228,7 @@ class ExamRegistrationServiceTest {
         void shouldThrowWhenAnalysisForApprovingImmunohematologyExamIsInvalid(ImmunohematologyExamDTO exam) {
             when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(immunohematologyExam));
 
-            assertThatThrownBy(() -> sut.registerApprovedExam(UUID.randomUUID(), exam)).isInstanceOf(InvalidExamAnalysisException.class);
+            assertThatThrownBy(() -> sut.registerApprovedExam(UUID.randomUUID(), exam, updatedAt)).isInstanceOf(InvalidExamAnalysisException.class);
         }
 
         static Stream<Arguments> invalidImmunohematologyExamForApproval() {
@@ -243,7 +246,7 @@ class ExamRegistrationServiceTest {
         void shouldThrowWhenAnalysisForRejectingImmunohematologyExamIsInvalid(ImmunohematologyExamDTO exam) {
             when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(immunohematologyExam));
 
-            assertThatThrownBy(() -> sut.registerRejectedExam(UUID.randomUUID(), exam)).isInstanceOf(InvalidExamAnalysisException.class);
+            assertThatThrownBy(() -> sut.registerRejectedExam(UUID.randomUUID(), exam, updatedAt)).isInstanceOf(InvalidExamAnalysisException.class);
         }
 
         static Stream<Arguments> invalidImmunohematologyExamForRejection() {
@@ -261,7 +264,7 @@ class ExamRegistrationServiceTest {
         void shouldThrowWhenAnalysisForApprovingSerologicalScreeningExamIsInvalid(SerologicalScreeningExamDTO exam) {
             when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(serologicalScreeningExam));
 
-            assertThatThrownBy(() -> sut.registerApprovedExam(UUID.randomUUID(), exam)).isInstanceOf(InvalidExamAnalysisException.class);
+            assertThatThrownBy(() -> sut.registerApprovedExam(UUID.randomUUID(), exam, updatedAt)).isInstanceOf(InvalidExamAnalysisException.class);
         }
 
         @ParameterizedTest
@@ -272,7 +275,7 @@ class ExamRegistrationServiceTest {
         void shouldThrowWhenAnalysisForRejectingSerologicalScreeningExamIsInvalid(SerologicalScreeningExamDTO exam) {
             when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(serologicalScreeningExam));
 
-            assertThatThrownBy(() -> sut.registerRejectedExam(UUID.randomUUID(), exam)).isInstanceOf(InvalidExamAnalysisException.class);
+            assertThatThrownBy(() -> sut.registerRejectedExam(UUID.randomUUID(), exam, updatedAt)).isInstanceOf(InvalidExamAnalysisException.class);
         }
 
         static Stream<Arguments> invalidSerologicalScreeningExamForApproval() {
