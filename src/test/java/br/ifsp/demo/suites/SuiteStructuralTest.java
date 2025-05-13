@@ -7,7 +7,7 @@ import org.junit.platform.suite.api.SuiteDisplayName;
 
 @Suite
 @SelectPackages({"br.ifsp.demo.application.service"})
-@SuiteDisplayName("All functional tests")
-@IncludeTags({"FunctionalTest"})
-public class SuitFunctionalTest {
+@SuiteDisplayName("All structural tests")
+@IncludeTags({"StructuralTest"})
+public class SuiteStructuralTest {
 }

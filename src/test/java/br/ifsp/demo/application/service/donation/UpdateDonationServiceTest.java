@@ -5,6 +5,7 @@ import br.ifsp.demo.domain.model.donation.Appointment;
 import br.ifsp.demo.domain.model.donation.Donation;
 import br.ifsp.demo.domain.model.donation.DonationStatus;
 import br.ifsp.demo.domain.model.donor.Donor;
+import br.ifsp.demo.domain.model.exam.Exam;
 import br.ifsp.demo.domain.model.exam.ExamStatus;
 import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
@@ -146,15 +147,29 @@ class UpdateDonationServiceTest {
             );
         }
 
-        @Test
+        @ParameterizedTest
+        @MethodSource("foundExam")
         @Tag("UnitTest")
         @Tag("FunctionalTest")
         @DisplayName("should throw when at least one exam is not found")
-        void shouldThrowWhenAtLeastOneExamIsNotFound() {
+        void shouldThrowWhenAtLeastOneExamIsNotFound(Exam exam) {
             when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.of(donation));
-            when(examRepository.findAllByDonationId(any(UUID.class))).thenReturn(List.of(immunohematologyApproved));
+            when(examRepository.findAllByDonationId(any(UUID.class))).thenReturn(List.of(exam));
 
             assertThatThrownBy(() -> sut.approve(UUID.randomUUID())).isInstanceOf(ExamNotFoundException.class);
+        }
+
+        static Stream<Arguments> foundExam(){
+            Donation donation = mock(Donation.class);
+            ImmunohematologyExam immunohematologyApproved = new ImmunohematologyExam(donation);
+            immunohematologyApproved.setStatus(ExamStatus.APPROVED);
+            SerologicalScreeningExam serologicalScreeningApproved = new SerologicalScreeningExam(donation);
+            serologicalScreeningApproved.setStatus(ExamStatus.APPROVED);
+
+            return Stream.of(
+                    Arguments.of(immunohematologyApproved),
+                    Arguments.of(serologicalScreeningApproved)
+            );
         }
 
         @Test
@@ -182,11 +197,21 @@ class UpdateDonationServiceTest {
         @Test
         @Tag("UnitTest")
         @Tag("FunctionalTest")
-        @DisplayName("should throw DonationNotFoundException when donation is not found")
-        void shouldThrowDonationNotFoundExceptionWhenDonationIsNotFound() {
+        @DisplayName("should throw DonationNotFoundException when donation is not found for approval")
+        void shouldThrowDonationNotFoundExceptionWhenDonationIsNotFoundForApproval() {
             when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> sut.approve(UUID.randomUUID())).isInstanceOf(DonationNotFoundException.class);
+        }
+
+        @Test
+        @Tag("UnitTest")
+        @Tag("StructuralTest")
+        @DisplayName("should throw DonationNotFoundException when donation is not found for rejection")
+        void shouldThrowDonationNotFoundExceptionWhenDonationIsNotFoundForRejection() {
+            when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> sut.reject(UUID.randomUUID())).isInstanceOf(DonationNotFoundException.class);
         }
     }
 }
