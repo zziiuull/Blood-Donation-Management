@@ -24,6 +24,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -53,6 +54,7 @@ class UpdateDonationServiceTest {
     private ImmunohematologyExam immunohematologyRejected;
     private SerologicalScreeningExam serologicalScreeningApproved;
     private SerologicalScreeningExam serologicalScreeningRejected;
+    private LocalDateTime updatedAt;
 
     @BeforeEach
     void setUp() {
@@ -71,6 +73,7 @@ class UpdateDonationServiceTest {
         serologicalScreeningApproved.setStatus(ExamStatus.APPROVED);
         serologicalScreeningRejected = new SerologicalScreeningExam(donation);
         serologicalScreeningRejected.setStatus(ExamStatus.REJECTED);
+        updatedAt = LocalDateTime.of(2020, 5, 10, 10, 10, 10);
     }
 
     @Nested
@@ -85,10 +88,10 @@ class UpdateDonationServiceTest {
             when(examRepository.findAllByDonationId(any(UUID.class))).thenReturn(List.of(immunohematologyApproved, serologicalScreeningApproved));
             when(donationRepository.save(any(Donation.class))).thenReturn(donation);
 
-            Donation result = sut.approve(UUID.randomUUID());
+            Donation result = sut.approve(UUID.randomUUID(), updatedAt);
 
             assertThat(result.getStatus()).isEqualTo(DonationStatus.APPROVED);
-            assertThat(result.getUpdatedAt()).isNotNull();
+            assertThat(result.getUpdatedAt()).isEqualTo(updatedAt);
             verify(donationRepository, times(1)).save(any(Donation.class));
             verify(notifierService, times(1)).notify(any(Donor.class), anyString());
         }
@@ -102,11 +105,10 @@ class UpdateDonationServiceTest {
             when(examRepository.findAllByDonationId(any(UUID.class))).thenReturn(List.of(immunohematologyRejected, serologicalScreeningRejected));
             when(donationRepository.save(any(Donation.class))).thenReturn(donation);
 
-            Donation result = sut.reject(UUID.randomUUID());
+            Donation result = sut.reject(UUID.randomUUID(), updatedAt);
 
             assertThat(result.getStatus()).isEqualTo(DonationStatus.REJECTED);
-            assertThat(result.getUpdatedAt()).isNotNull();
-            verify(donationRepository, times(1)).save(any(Donation.class));
+            assertThat(result.getUpdatedAt()).isEqualTo(updatedAt);            verify(donationRepository, times(1)).save(any(Donation.class));
             verify(notifierService, times(1)).notify(any(Donor.class), anyString());
         }
     }
@@ -123,7 +125,7 @@ class UpdateDonationServiceTest {
             when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.of(donation));
             when(examRepository.findAllByDonationId(any(UUID.class))).thenReturn(List.of(immunohematologyExam, serologicalScreeningExam));
 
-            assertThatThrownBy(() -> sut.approve(UUID.randomUUID())).isInstanceOf(CannotFinishDonationWithExamUnderAnalysisException.class);
+            assertThatThrownBy(() -> sut.approve(UUID.randomUUID(), updatedAt)).isInstanceOf(CannotFinishDonationWithExamUnderAnalysisException.class);
         }
 
         static Stream<Arguments> examsUnderAnalysis() {
@@ -156,7 +158,7 @@ class UpdateDonationServiceTest {
             when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.of(donation));
             when(examRepository.findAllByDonationId(any(UUID.class))).thenReturn(List.of(exam));
 
-            assertThatThrownBy(() -> sut.approve(UUID.randomUUID())).isInstanceOf(ExamNotFoundException.class);
+            assertThatThrownBy(() -> sut.approve(UUID.randomUUID(), updatedAt)).isInstanceOf(ExamNotFoundException.class);
         }
 
         static Stream<Arguments> foundExam(){
@@ -180,7 +182,7 @@ class UpdateDonationServiceTest {
             when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.of(donation));
             when(examRepository.findAllByDonationId(any(UUID.class))).thenReturn(List.of(immunohematologyRejected, serologicalScreeningApproved));
 
-            assertThatThrownBy(() -> sut.approve(UUID.randomUUID())).isInstanceOf(InvalidDonationAnalysisException.class);
+            assertThatThrownBy(() -> sut.approve(UUID.randomUUID(), updatedAt)).isInstanceOf(InvalidDonationAnalysisException.class);
         }
 
         @Test
@@ -191,7 +193,7 @@ class UpdateDonationServiceTest {
             when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.of(donation));
             when(examRepository.findAllByDonationId(any(UUID.class))).thenReturn(List.of(immunohematologyApproved, serologicalScreeningRejected));
 
-            assertThatThrownBy(() -> sut.approve(UUID.randomUUID())).isInstanceOf(InvalidDonationAnalysisException.class);
+            assertThatThrownBy(() -> sut.approve(UUID.randomUUID(), updatedAt)).isInstanceOf(InvalidDonationAnalysisException.class);
         }
 
         @Test
@@ -201,7 +203,7 @@ class UpdateDonationServiceTest {
         void shouldThrowDonationNotFoundExceptionWhenDonationIsNotFoundForApproval() {
             when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> sut.approve(UUID.randomUUID())).isInstanceOf(DonationNotFoundException.class);
+            assertThatThrownBy(() -> sut.approve(UUID.randomUUID(), updatedAt)).isInstanceOf(DonationNotFoundException.class);
         }
 
         @Test
@@ -211,7 +213,7 @@ class UpdateDonationServiceTest {
         void shouldThrowDonationNotFoundExceptionWhenDonationIsNotFoundForRejection() {
             when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> sut.reject(UUID.randomUUID())).isInstanceOf(DonationNotFoundException.class);
+            assertThatThrownBy(() -> sut.reject(UUID.randomUUID(), updatedAt)).isInstanceOf(DonationNotFoundException.class);
         }
     }
 }
