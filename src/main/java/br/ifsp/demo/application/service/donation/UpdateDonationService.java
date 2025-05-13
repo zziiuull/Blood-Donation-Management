@@ -32,7 +32,7 @@ public class UpdateDonationService {
         this.notifierService = notifierService;
     }
 
-    public Donation approve(UUID donationId){
+    public Donation approve(UUID donationId, LocalDateTime updatedAt){
         Optional<Donation> optionalDonation = donationRepository.findById(donationId);
         if (optionalDonation.isEmpty()) throw new DonationNotFoundException("Donation not found");
         Donation donation = optionalDonation.get();
@@ -40,7 +40,7 @@ public class UpdateDonationService {
         isExamsAnalyzed(donationId, ExamStatus.APPROVED);
 
         donation.setStatus(DonationStatus.APPROVED);
-        donation.setUpdatedAt(LocalDateTime.now());
+        donation.setUpdatedAt(updatedAt);
 
         Donation saved = donationRepository.save(donation);
 
@@ -73,7 +73,7 @@ public class UpdateDonationService {
             throw new InvalidDonationAnalysisException("Serological screening exam doesn't have correct status for this donation analysis");
     }
 
-    public Donation reject(UUID donationId){
+    public Donation reject(UUID donationId, LocalDateTime updatedAt){
         Optional<Donation> optionalDonation = donationRepository.findById(donationId);
         if (optionalDonation.isEmpty()) throw new DonationNotFoundException("Donation not found");
         Donation donation = optionalDonation.get();
@@ -81,7 +81,7 @@ public class UpdateDonationService {
         isExamsAnalyzed(donationId, ExamStatus.REJECTED);
 
         donation.setStatus(DonationStatus.REJECTED);
-        donation.setUpdatedAt(LocalDateTime.now());
+        donation.setUpdatedAt(updatedAt);
 
         Donation saved = donationRepository.save(donation);
 
