@@ -3,7 +3,7 @@ package br.ifsp.demo.controller.donation;
 import br.ifsp.demo.application.service.donation.DonationRegisterService;
 import br.ifsp.demo.application.service.donation.UpdateDonationService;
 import br.ifsp.demo.application.service.donation.ViewDonationDetailsService;
-import br.ifsp.demo.application.service.donation.dto.DonationDetailsDTO;
+import br.ifsp.demo.application.service.dto.donation.DonationDetailsDTO;
 import br.ifsp.demo.domain.model.donation.Donation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;

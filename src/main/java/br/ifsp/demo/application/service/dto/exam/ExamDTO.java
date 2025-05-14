@@ -1,4 +1,4 @@
-package br.ifsp.demo.application.service.donation.dto;
+package br.ifsp.demo.application.service.dto.exam;
 
 import br.ifsp.demo.domain.model.exam.ExamStatus;
 

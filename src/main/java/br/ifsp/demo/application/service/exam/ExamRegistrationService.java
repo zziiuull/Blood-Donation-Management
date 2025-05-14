@@ -1,7 +1,7 @@
 package br.ifsp.demo.application.service.exam;
 
-import br.ifsp.demo.application.service.exam.dto.ImmunohematologyExamDTO;
-import br.ifsp.demo.application.service.exam.dto.SerologicalScreeningExamDTO;
+import br.ifsp.demo.application.service.dto.exam.ImmunohematologyExamDTO;
+import br.ifsp.demo.application.service.dto.exam.SerologicalScreeningExamDTO;
 import br.ifsp.demo.domain.model.exam.*;
 import br.ifsp.demo.domain.repository.exam.ExamRepository;
 import br.ifsp.demo.exception.ExamAlreadyAnalyzedException;
