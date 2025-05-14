@@ -1,8 +1,9 @@
 package br.ifsp.demo.application.service.donation;
 
-import br.ifsp.demo.application.service.donation.dto.DonationDetailsDTO;
+import br.ifsp.demo.application.service.dto.donation.DonationDetailsDTO;
 import br.ifsp.demo.domain.model.donation.Donation;
 import br.ifsp.demo.domain.model.donation.DonationStatus;
+import br.ifsp.demo.domain.model.exam.ExamStatus;
 import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.domain.repository.donation.DonationRepository;
@@ -17,6 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -46,8 +48,21 @@ class ViewDonationDetailsServiceTest {
         void shouldReturnDonationDetailsWhenDonationExists() {
             UUID donationId = UUID.randomUUID();
 
+            UUID immunoId = UUID.randomUUID();
+            UUID seroId = UUID.randomUUID();
+            LocalDateTime immunoDate = LocalDateTime.now().minusHours(2);
+            LocalDateTime seroDate = LocalDateTime.now().minusHours(1);
+
             ImmunohematologyExam immunohematologyExam = mock(ImmunohematologyExam.class);
+            when(immunohematologyExam.getId()).thenReturn(immunoId);
+            when(immunohematologyExam.getStatus()).thenReturn(ExamStatus.APPROVED);
+            when(immunohematologyExam.getCreatedAt()).thenReturn(immunoDate);
+
             SerologicalScreeningExam serologicalScreeningExam = mock(SerologicalScreeningExam.class);
+            when(serologicalScreeningExam.getId()).thenReturn(seroId);
+            when(serologicalScreeningExam.getStatus()).thenReturn(ExamStatus.APPROVED);
+            when(serologicalScreeningExam.getCreatedAt()).thenReturn(seroDate);
+
             Donation donation = mock(Donation.class);
 
             when(donation.getId()).thenReturn(donationId);
@@ -61,7 +76,12 @@ class ViewDonationDetailsServiceTest {
             assertThat(result).isNotNull();
             assertThat(result.id()).isEqualTo(donationId);
             assertThat(result.status()).isEqualTo(DonationStatus.UNDER_ANALYSIS);
-            assertThat(result.exams()).hasSize(2);
+            assertThat(result.exams()).isNotNull().hasSize(2);
+            assertThat(result.exams()).allSatisfy(exam -> {
+                assertThat(exam.id()).isNotNull();
+                assertThat(exam.status()).isNotNull();
+                assertThat(exam.performedAt()).isNotNull();
+            });
 
             verify(donationRepository, times(1)).findById(donationId);
             verify(examRepository, times(1)).findAllByDonationId(donationId);
