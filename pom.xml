@@ -162,8 +162,14 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <targetClasses></targetClasses>
-                    <targetTests></targetTests>
+                    <targetClasses>
+                        <param>br.ifsp.demo.application.service.donation*</param>
+                        <param>br.ifsp.demo.application.service.exam*</param>
+                    </targetClasses>
+                    <targetTests>
+                        <param>br.ifsp.demo.application.service.donation*</param>
+                        <param>br.ifsp.demo.application.service.exam*</param>
+                    </targetTests>
                 </configuration>
             </plugin>
             <plugin>

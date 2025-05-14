@@ -1,5 +1,6 @@
-package br.ifsp.demo.application.service.donation.dto;
+package br.ifsp.demo.application.service.dto.donation;
 
+import br.ifsp.demo.application.service.dto.exam.ExamDTO;
 import br.ifsp.demo.domain.model.donation.DonationStatus;
 
 import java.time.LocalDateTime;

@@ -3,8 +3,8 @@ package br.ifsp.demo.controller.exam;
 import br.ifsp.demo.application.service.exam.ExamRegistrationService;
 import br.ifsp.demo.application.service.exam.ExamRequestService;
 import br.ifsp.demo.application.service.exam.ViewExamDetailsService;
-import br.ifsp.demo.application.service.exam.dto.ImmunohematologyExamDTO;
-import br.ifsp.demo.application.service.exam.dto.SerologicalScreeningExamDTO;
+import br.ifsp.demo.application.service.dto.exam.ImmunohematologyExamDTO;
+import br.ifsp.demo.application.service.dto.exam.SerologicalScreeningExamDTO;
 import br.ifsp.demo.controller.exam.request.ImmunohematologyExamRequest;
 import br.ifsp.demo.controller.exam.request.SerologicalScreeningExamRequest;
 import br.ifsp.demo.controller.exam.response.ImmunohematologyExamResponse;
@@ -20,6 +20,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @RestController
@@ -64,7 +65,8 @@ public class ExamController {
         validateDonationExists(donationId);
         return ResponseEntity.ok(examRegistrationService.registerApprovedExam(
                 examId,
-                ImmunohematologyExamDTO.fromRequest(exam)));
+                ImmunohematologyExamDTO.fromRequest(exam),
+                LocalDateTime.now()));
     }
 
     @PostMapping("/register/donation/{donationId}/serologicalscreening/approve/{examId}")
@@ -76,7 +78,8 @@ public class ExamController {
         validateDonationExists(donationId);
         return ResponseEntity.ok(examRegistrationService.registerApprovedExam(
                 examId,
-                SerologicalScreeningExamDTO.fromRequest(exam)));
+                SerologicalScreeningExamDTO.fromRequest(exam),
+                LocalDateTime.now()));
     }
 
     @PostMapping("/register/donation/{donationId}/immunohematology/reject/{examId}")
@@ -88,7 +91,8 @@ public class ExamController {
         validateDonationExists(donationId);
         return ResponseEntity.ok(examRegistrationService.registerRejectedExam(
                 examId,
-                ImmunohematologyExamDTO.fromRequest(exam)));
+                ImmunohematologyExamDTO.fromRequest(exam),
+                LocalDateTime.now()));
     }
 
     @PostMapping("/register/donation/{donationId}/serologicalscreening/reject/{examId}")
@@ -100,7 +104,8 @@ public class ExamController {
         validateDonationExists(donationId);
         return ResponseEntity.ok(examRegistrationService.registerRejectedExam(
                 examId,
-                SerologicalScreeningExamDTO.fromRequest(exam)));
+                SerologicalScreeningExamDTO.fromRequest(exam),
+                LocalDateTime.now()));
     }
 
     @GetMapping("/view/immunohematology/{donationId}")

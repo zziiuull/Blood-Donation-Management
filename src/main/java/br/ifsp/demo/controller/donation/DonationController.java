@@ -3,12 +3,14 @@ package br.ifsp.demo.controller.donation;
 import br.ifsp.demo.application.service.donation.DonationRegisterService;
 import br.ifsp.demo.application.service.donation.UpdateDonationService;
 import br.ifsp.demo.application.service.donation.ViewDonationDetailsService;
-import br.ifsp.demo.application.service.donation.dto.DonationDetailsDTO;
+import br.ifsp.demo.application.service.dto.donation.DonationDetailsDTO;
 import br.ifsp.demo.domain.model.donation.Donation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @RestController
@@ -34,13 +36,13 @@ public class DonationController {
 
     @PutMapping("/approve/{id}")
     public ResponseEntity<DonationResponse> approve(@PathVariable UUID id) {
-        Donation donation = updateDonationService.approve(id);
+        Donation donation = updateDonationService.approve(id, LocalDateTime.now());
         return ResponseEntity.ok(new DonationResponse(donation));
     }
 
     @PutMapping("/reject/{id}")
     public ResponseEntity<DonationResponse> reject(@PathVariable UUID id) {
-        Donation donation = updateDonationService.reject(id);
+        Donation donation = updateDonationService.reject(id, LocalDateTime.now());
         return ResponseEntity.ok(new DonationResponse(donation));
     }
 }

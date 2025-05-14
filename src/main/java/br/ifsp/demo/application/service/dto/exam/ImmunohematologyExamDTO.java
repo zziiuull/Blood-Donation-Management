@@ -1,4 +1,4 @@
-package br.ifsp.demo.application.service.exam.dto;
+package br.ifsp.demo.application.service.dto.exam;
 
 import br.ifsp.demo.controller.exam.request.ImmunohematologyExamRequest;
 import br.ifsp.demo.domain.model.common.BloodType;
