@@ -190,7 +190,7 @@ class ExamRegistrationServiceTest {
         }
 
         @Test
-        @Tag("MutationTest")
+        @Tag("Mutation")
         @Tag("UnitTest")
         @DisplayName("Should throw when immunohematology exam is no longer under analysis for rejection")
         void shouldThrowWhenImmunohematologyExamIsNoLongerUnderAnalysisForRejection() {
@@ -202,7 +202,7 @@ class ExamRegistrationServiceTest {
         }
 
         @Test
-        @Tag("MutationTest")
+        @Tag("Mutation")
         @Tag("UnitTest")
         @DisplayName("Should throw when serological screening exam is no longer under analysis for approval")
         void shouldThrowWhenSerologicalScreeningExamIsNoLongerUnderAnalysisForApproval() {
@@ -214,7 +214,7 @@ class ExamRegistrationServiceTest {
         }
 
         @Test
-        @Tag("MutationTest")
+        @Tag("Mutation")
         @Tag("UnitTest")
         @DisplayName("Should throw when serological screening exam is no longer under analysis for rejection")
         void shouldThrowWhenSerologicalScreeningExamIsNoLongerUnderAnalysisForRejection() {
