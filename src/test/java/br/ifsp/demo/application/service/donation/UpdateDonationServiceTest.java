@@ -80,6 +80,7 @@ class UpdateDonationServiceTest {
     @DisplayName("For valid tests")
     class ValidTests {
         @Test
+        @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should approve donation")
@@ -97,6 +98,7 @@ class UpdateDonationServiceTest {
         }
 
         @Test
+        @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should reject donation")
@@ -118,6 +120,7 @@ class UpdateDonationServiceTest {
     class InvalidTests {
         @ParameterizedTest
         @MethodSource("examsUnderAnalysis")
+        @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should throw when at least one exam is under analysis")
@@ -151,6 +154,7 @@ class UpdateDonationServiceTest {
 
         @ParameterizedTest
         @MethodSource("foundExam")
+        @Tag("Functional")
         @Tag("UnitTest")
         @Tag("FunctionalTest")
         @DisplayName("should throw when at least one exam is not found")
@@ -175,6 +179,7 @@ class UpdateDonationServiceTest {
         }
 
         @Test
+        @Tag("Functional")
         @Tag("UnitTest")
         @Tag("FunctionalTest")
         @DisplayName("should throw when analysis is contradictory for approval")
@@ -186,6 +191,7 @@ class UpdateDonationServiceTest {
         }
 
         @Test
+        @Tag("Functional")
         @Tag("UnitTest")
         @Tag("FunctionalTest")
         @DisplayName("should throw when analysis is contradictory for rejection")
@@ -197,6 +203,7 @@ class UpdateDonationServiceTest {
         }
 
         @Test
+        @Tag("Functional")
         @Tag("UnitTest")
         @Tag("FunctionalTest")
         @DisplayName("should throw DonationNotFoundException when donation is not found for approval")
@@ -207,6 +214,7 @@ class UpdateDonationServiceTest {
         }
 
         @Test
+        @Tag("Functional")
         @Tag("UnitTest")
         @Tag("StructuralTest")
         @DisplayName("should throw DonationNotFoundException when donation is not found for rejection")
