@@ -101,6 +101,7 @@ class DonationRegisterServiceTest {
     @DisplayName("For valid tests")
     class ValidTests {
         @Test
+        @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should register donation when donor is eligible")
@@ -130,6 +131,7 @@ class DonationRegisterServiceTest {
     @DisplayName("For invalid tests")
     class InvalidTests {
         @Test
+        @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should throw exception when trying to register donation without donor")
@@ -143,6 +145,7 @@ class DonationRegisterServiceTest {
         }
 
         @Test
+        @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should throw exception when donor is not eligible to donate")
@@ -157,6 +160,7 @@ class DonationRegisterServiceTest {
         }
 
         @Test
+        @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should throw exception when trying to register donation for a non-existent donor")
@@ -171,6 +175,7 @@ class DonationRegisterServiceTest {
         }
 
         @Test
+        @Tag("Functional")
         @Tag("UnitTest")
         @Tag("FunctionalTest")
         @DisplayName("Should throw exception when appointment is null")
@@ -186,6 +191,7 @@ class DonationRegisterServiceTest {
         }
 
         @Test
+        @Tag("Functional")
         @Tag("UnitTest")
         @Tag("FunctionalTest")
         @DisplayName("Should throw exception when appointment does not exist")
@@ -200,6 +206,7 @@ class DonationRegisterServiceTest {
         }
 
         @Test
+        @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should throw exception when donation already exists for this appointment")
