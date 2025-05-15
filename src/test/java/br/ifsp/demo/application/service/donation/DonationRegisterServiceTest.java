@@ -177,7 +177,6 @@ class DonationRegisterServiceTest {
         @Test
         @Tag("Functional")
         @Tag("UnitTest")
-        @Tag("FunctionalTest")
         @DisplayName("Should throw exception when appointment is null")
         void shouldThrowExceptionWhenAppointmentIsNull() {
             when(donorRepository.findById(eligibleDonorId)).thenReturn(Optional.of(eligibleDonor));
@@ -193,7 +192,6 @@ class DonationRegisterServiceTest {
         @Test
         @Tag("Functional")
         @Tag("UnitTest")
-        @Tag("FunctionalTest")
         @DisplayName("Should throw exception when appointment does not exist")
         void shouldThrowExceptionWhenAppointmentDoesNotExist() {
             when(donorRepository.findById(eligibleDonorId)).thenReturn(Optional.of(eligibleDonor));
