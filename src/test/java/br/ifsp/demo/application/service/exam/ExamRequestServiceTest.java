@@ -47,6 +47,7 @@ class ExamRequestServiceTest {
     @DisplayName("For valid tests")
     class ValidTests {
         @Test
+        @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should request immunohematology exam if donation is registered")
@@ -69,6 +70,7 @@ class ExamRequestServiceTest {
         }
 
         @Test
+        @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should request serological screening exam if donation is registered")
@@ -95,6 +97,7 @@ class ExamRequestServiceTest {
     @DisplayName("For invalid tests")
     class InvalidTests {
         @Test
+        @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should throw ExamRequestNotAllowedException when requesting immunohematology exam for approved donation")
@@ -109,6 +112,7 @@ class ExamRequestServiceTest {
         }
 
         @Test
+        @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should throw ExamRequestNotAllowedException when requesting serological screening exam for approved donation")
@@ -123,6 +127,7 @@ class ExamRequestServiceTest {
         }
 
         @Test
+        @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should throw ExamRequestNotAllowedException when requesting immunohematology exam for rejected donation")
@@ -137,6 +142,7 @@ class ExamRequestServiceTest {
         }
 
         @Test
+        @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should throw ExamRequestNotAllowedException when requesting serological screening exam for rejected donation")
@@ -151,6 +157,7 @@ class ExamRequestServiceTest {
         }
 
         @Test
+        @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should throw ExamRequestNotAllowedException when immunohematology exam already exists for donation")
@@ -166,6 +173,7 @@ class ExamRequestServiceTest {
         }
 
         @Test
+        @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should throw ExamRequestNotAllowedException when immunohematology exam already exists for donation")
@@ -182,7 +190,7 @@ class ExamRequestServiceTest {
 
         @Test
         @Tag("UnitTest")
-        @Tag("FunctionalTest")
+        @Tag("Functional")
         @DisplayName("Should throw IllegalArgumentException when requesting immunohematology exam if donation is null")
         void shouldThrowIllegalArgumentExceptionWhenRequestingImmunohematologyExamIfDonationIsNull(){
             assertThatThrownBy(() -> sut.requestImmunohematologyExam(null))
@@ -194,7 +202,7 @@ class ExamRequestServiceTest {
 
         @Test
         @Tag("UnitTest")
-        @Tag("FunctionalTest")
+        @Tag("Functional")
         @DisplayName("Should throw IllegalArgumentException when requesting immunohematology exam if donation is null")
         void shouldThrowIllegalArgumentExceptionWhenRequestingSerologicalScreeningExamIfDonationIsNull(){
             assertThatThrownBy(() -> sut.requestSerologicalScreeningExam(null))
