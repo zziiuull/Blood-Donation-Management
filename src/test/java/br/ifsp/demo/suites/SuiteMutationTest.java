@@ -8,6 +8,6 @@ import org.junit.platform.suite.api.SuiteDisplayName;
 @Suite
 @SelectPackages({"br.ifsp.demo.application.service"})
 @SuiteDisplayName("All mutation tests")
-@IncludeTags({"MutationTest"})
+@IncludeTags({"Mutation"})
 public class SuiteMutationTest {
 }

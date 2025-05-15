@@ -58,6 +58,7 @@ class ViewExamDetailsServiceTest {
     @DisplayName("For valid tests")
     class ValidTests {
         @Test
+        @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should view immunohematology exam details and return null subclass fields when immunohematology exam has not been performed")
@@ -78,6 +79,7 @@ class ViewExamDetailsServiceTest {
         }
 
         @Test
+        @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should view immunohematology exam details when immunohematology exam has been performed")
@@ -102,6 +104,7 @@ class ViewExamDetailsServiceTest {
         }
 
         @Test
+        @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should view serological screening exam details and return null subclass fields when serological screening exam has not been performed")
@@ -126,6 +129,7 @@ class ViewExamDetailsServiceTest {
         }
 
         @Test
+        @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should view serological screening exam exam details when serological screening exam has been performed")
@@ -162,6 +166,7 @@ class ViewExamDetailsServiceTest {
     @DisplayName("For invalid tests")
     class InvalidTests {
         @Test
+        @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should throw exception when immunohematology exam does not exist for donation")
@@ -176,6 +181,7 @@ class ViewExamDetailsServiceTest {
         }
 
         @Test
+        @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should throw exception when serological screening exam does not exist for donation")

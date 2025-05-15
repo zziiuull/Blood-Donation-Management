@@ -80,6 +80,7 @@ class UpdateDonationServiceTest {
     @DisplayName("For valid tests")
     class ValidTests {
         @Test
+        @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should approve donation")
@@ -97,6 +98,7 @@ class UpdateDonationServiceTest {
         }
 
         @Test
+        @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should reject donation")
@@ -118,6 +120,7 @@ class UpdateDonationServiceTest {
     class InvalidTests {
         @ParameterizedTest
         @MethodSource("examsUnderAnalysis")
+        @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should throw when at least one exam is under analysis")
@@ -151,8 +154,8 @@ class UpdateDonationServiceTest {
 
         @ParameterizedTest
         @MethodSource("foundExam")
+        @Tag("Functional")
         @Tag("UnitTest")
-        @Tag("FunctionalTest")
         @DisplayName("should throw when at least one exam is not found")
         void shouldThrowWhenAtLeastOneExamIsNotFound(Exam exam) {
             when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.of(donation));
@@ -175,8 +178,8 @@ class UpdateDonationServiceTest {
         }
 
         @Test
+        @Tag("Functional")
         @Tag("UnitTest")
-        @Tag("FunctionalTest")
         @DisplayName("should throw when analysis is contradictory for approval")
         void shouldThrowWhenAnalysisIsContradictoryForApproval() {
             when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.of(donation));
@@ -186,8 +189,8 @@ class UpdateDonationServiceTest {
         }
 
         @Test
+        @Tag("Functional")
         @Tag("UnitTest")
-        @Tag("FunctionalTest")
         @DisplayName("should throw when analysis is contradictory for rejection")
         void shouldThrowWhenAnalysisIsContradictoryForRejection() {
             when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.of(donation));
@@ -197,8 +200,8 @@ class UpdateDonationServiceTest {
         }
 
         @Test
+        @Tag("Functional")
         @Tag("UnitTest")
-        @Tag("FunctionalTest")
         @DisplayName("should throw DonationNotFoundException when donation is not found for approval")
         void shouldThrowDonationNotFoundExceptionWhenDonationIsNotFoundForApproval() {
             when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
@@ -208,7 +211,7 @@ class UpdateDonationServiceTest {
 
         @Test
         @Tag("UnitTest")
-        @Tag("StructuralTest")
+        @Tag("Structural")
         @DisplayName("should throw DonationNotFoundException when donation is not found for rejection")
         void shouldThrowDonationNotFoundExceptionWhenDonationIsNotFoundForRejection() {
             when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.empty());

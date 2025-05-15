@@ -69,6 +69,7 @@ class ExamRegistrationServiceTest {
     @DisplayName("For valid tests")
     class ValidTests {
         @Test
+        @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should approve immunohematology exam")
@@ -87,6 +88,7 @@ class ExamRegistrationServiceTest {
         }
 
         @Test
+        @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should approve serological screening exam")
@@ -109,6 +111,7 @@ class ExamRegistrationServiceTest {
         }
 
         @Test
+        @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should reject immunohematology exam")
@@ -127,6 +130,7 @@ class ExamRegistrationServiceTest {
         }
 
         @Test
+        @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should reject serological screening exam")
@@ -153,8 +157,8 @@ class ExamRegistrationServiceTest {
     @DisplayName("For invalid tests")
     class InvalidTests {
         @Test
+        @Tag("Functional")
         @Tag("UnitTest")
-        @Tag("FunctionalTest")
         @DisplayName("Should throw when immunohematology exam is not found")
         void shouldThrowWhenImmunohematologyExamIsNotFound() {
             when(examRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
@@ -164,7 +168,7 @@ class ExamRegistrationServiceTest {
 
         @Test
         @Tag("UnitTest")
-        @Tag("StructuralTest")
+        @Tag("Structural")
         @DisplayName("Should throw when serological screening exam is not found")
         void shouldThrowWhenSerologicalScreeningExamIsNotFound() {
             when(examRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
@@ -173,6 +177,7 @@ class ExamRegistrationServiceTest {
         }
 
         @Test
+        @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should throw when immunohematology exam is no longer under analysis for approval")
@@ -185,7 +190,7 @@ class ExamRegistrationServiceTest {
         }
 
         @Test
-        @Tag("MutationTest")
+        @Tag("Mutation")
         @Tag("UnitTest")
         @DisplayName("Should throw when immunohematology exam is no longer under analysis for rejection")
         void shouldThrowWhenImmunohematologyExamIsNoLongerUnderAnalysisForRejection() {
@@ -197,7 +202,7 @@ class ExamRegistrationServiceTest {
         }
 
         @Test
-        @Tag("MutationTest")
+        @Tag("Mutation")
         @Tag("UnitTest")
         @DisplayName("Should throw when serological screening exam is no longer under analysis for approval")
         void shouldThrowWhenSerologicalScreeningExamIsNoLongerUnderAnalysisForApproval() {
@@ -209,7 +214,7 @@ class ExamRegistrationServiceTest {
         }
 
         @Test
-        @Tag("MutationTest")
+        @Tag("Mutation")
         @Tag("UnitTest")
         @DisplayName("Should throw when serological screening exam is no longer under analysis for rejection")
         void shouldThrowWhenSerologicalScreeningExamIsNoLongerUnderAnalysisForRejection() {
@@ -223,7 +228,7 @@ class ExamRegistrationServiceTest {
         @ParameterizedTest
         @MethodSource("invalidImmunohematologyExamForApproval")
         @Tag("UnitTest")
-        @Tag("FunctionalTest")
+        @Tag("Functional")
         @DisplayName("Should throw when analysis for approving immunohematology exam is invalid")
         void shouldThrowWhenAnalysisForApprovingImmunohematologyExamIsInvalid(ImmunohematologyExamDTO exam) {
             when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(immunohematologyExam));
@@ -241,7 +246,7 @@ class ExamRegistrationServiceTest {
         @ParameterizedTest
         @MethodSource("invalidImmunohematologyExamForRejection")
         @Tag("UnitTest")
-        @Tag("StructuralTest")
+        @Tag("Structural")
         @DisplayName("Should throw when analysis for rejecting immunohematology exam is invalid")
         void shouldThrowWhenAnalysisForRejectingImmunohematologyExamIsInvalid(ImmunohematologyExamDTO exam) {
             when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(immunohematologyExam));
@@ -259,7 +264,7 @@ class ExamRegistrationServiceTest {
         @ParameterizedTest
         @MethodSource("invalidSerologicalScreeningExamForApproval")
         @Tag("UnitTest")
-        @Tag("StructuralTest")
+        @Tag("Structural")
         @DisplayName("Should throw when analysis for approving serological screening exam is invalid")
         void shouldThrowWhenAnalysisForApprovingSerologicalScreeningExamIsInvalid(SerologicalScreeningExamDTO exam) {
             when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(serologicalScreeningExam));
@@ -270,7 +275,7 @@ class ExamRegistrationServiceTest {
         @ParameterizedTest
         @MethodSource("invalidSerologicalScreeningExamForRejection")
         @Tag("UnitTest")
-        @Tag("StructuralTest")
+        @Tag("Structural")
         @DisplayName("Should throw when analysis for rejecting serological screening exam is invalid")
         void shouldThrowWhenAnalysisForRejectingSerologicalScreeningExamIsInvalid(SerologicalScreeningExamDTO exam) {
             when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(serologicalScreeningExam));

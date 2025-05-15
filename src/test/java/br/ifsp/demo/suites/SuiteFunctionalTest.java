@@ -8,6 +8,6 @@ import org.junit.platform.suite.api.SuiteDisplayName;
 @Suite
 @SelectPackages({"br.ifsp.demo.application.service"})
 @SuiteDisplayName("All functional tests")
-@IncludeTags({"FunctionalTest"})
+@IncludeTags({"Functional"})
 public class SuiteFunctionalTest {
 }
