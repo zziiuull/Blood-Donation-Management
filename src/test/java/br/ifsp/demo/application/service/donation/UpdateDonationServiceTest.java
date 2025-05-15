@@ -211,7 +211,7 @@ class UpdateDonationServiceTest {
 
         @Test
         @Tag("UnitTest")
-        @Tag("StructuralTest")
+        @Tag("Structural")
         @DisplayName("should throw DonationNotFoundException when donation is not found for rejection")
         void shouldThrowDonationNotFoundExceptionWhenDonationIsNotFoundForRejection() {
             when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
