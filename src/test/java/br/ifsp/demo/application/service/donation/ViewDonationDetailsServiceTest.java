@@ -42,6 +42,7 @@ class ViewDonationDetailsServiceTest {
     @DisplayName("For valid tests")
     class ValidTests {
         @Test
+        @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should return donation details when donation exists")
@@ -91,6 +92,7 @@ class ViewDonationDetailsServiceTest {
     @Nested
     class InvalidTests {
         @Test
+        @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should throw exception when donation does not exist")
