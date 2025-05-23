@@ -1,4 +1,4 @@
-package br.ifsp.demo.domain.repository.collectionSite;
+package br.ifsp.demo.infrastructure.repository.collectionSite;
 
 import br.ifsp.demo.domain.model.donation.CollectionSite;
 import org.springframework.data.jpa.repository.JpaRepository;

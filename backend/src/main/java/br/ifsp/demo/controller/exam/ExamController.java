@@ -12,7 +12,7 @@ import br.ifsp.demo.controller.exam.response.SerologicalScreeningExamResponse;
 import br.ifsp.demo.domain.model.donation.Donation;
 import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
-import br.ifsp.demo.domain.repository.donation.DonationRepository;
+import br.ifsp.demo.infrastructure.repository.donation.DonationRepository;
 import br.ifsp.demo.exception.DonationNotFoundException;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

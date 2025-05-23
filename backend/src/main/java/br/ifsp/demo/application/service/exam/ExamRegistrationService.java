@@ -3,7 +3,7 @@ package br.ifsp.demo.application.service.exam;
 import br.ifsp.demo.application.service.dto.exam.ImmunohematologyExamDTO;
 import br.ifsp.demo.application.service.dto.exam.SerologicalScreeningExamDTO;
 import br.ifsp.demo.domain.model.exam.*;
-import br.ifsp.demo.domain.repository.exam.ExamRepository;
+import br.ifsp.demo.infrastructure.repository.exam.ExamRepository;
 import br.ifsp.demo.exception.ExamAlreadyAnalyzedException;
 import br.ifsp.demo.exception.ExamNotFoundException;
 import br.ifsp.demo.exception.InvalidExamAnalysisException;

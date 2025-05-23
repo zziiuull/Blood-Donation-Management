@@ -1,4 +1,4 @@
-package br.ifsp.demo.domain.repository.donation;
+package br.ifsp.demo.infrastructure.repository.donation;
 
 import br.ifsp.demo.domain.model.donation.Appointment;
 import br.ifsp.demo.domain.model.donation.Donation;

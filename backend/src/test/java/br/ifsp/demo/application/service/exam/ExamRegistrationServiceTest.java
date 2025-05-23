@@ -8,7 +8,7 @@ import br.ifsp.demo.domain.model.donation.Donation;
 import br.ifsp.demo.domain.model.donation.DonationStatus;
 import br.ifsp.demo.domain.model.donor.Donor;
 import br.ifsp.demo.domain.model.exam.*;
-import br.ifsp.demo.domain.repository.exam.ExamRepository;
+import br.ifsp.demo.infrastructure.repository.exam.ExamRepository;
 import br.ifsp.demo.exception.ExamNotFoundException;
 import br.ifsp.demo.exception.ExamAlreadyAnalyzedException;
 import br.ifsp.demo.exception.InvalidExamAnalysisException;

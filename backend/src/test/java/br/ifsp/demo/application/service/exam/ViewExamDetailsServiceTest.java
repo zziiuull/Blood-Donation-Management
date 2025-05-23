@@ -9,7 +9,7 @@ import br.ifsp.demo.domain.model.exam.DiseaseDetection;
 import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
 import br.ifsp.demo.domain.model.exam.IrregularAntibodies;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
-import br.ifsp.demo.domain.repository.exam.ExamRepository;
+import br.ifsp.demo.infrastructure.repository.exam.ExamRepository;
 import br.ifsp.demo.exception.ExamNotFoundException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;

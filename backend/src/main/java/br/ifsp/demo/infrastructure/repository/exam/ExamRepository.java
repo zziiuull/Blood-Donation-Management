@@ -1,4 +1,4 @@
-package br.ifsp.demo.domain.repository.exam;
+package br.ifsp.demo.infrastructure.repository.exam;
 
 import br.ifsp.demo.domain.model.exam.Exam;
 import org.springframework.data.jpa.repository.JpaRepository;

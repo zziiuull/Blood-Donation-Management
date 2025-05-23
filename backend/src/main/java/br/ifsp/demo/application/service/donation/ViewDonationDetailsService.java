@@ -3,8 +3,8 @@ package br.ifsp.demo.application.service.donation;
 import br.ifsp.demo.application.service.dto.donation.DonationDetailsDTO;
 import br.ifsp.demo.application.service.dto.exam.ExamDTO;
 import br.ifsp.demo.domain.model.donation.Donation;
-import br.ifsp.demo.domain.repository.donation.DonationRepository;
-import br.ifsp.demo.domain.repository.exam.ExamRepository;
+import br.ifsp.demo.infrastructure.repository.donation.DonationRepository;
+import br.ifsp.demo.infrastructure.repository.exam.ExamRepository;
 import br.ifsp.demo.exception.DonationNotFoundException;
 import org.springframework.stereotype.Service;
 
