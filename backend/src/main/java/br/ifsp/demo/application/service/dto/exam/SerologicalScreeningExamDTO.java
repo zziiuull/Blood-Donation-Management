@@ -1,6 +1,6 @@
 package br.ifsp.demo.application.service.dto.exam;
 
-import br.ifsp.demo.controller.exam.request.SerologicalScreeningExamRequest;
+import br.ifsp.demo.presentation.controller.exam.request.SerologicalScreeningExamRequest;
 import br.ifsp.demo.domain.model.exam.DiseaseDetection;
 
 

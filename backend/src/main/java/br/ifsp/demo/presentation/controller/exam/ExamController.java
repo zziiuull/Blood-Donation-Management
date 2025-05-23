@@ -1,14 +1,14 @@
-package br.ifsp.demo.controller.exam;
+package br.ifsp.demo.presentation.controller.exam;
 
 import br.ifsp.demo.application.service.exam.ExamRegistrationService;
 import br.ifsp.demo.application.service.exam.ExamRequestService;
 import br.ifsp.demo.application.service.exam.ViewExamDetailsService;
 import br.ifsp.demo.application.service.dto.exam.ImmunohematologyExamDTO;
 import br.ifsp.demo.application.service.dto.exam.SerologicalScreeningExamDTO;
-import br.ifsp.demo.controller.exam.request.ImmunohematologyExamRequest;
-import br.ifsp.demo.controller.exam.request.SerologicalScreeningExamRequest;
-import br.ifsp.demo.controller.exam.response.ImmunohematologyExamResponse;
-import br.ifsp.demo.controller.exam.response.SerologicalScreeningExamResponse;
+import br.ifsp.demo.presentation.controller.exam.request.ImmunohematologyExamRequest;
+import br.ifsp.demo.presentation.controller.exam.request.SerologicalScreeningExamRequest;
+import br.ifsp.demo.presentation.controller.exam.response.ImmunohematologyExamResponse;
+import br.ifsp.demo.presentation.controller.exam.response.SerologicalScreeningExamResponse;
 import br.ifsp.demo.domain.model.donation.Donation;
 import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;

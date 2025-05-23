@@ -1,4 +1,4 @@
-package br.ifsp.demo.controller.exam.request;
+package br.ifsp.demo.presentation.controller.exam.request;
 
 import br.ifsp.demo.domain.model.exam.DiseaseDetection;
 import jakarta.validation.constraints.NotNull;

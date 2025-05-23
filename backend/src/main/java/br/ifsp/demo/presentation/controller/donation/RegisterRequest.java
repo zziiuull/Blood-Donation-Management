@@ -1,4 +1,4 @@
-package br.ifsp.demo.controller.donation;
+package br.ifsp.demo.presentation.controller.donation;
 
 import jakarta.validation.constraints.NotNull;
 

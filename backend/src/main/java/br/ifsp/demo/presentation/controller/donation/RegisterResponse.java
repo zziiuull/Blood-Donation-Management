@@ -1,4 +1,4 @@
-package br.ifsp.demo.controller.donation;
+package br.ifsp.demo.presentation.controller.donation;
 
 import br.ifsp.demo.domain.model.donation.Donation;
 import br.ifsp.demo.domain.model.donation.DonationStatus;

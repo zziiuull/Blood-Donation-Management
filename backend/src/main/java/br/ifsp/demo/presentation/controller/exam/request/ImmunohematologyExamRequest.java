@@ -1,4 +1,4 @@
-package br.ifsp.demo.controller.exam.request;
+package br.ifsp.demo.presentation.controller.exam.request;
 
 import br.ifsp.demo.domain.model.common.BloodType;
 import br.ifsp.demo.domain.model.exam.IrregularAntibodies;
