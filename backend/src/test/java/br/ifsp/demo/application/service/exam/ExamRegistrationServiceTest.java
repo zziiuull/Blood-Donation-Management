@@ -298,6 +298,18 @@ class ExamRegistrationServiceTest {
             when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(serologicalScreeningExam));
 
             assertThatThrownBy(() -> sut.registerRejectedExam(UUID.randomUUID(), approvedSerologicalScreeningExamDTO, updatedAt)).isInstanceOf(InvalidExamAnalysisException.class);
+                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.POSITIVE))
+            );
+        }
+
+        @Test
+        @Tag("UnitTest")
+        @Tag("Structural")
+        @DisplayName("Should throw when analysis for rejecting serological screening exam is invalid")
+        void shouldThrowWhenAnalysisForRejectingSerologicalScreeningExamIsInvalid() {
+            when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(serologicalScreeningExam));
+
+            assertThatThrownBy(() -> sut.registerRejectedExam(UUID.randomUUID(), approvedSerologicalScreeningExamDTO, updatedAt)).isInstanceOf(InvalidExamAnalysisException.class);
         }
     }
 }
