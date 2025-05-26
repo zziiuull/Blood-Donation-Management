@@ -29,7 +29,7 @@ public class ExamRegistrationService {
         if (!isFieldsValidForApproving(examDTO)) throw new InvalidExamAnalysisException("Immunohematology exam has invalid field(s) for approving");
 
         editExamData(exam, examDTO);
-        approveExam(exam, updatedAt);
+        exam.approve(updatedAt);
 
         return examRepository.save(exam);
     }
@@ -54,11 +54,6 @@ public class ExamRegistrationService {
         exam.setBloodType(examDTO.bloodType());
     }
 
-    private void approveExam(Exam exam, LocalDateTime updatedAt) {
-        exam.setStatus(ExamStatus.APPROVED);
-        exam.setUpdatedAt(updatedAt);
-    }
-
     public SerologicalScreeningExam registerApprovedExam(UUID examId, SerologicalScreeningExamDTO examDTO, LocalDateTime updatedAt) {
         SerologicalScreeningExam exam = retrieveSerologicalScreeningExam(examId);
 
@@ -67,7 +62,7 @@ public class ExamRegistrationService {
         if (!isFieldsValidForApproving(examDTO)) throw new InvalidExamAnalysisException("Serological screening exam has invalid field(s) for approving");
 
         editExamData(exam, examDTO);
-        approveExam(exam, updatedAt);
+        exam.approve(updatedAt);
 
         return examRepository.save(exam);
     }
@@ -104,7 +99,7 @@ public class ExamRegistrationService {
         if (!isFieldsValidForRejecting(examDTO)) throw new InvalidExamAnalysisException("Immunohematology exam has invalid field(s) for rejecting");
 
         editExamData(exam, examDTO);
-        rejectExam(exam, updatedAt);
+        exam.reject(updatedAt);
 
         return examRepository.save(exam);
     }
@@ -112,11 +107,6 @@ public class ExamRegistrationService {
     private boolean isFieldsValidForRejecting(ImmunohematologyExamDTO exam){
         if (exam.bloodType() == null) return false;
         return exam.irregularAntibodies() == IrregularAntibodies.POSITIVE;
-    }
-
-    private void rejectExam(Exam exam, LocalDateTime updatedAt) {
-        exam.setStatus(ExamStatus.REJECTED);
-        exam.setUpdatedAt(updatedAt);
     }
 
     public SerologicalScreeningExam registerRejectedExam(UUID examId, SerologicalScreeningExamDTO examDTO, LocalDateTime updatedAt) {
@@ -127,7 +117,7 @@ public class ExamRegistrationService {
         if (!isFieldsValidForRejecting(examDTO)) throw new InvalidExamAnalysisException("Serological screening exam has invalid field(s) for rejecting");
 
         editExamData(exam, examDTO);
-        rejectExam(exam, updatedAt);
+        exam.reject(updatedAt);
 
         return examRepository.save(exam);
     }

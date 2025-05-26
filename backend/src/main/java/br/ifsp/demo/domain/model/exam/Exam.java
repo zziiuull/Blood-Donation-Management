@@ -26,7 +26,6 @@ public abstract class Exam {
 
     private LocalDateTime createdAt;
 
-    @Setter
     private LocalDateTime updatedAt;
 
     @Setter
@@ -42,5 +41,15 @@ public abstract class Exam {
         this.status = status;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public void approve(LocalDateTime updatedAt) {
+        this.status = ExamStatus.APPROVED;
+        this.updatedAt = updatedAt;
+    }
+
+    public void reject(LocalDateTime updatedAt) {
+        this.status = ExamStatus.REJECTED;
+        this.updatedAt = updatedAt;
     }
 }
