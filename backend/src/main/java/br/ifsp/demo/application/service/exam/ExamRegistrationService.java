@@ -25,9 +25,6 @@ public class ExamRegistrationService {
         ImmunohematologyExam exam = retrieveImmunohematologyExam(examId);
 
         isUnderAnalysis(exam);
-
-        if (!isFieldsValidForApproving(examDTO)) throw new InvalidExamAnalysisException("Immunohematology exam has invalid field(s) for approving");
-
         exam.updateResults(examDTO);
         exam.approve(updatedAt);
 
@@ -42,11 +39,6 @@ public class ExamRegistrationService {
 
     private void isUnderAnalysis(Exam exam){
         if (exam.getStatus() != ExamStatus.UNDER_ANALYSIS) throw new ExamAlreadyAnalyzedException("Can not approve exam already analyzed");
-    }
-
-    private boolean isFieldsValidForApproving(ImmunohematologyExamDTO exam){
-        if (exam.bloodType() == null) return false;
-        return exam.irregularAntibodies() == IrregularAntibodies.NEGATIVE;
     }
 
     public SerologicalScreeningExam registerApprovedExam(UUID examId, SerologicalScreeningExamDTO examDTO, LocalDateTime updatedAt) {
@@ -81,18 +73,10 @@ public class ExamRegistrationService {
         ImmunohematologyExam exam = retrieveImmunohematologyExam(examId);
 
         isUnderAnalysis(exam);
-
-        if (!isFieldsValidForRejecting(examDTO)) throw new InvalidExamAnalysisException("Immunohematology exam has invalid field(s) for rejecting");
-
         exam.updateResults(examDTO);
         exam.reject(updatedAt);
 
         return examRepository.save(exam);
-    }
-
-    private boolean isFieldsValidForRejecting(ImmunohematologyExamDTO exam){
-        if (exam.bloodType() == null) return false;
-        return exam.irregularAntibodies() == IrregularAntibodies.POSITIVE;
     }
 
     public SerologicalScreeningExam registerRejectedExam(UUID examId, SerologicalScreeningExamDTO examDTO, LocalDateTime updatedAt) {

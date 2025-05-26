@@ -1,5 +1,6 @@
 package br.ifsp.demo.domain.model.exam;
 
+import br.ifsp.demo.application.service.dto.exam.ImmunohematologyExamDTO;
 import br.ifsp.demo.domain.model.common.BloodType;
 import br.ifsp.demo.domain.model.donation.Donation;
 import jakarta.persistence.Entity;
@@ -19,6 +20,18 @@ public class ImmunohematologyExam extends Exam {
 
     public ImmunohematologyExam() {
         super();
+    }
+
+    @Override
+    public boolean isFieldsValidForApproval() {
+        if (bloodType == null) return false;
+        return irregularAntibodies == IrregularAntibodies.NEGATIVE;
+    }
+
+    @Override
+    public boolean isFieldsValidForRejection() {
+        if (bloodType == null) return false;
+        return irregularAntibodies == IrregularAntibodies.POSITIVE;
     }
 
     public void updateResults(ImmunohematologyExamDTO examDTO) {
