@@ -1,5 +1,6 @@
 package br.ifsp.demo.domain.model.exam;
 
+import br.ifsp.demo.application.service.dto.exam.SerologicalScreeningExamDTO;
 import br.ifsp.demo.domain.model.donation.Donation;
 import jakarta.persistence.Entity;
 import lombok.Getter;
@@ -22,6 +23,26 @@ public class SerologicalScreeningExam extends Exam {
 
     public SerologicalScreeningExam() {
         super();
+    }
+
+    @Override
+    public boolean isFieldsValidForApproval() {
+        if (hepatitisB == null || hepatitisB == DiseaseDetection.POSITIVE) return false;
+        if (hepatitisC == null || hepatitisC == DiseaseDetection.POSITIVE) return false;
+        if (chagasDisease == null || chagasDisease == DiseaseDetection.POSITIVE) return false;
+        if (syphilis == null || syphilis == DiseaseDetection.POSITIVE) return false;
+        if (aids == null || aids == DiseaseDetection.POSITIVE) return false;
+        return htlv1_2 != null && htlv1_2 != DiseaseDetection.POSITIVE;
+    }
+
+    @Override
+    public boolean isFieldsValidForRejection() {
+        if (hepatitisB == null || hepatitisB == DiseaseDetection.NEGATIVE) return false;
+        if (hepatitisC == null || hepatitisC == DiseaseDetection.NEGATIVE) return false;
+        if (chagasDisease == null || chagasDisease == DiseaseDetection.NEGATIVE) return false;
+        if (syphilis == null || syphilis == DiseaseDetection.NEGATIVE) return false;
+        if (aids == null || aids == DiseaseDetection.NEGATIVE) return false;
+        return htlv1_2 != null && htlv1_2 != DiseaseDetection.NEGATIVE;
     }
 
     public void updateResults(SerologicalScreeningExamDTO examDTO){

@@ -45,9 +45,6 @@ public class ExamRegistrationService {
         SerologicalScreeningExam exam = retrieveSerologicalScreeningExam(examId);
 
         isUnderAnalysis(exam);
-
-        if (!isFieldsValidForApproving(examDTO)) throw new InvalidExamAnalysisException("Serological screening exam has invalid field(s) for approving");
-
         exam.updateResults(examDTO);
         exam.approve(updatedAt);
 
@@ -58,15 +55,6 @@ public class ExamRegistrationService {
         Optional<Exam> optionalExam = examRepository.findById(examId);
         if (optionalExam.isEmpty()) throw new ExamNotFoundException("Exam not found");
         return (SerologicalScreeningExam) optionalExam.get();
-    }
-
-    private boolean isFieldsValidForApproving(SerologicalScreeningExamDTO exam){
-        if (exam.hepatitisB() == null || exam.hepatitisB() == DiseaseDetection.POSITIVE) return false;
-        if (exam.hepatitisC() == null || exam.hepatitisC() == DiseaseDetection.POSITIVE) return false;
-        if (exam.chagasDisease() == null || exam.chagasDisease() == DiseaseDetection.POSITIVE) return false;
-        if (exam.syphilis() == null || exam.syphilis() == DiseaseDetection.POSITIVE) return false;
-        if (exam.aids() == null || exam.aids() == DiseaseDetection.POSITIVE) return false;
-        return exam.htlv1_2() != null && exam.htlv1_2() != DiseaseDetection.POSITIVE;
     }
 
     public ImmunohematologyExam registerRejectedExam(UUID examId, ImmunohematologyExamDTO examDTO, LocalDateTime updatedAt) {
@@ -83,21 +71,9 @@ public class ExamRegistrationService {
         SerologicalScreeningExam exam = retrieveSerologicalScreeningExam(examId);
 
         isUnderAnalysis(exam);
-
-        if (!isFieldsValidForRejecting(examDTO)) throw new InvalidExamAnalysisException("Serological screening exam has invalid field(s) for rejecting");
-
         exam.updateResults(examDTO);
         exam.reject(updatedAt);
 
         return examRepository.save(exam);
-    }
-
-    private boolean isFieldsValidForRejecting(SerologicalScreeningExamDTO exam){
-        if (exam.hepatitisB() == null || exam.hepatitisB() == DiseaseDetection.NEGATIVE) return false;
-        if (exam.hepatitisC() == null || exam.hepatitisC() == DiseaseDetection.NEGATIVE) return false;
-        if (exam.chagasDisease() == null || exam.chagasDisease() == DiseaseDetection.NEGATIVE) return false;
-        if (exam.syphilis() == null || exam.syphilis() == DiseaseDetection.NEGATIVE) return false;
-        if (exam.aids() == null || exam.aids() == DiseaseDetection.NEGATIVE) return false;
-        return exam.htlv1_2() != null && exam.htlv1_2() != DiseaseDetection.NEGATIVE;
     }
 }
