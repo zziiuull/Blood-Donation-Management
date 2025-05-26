@@ -1,6 +1,8 @@
 package br.ifsp.demo.domain.model.exam;
 
+import br.ifsp.demo.application.service.dto.exam.ImmunohematologyExamDTO;
 import br.ifsp.demo.domain.model.donation.Donation;
+import br.ifsp.demo.presentation.exception.InvalidExamAnalysisException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -44,12 +46,19 @@ public abstract class Exam {
     }
 
     public void approve(LocalDateTime updatedAt) {
+        if (isFieldsValidForApproval())
+            throw new InvalidExamAnalysisException("Exam has invalid field(s) for approval");
         this.status = ExamStatus.APPROVED;
         this.updatedAt = updatedAt;
     }
 
     public void reject(LocalDateTime updatedAt) {
+        if (isFieldsValidForRejection())
+            throw new InvalidExamAnalysisException("Exam has invalid field(s) for rejection");
         this.status = ExamStatus.REJECTED;
         this.updatedAt = updatedAt;
     }
+
+    abstract public boolean isFieldsValidForApproval();
+    abstract public boolean isFieldsValidForRejection();
 }
