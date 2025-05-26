@@ -4,7 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="49d9f065-60b7-440e-92a2-ba2030bb7ac3" name="Changes" comment="" />
+    <list default="true" id="49d9f065-60b7-440e-92a2-ba2030bb7ac3" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/br/ifsp/demo/exception/ApiException.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/br/ifsp/demo/presentation/exception/ApiException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/br/ifsp/demo/exception/ApiExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/br/ifsp/demo/presentation/exception/ApiExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/br/ifsp/demo/exception/CannotFinishDonationWithExamUnderAnalysisException.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/br/ifsp/demo/presentation/exception/CannotFinishDonationWithExamUnderAnalysisException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/br/ifsp/demo/exception/DonationNotFoundException.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/br/ifsp/demo/presentation/exception/DonationNotFoundException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/br/ifsp/demo/exception/EntityAlreadyExistsException.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/br/ifsp/demo/presentation/exception/EntityAlreadyExistsException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/br/ifsp/demo/exception/ExamAlreadyAnalyzedException.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/br/ifsp/demo/presentation/exception/ExamAlreadyAnalyzedException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/br/ifsp/demo/exception/ExamNotFoundException.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/br/ifsp/demo/presentation/exception/ExamNotFoundException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/br/ifsp/demo/exception/ExamRequestNotAllowedException.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/br/ifsp/demo/presentation/exception/ExamRequestNotAllowedException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/br/ifsp/demo/exception/InvalidDonationAnalysisException.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/br/ifsp/demo/presentation/exception/InvalidDonationAnalysisException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/br/ifsp/demo/exception/InvalidExamAnalysisException.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/br/ifsp/demo/presentation/exception/InvalidExamAnalysisException.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -23,9 +34,9 @@
       </MavenGeneralSettings>
     </option>
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 4
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
   <component name="ProjectId" id="2xVYtoAhwn4klrkfj7Wyeh5OjWW" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -38,13 +49,14 @@
     "RequestMappingsPanelWidth0": "75",
     "RequestMappingsPanelWidth1": "75",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.go.formatter.settings.were.checked": "true",
     "RunOnceActivity.go.migrated.go.modules.settings": "true",
     "Spring Boot.DemoAuthAppApplication.executor": "Run",
     "git-widget-placeholder": "main",
     "go.import.settings.migrated": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "H:/Meu Drive/Engenharia-de-Software/Semestre-3/Programacao_Orientada_a_Objetos/lista_nivelamento",
+    "last_opened_file_path": "/home/aluno/IdeaProjects/Blood-Donation-Management",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -56,6 +68,7 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/backend/src/main/java/br/ifsp/demo/presentation" />
       <recent name="C:\Blood-Donation-Management\backend" />
     </key>
   </component>
@@ -76,14 +89,6 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-  </component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.17011.79" />
-        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-IU-241.17011.79" />
-      </set>
-    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
