@@ -13,7 +13,11 @@ import br.ifsp.demo.domain.model.donation.Donation;
 import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.infrastructure.repository.donation.DonationRepository;
-import br.ifsp.demo.exception.DonationNotFoundException;
+import br.ifsp.demo.presentation.exception.DonationNotFoundException;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -33,6 +37,30 @@ public class ExamController {
     private final ViewExamDetailsService viewExamDetailsService;
     private final DonationRepository donationRepository;
 
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200", description = "Successful operation.",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ExamRequestService.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Authentication fails.",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Donation does not exist.",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Exam already requested.",
+                    content = @Content(schema = @Schema(hidden = true))
+            )
+    })
     @PostMapping("/request/immunohematology/{donationId}")
     public ResponseEntity<ImmunohematologyExamResponse> requestImmunohematologyExam(
             @PathVariable UUID donationId){
@@ -44,7 +72,30 @@ public class ExamController {
         return ResponseEntity.ok(new ImmunohematologyExamResponse(immunohematologyExam));
     }
 
-
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200", description = "Successful operation.",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ExamRequestService.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Authentication fails.",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Donation does not exist.",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Exam already requested.",
+                    content = @Content(schema = @Schema(hidden = true))
+            )
+    })
     @PostMapping("/request/serologicalscreening/{donationId}")
     public ResponseEntity<SerologicalScreeningExamResponse> requestSerologicalScreeningExam(
             @PathVariable UUID donationId){
@@ -56,6 +107,40 @@ public class ExamController {
         return ResponseEntity.ok(new SerologicalScreeningExamResponse(serologicalScreeningExam));
     }
 
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200", description = "Successful operation.",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ExamRegistrationService.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Exam has invalid fields for approving.",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Authentication fails.",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Exam does not exist.",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Donation does not exist.",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Exam already analyzed.",
+                    content = @Content(schema = @Schema(hidden = true))
+            )
+    })
     @PostMapping("/register/donation/{donationId}/immunohematology/approve/{examId}")
     public ResponseEntity<ImmunohematologyExam> approveImmunohematologyExam(
             @PathVariable UUID donationId,
@@ -69,6 +154,40 @@ public class ExamController {
                 LocalDateTime.now()));
     }
 
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200", description = "Successful operation.",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ExamRegistrationService.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Exam has invalid fields for approving.",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Authentication fails.",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Exam does not exist.",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Donation does not exist.",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Exam already analyzed.",
+                    content = @Content(schema = @Schema(hidden = true))
+            )
+    })
     @PostMapping("/register/donation/{donationId}/serologicalscreening/approve/{examId}")
     public ResponseEntity<SerologicalScreeningExam> approveSerologicalScreeningExam(
             @PathVariable UUID donationId,
@@ -82,6 +201,40 @@ public class ExamController {
                 LocalDateTime.now()));
     }
 
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200", description = "Successful operation.",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ExamRegistrationService.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Exam has invalid fields for rejecting.",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Authentication fails.",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Exam does not exist.",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Donation does not exist.",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Exam already analyzed.",
+                    content = @Content(schema = @Schema(hidden = true))
+            )
+    })
     @PostMapping("/register/donation/{donationId}/immunohematology/reject/{examId}")
     public ResponseEntity<ImmunohematologyExam> rejectImmunohematologyExam(
             @PathVariable UUID donationId,
@@ -95,6 +248,40 @@ public class ExamController {
                 LocalDateTime.now()));
     }
 
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200", description = "Successful operation.",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ExamRegistrationService.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Exam has invalid fields for rejecting.",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Authentication fails.",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Exam does not exist.",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Donation does not exist.",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Exam already analyzed.",
+                    content = @Content(schema = @Schema(hidden = true))
+            )
+    })
     @PostMapping("/register/donation/{donationId}/serologicalscreening/reject/{examId}")
     public ResponseEntity<SerologicalScreeningExam> rejectSerologicalScreeningExam(
             @PathVariable UUID donationId,
@@ -108,6 +295,30 @@ public class ExamController {
                 LocalDateTime.now()));
     }
 
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200", description = "Successful operation.",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ViewExamDetailsService.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Authentication fails.",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Exam does not exist.",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Donation does not exist.",
+                    content = @Content(schema = @Schema(hidden = true))
+            )
+    })
     @GetMapping("/view/immunohematology/{donationId}")
     public ResponseEntity<ImmunohematologyExamResponse> viewImmunohematologyExam(@PathVariable UUID donationId) {
         validateDonationExists(donationId);
@@ -115,6 +326,30 @@ public class ExamController {
         return ResponseEntity.ok(new ImmunohematologyExamResponse(immunohematologyExam));
     }
 
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200", description = "Successful operation.",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ViewExamDetailsService.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Authentication fails.",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Exam does not exist.",
+                    content = @Content(schema = @Schema(hidden = true))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Donation does not exist.",
+                    content = @Content(schema = @Schema(hidden = true))
+            )
+    })
     @GetMapping("/view/serologicalscreening/{donationId}")
     public ResponseEntity<SerologicalScreeningExamResponse> viewSerologicalScreeningExam(@PathVariable UUID donationId) {
         validateDonationExists(donationId);

@@ -145,4 +145,16 @@ public class ApiExceptionHandler {
                 .build();
         return new ResponseEntity<>(apiException, badRequest);
     }
+
+    @ExceptionHandler(value = ExamRequestNotAllowedException.class)
+    public ResponseEntity<?> handleExamRequestNotAllowedException(ExamRequestNotAllowedException e){
+        final HttpStatus conflict = CONFLICT;
+        final ApiException apiException = ApiException.builder()
+                .status(conflict)
+                .message(e.getMessage())
+                .developerMessage(e.getClass().getName())
+                .timestamp(ZonedDateTime.now(ZoneId.of("Z")))
+                .build();
+        return new ResponseEntity<>(apiException, conflict);
+    }
 }
