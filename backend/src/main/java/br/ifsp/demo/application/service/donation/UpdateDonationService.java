@@ -39,8 +39,7 @@ public class UpdateDonationService {
 
         isExamsAnalyzed(donationId, ExamStatus.APPROVED);
 
-        donation.setStatus(DonationStatus.APPROVED);
-        donation.setUpdatedAt(updatedAt);
+        donation.approve(updatedAt);
 
         Donation saved = donationRepository.save(donation);
 
@@ -80,8 +79,7 @@ public class UpdateDonationService {
 
         isExamsAnalyzed(donationId, ExamStatus.REJECTED);
 
-        donation.setStatus(DonationStatus.REJECTED);
-        donation.setUpdatedAt(updatedAt);
+        donation.reject(updatedAt);
 
         Donation saved = donationRepository.save(donation);
 

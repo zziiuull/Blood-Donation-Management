@@ -21,13 +21,12 @@ public class Donation {
     @OneToOne(optional = false)
     private Appointment appointment;
 
-    @Enumerated(EnumType.STRING)
     @Setter
+    @Enumerated(EnumType.STRING)
     private DonationStatus status;
 
     private LocalDateTime createdAt;
 
-    @Setter
     private LocalDateTime updatedAt;
 
     protected Donation() {}
@@ -42,6 +41,16 @@ public class Donation {
         this.status = status;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public void approve(LocalDateTime updatedAt) {
+        status = DonationStatus.APPROVED;
+        this.updatedAt = updatedAt;
+    }
+
+    public void reject(LocalDateTime updatedAt){
+        status = DonationStatus.REJECTED;
+        this.updatedAt = updatedAt;
     }
 
     @PreUpdate
