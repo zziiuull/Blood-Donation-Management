@@ -27,22 +27,22 @@ public class SerologicalScreeningExam extends Exam {
 
     @Override
     public boolean isFieldsValidForApproval() {
-        if (hepatitisB == null || hepatitisB == DiseaseDetection.POSITIVE) return false;
-        if (hepatitisC == null || hepatitisC == DiseaseDetection.POSITIVE) return false;
-        if (chagasDisease == null || chagasDisease == DiseaseDetection.POSITIVE) return false;
-        if (syphilis == null || syphilis == DiseaseDetection.POSITIVE) return false;
-        if (aids == null || aids == DiseaseDetection.POSITIVE) return false;
-        return htlv1_2 != null && htlv1_2 != DiseaseDetection.POSITIVE;
+        if (hepatitisB != DiseaseDetection.NEGATIVE) return false;
+        if (hepatitisC != DiseaseDetection.NEGATIVE) return false;
+        if (chagasDisease != DiseaseDetection.NEGATIVE) return false;
+        if (syphilis != DiseaseDetection.NEGATIVE) return false;
+        if (aids != DiseaseDetection.NEGATIVE) return false;
+        return htlv1_2 == DiseaseDetection.NEGATIVE;
     }
 
     @Override
     public boolean isFieldsValidForRejection() {
-        if (hepatitisB == null || hepatitisB == DiseaseDetection.NEGATIVE) return false;
-        if (hepatitisC == null || hepatitisC == DiseaseDetection.NEGATIVE) return false;
-        if (chagasDisease == null || chagasDisease == DiseaseDetection.NEGATIVE) return false;
-        if (syphilis == null || syphilis == DiseaseDetection.NEGATIVE) return false;
-        if (aids == null || aids == DiseaseDetection.NEGATIVE) return false;
-        return htlv1_2 != null && htlv1_2 != DiseaseDetection.NEGATIVE;
+        if (hepatitisB == DiseaseDetection.POSITIVE) return true;
+        if (hepatitisC == DiseaseDetection.POSITIVE) return true;
+        if (chagasDisease == DiseaseDetection.POSITIVE) return true;
+        if (syphilis == DiseaseDetection.POSITIVE) return true;
+        if (aids == DiseaseDetection.POSITIVE) return true;
+        return htlv1_2 == DiseaseDetection.POSITIVE;
     }
 
     public void updateResults(SerologicalScreeningExamDTO examDTO){
