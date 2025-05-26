@@ -1,4 +1,4 @@
-package br.ifsp.demo.config;
+package br.ifsp.demo.presentation.config;
 
 import br.ifsp.demo.domain.model.common.BloodType;
 import br.ifsp.demo.domain.model.common.ContactInfo;
