@@ -46,14 +46,14 @@ public abstract class Exam {
     }
 
     public void approve(LocalDateTime updatedAt) {
-        if (isFieldsValidForApproval())
+        if (!isFieldsValidForApproval())
             throw new InvalidExamAnalysisException("Exam has invalid field(s) for approval");
         this.status = ExamStatus.APPROVED;
         this.updatedAt = updatedAt;
     }
 
     public void reject(LocalDateTime updatedAt) {
-        if (isFieldsValidForRejection())
+        if (!isFieldsValidForRejection())
             throw new InvalidExamAnalysisException("Exam has invalid field(s) for rejection");
         this.status = ExamStatus.REJECTED;
         this.updatedAt = updatedAt;
