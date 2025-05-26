@@ -1,6 +1,6 @@
-package br.ifsp.demo.security.auth;
+package br.ifsp.demo.presentation.security.auth;
 
-import br.ifsp.demo.security.user.Role;
+import br.ifsp.demo.presentation.security.user.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public record AuthResponse(

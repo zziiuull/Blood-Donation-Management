@@ -5,7 +5,6 @@ import br.ifsp.demo.application.service.donation.UpdateDonationService;
 import br.ifsp.demo.application.service.donation.ViewDonationDetailsService;
 import br.ifsp.demo.application.service.dto.donation.DonationDetailsDTO;
 import br.ifsp.demo.domain.model.donation.Donation;
-import br.ifsp.demo.security.auth.RegisterUserRequest;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

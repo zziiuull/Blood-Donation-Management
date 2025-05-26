@@ -1,14 +1,14 @@
-package br.ifsp.demo.security.auth;
+package br.ifsp.demo.presentation.security.auth;
 
 import br.ifsp.demo.domain.model.common.Cpf;
 import br.ifsp.demo.domain.model.physician.Crm;
 import br.ifsp.demo.domain.model.physician.Physician;
 import br.ifsp.demo.domain.model.physician.State;
 import br.ifsp.demo.presentation.exception.EntityAlreadyExistsException;
-import br.ifsp.demo.security.config.JwtService;
-import br.ifsp.demo.security.user.JpaUserRepository;
-import br.ifsp.demo.security.user.Role;
-import br.ifsp.demo.security.user.User;
+import br.ifsp.demo.presentation.security.config.JwtService;
+import br.ifsp.demo.presentation.security.user.JpaUserRepository;
+import br.ifsp.demo.presentation.security.user.Role;
+import br.ifsp.demo.presentation.security.user.User;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

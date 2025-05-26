@@ -1,4 +1,4 @@
-package br.ifsp.demo.security.auth;
+package br.ifsp.demo.presentation.security.auth;
 
 public record RegisterPhysicianRequest(
         String name,

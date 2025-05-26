@@ -1,4 +1,4 @@
-package br.ifsp.demo.security.config;
+package br.ifsp.demo.presentation.security.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

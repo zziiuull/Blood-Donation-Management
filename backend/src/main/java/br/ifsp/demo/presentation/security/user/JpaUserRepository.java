@@ -1,4 +1,4 @@
-package br.ifsp.demo.security.user;
+package br.ifsp.demo.presentation.security.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

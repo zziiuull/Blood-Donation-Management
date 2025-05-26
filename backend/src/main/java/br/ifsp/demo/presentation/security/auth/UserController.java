@@ -1,4 +1,4 @@
-package br.ifsp.demo.security.auth;
+package br.ifsp.demo.presentation.security.auth;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
