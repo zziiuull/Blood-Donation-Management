@@ -9,6 +9,8 @@ import br.ifsp.demo.domain.model.donor.Sex;
 import br.ifsp.demo.infrastructure.repository.appointment.AppointmentRepository;
 import br.ifsp.demo.infrastructure.repository.donation.DonationRepository;
 import br.ifsp.demo.infrastructure.repository.donor.DonorRepository;
+import br.ifsp.demo.presentation.exception.AppointmentNotFoundException;
+import br.ifsp.demo.presentation.exception.DonorNotFoundException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -138,7 +140,7 @@ class DonationRegisterServiceTest {
         void shouldThrowExceptionWhenTryingToRegisterDonationWithoutDonor() {
             when(donorRepository.findById(any())).thenReturn(Optional.empty());
             assertThatThrownBy(() -> sut.registerByDonorId(null, appointmentId))
-                    .isInstanceOf(IllegalArgumentException.class)
+                    .isInstanceOf(DonorNotFoundException.class)
                     .hasMessage("Donor does not exist");
 
             verifyNoInteractions(donationRepository);
@@ -168,7 +170,7 @@ class DonationRegisterServiceTest {
             when(donorRepository.findById(nonExistentDonorId)).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> sut.registerByDonorId(nonExistentDonorId, appointmentId))
-                    .isInstanceOf(IllegalArgumentException.class)
+                    .isInstanceOf(DonorNotFoundException.class)
                     .hasMessage("Donor does not exist");
 
             verifyNoInteractions(donationRepository);
@@ -183,7 +185,7 @@ class DonationRegisterServiceTest {
             when(appointmentRepository.findById(any())).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> sut.registerByDonorId(eligibleDonorId, null))
-                    .isInstanceOf(IllegalArgumentException.class)
+                    .isInstanceOf(AppointmentNotFoundException.class)
                     .hasMessage("Appointment does not exist");
 
             verifyNoInteractions(donationRepository);
@@ -197,7 +199,7 @@ class DonationRegisterServiceTest {
             when(donorRepository.findById(eligibleDonorId)).thenReturn(Optional.of(eligibleDonor));
             when(appointmentRepository.findById(nonExistentAppointmentId)).thenReturn(Optional.empty());
             assertThatThrownBy(() -> sut.registerByDonorId(eligibleDonorId, nonExistentAppointmentId))
-                    .isInstanceOf(IllegalArgumentException.class)
+                    .isInstanceOf(AppointmentNotFoundException.class)
                     .hasMessage("Appointment does not exist");
 
             verifyNoInteractions(donationRepository);
