@@ -8,16 +8,23 @@ import br.ifsp.demo.domain.model.donation.AppointmentStatus;
 import br.ifsp.demo.domain.model.donation.CollectionSite;
 import br.ifsp.demo.domain.model.donor.Donor;
 import br.ifsp.demo.domain.model.donor.Sex;
+import br.ifsp.demo.domain.model.physician.Crm;
+import br.ifsp.demo.domain.model.physician.Physician;
+import br.ifsp.demo.domain.model.physician.State;
 import br.ifsp.demo.infrastructure.repository.appointment.AppointmentRepository;
 import br.ifsp.demo.infrastructure.repository.collectionSite.CollectionSiteRepository;
 import br.ifsp.demo.infrastructure.repository.donor.DonorRepository;
+import br.ifsp.demo.presentation.security.user.JpaUserRepository;
+import br.ifsp.demo.presentation.security.user.Role;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Component
 public class DataLoader implements CommandLineRunner {
@@ -26,11 +33,15 @@ public class DataLoader implements CommandLineRunner {
     private final DonorRepository donorRepository;
     private final AppointmentRepository appointmentRepository;
     private final CollectionSiteRepository collectionSiteRepository;
+    private final JpaUserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public DataLoader(DonorRepository donorRepository, AppointmentRepository appointmentRepository, CollectionSiteRepository collectionSiteRepository) {
+    public DataLoader(DonorRepository donorRepository, AppointmentRepository appointmentRepository, CollectionSiteRepository collectionSiteRepository, JpaUserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.donorRepository = donorRepository;
         this.appointmentRepository = appointmentRepository;
         this.collectionSiteRepository = collectionSiteRepository;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -70,5 +81,17 @@ public class DataLoader implements CommandLineRunner {
         );
         Appointment savedAppointment = appointmentRepository.save(appointment);
         LOGGER.info("Appointment id: {}", savedAppointment.getId());
+
+        final Physician physician = new Physician(
+                UUID.randomUUID(),
+                "John",
+                "Doe",
+                "johndoe@email.com",
+                passwordEncoder.encode("12345678"),
+                Role.PHYSICIAN,
+                new Cpf("12345678911"),
+                new Crm("123", State.valueOf("SP"))
+        );
+        userRepository.save(physician);
     }
 }
