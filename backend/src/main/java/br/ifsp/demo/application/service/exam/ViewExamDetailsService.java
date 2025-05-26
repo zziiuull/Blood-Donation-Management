@@ -3,7 +3,7 @@ package br.ifsp.demo.application.service.exam;
 import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.infrastructure.repository.exam.ExamRepository;
-import br.ifsp.demo.exception.ExamNotFoundException;
+import br.ifsp.demo.presentation.exception.ExamNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;

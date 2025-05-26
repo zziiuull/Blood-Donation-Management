@@ -4,9 +4,9 @@ import br.ifsp.demo.application.service.dto.exam.ImmunohematologyExamDTO;
 import br.ifsp.demo.application.service.dto.exam.SerologicalScreeningExamDTO;
 import br.ifsp.demo.domain.model.exam.*;
 import br.ifsp.demo.infrastructure.repository.exam.ExamRepository;
-import br.ifsp.demo.exception.ExamAlreadyAnalyzedException;
-import br.ifsp.demo.exception.ExamNotFoundException;
-import br.ifsp.demo.exception.InvalidExamAnalysisException;
+import br.ifsp.demo.presentation.exception.ExamAlreadyAnalyzedException;
+import br.ifsp.demo.presentation.exception.ExamNotFoundException;
+import br.ifsp.demo.presentation.exception.InvalidExamAnalysisException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

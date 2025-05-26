@@ -5,7 +5,7 @@ import br.ifsp.demo.application.service.dto.exam.ExamDTO;
 import br.ifsp.demo.domain.model.donation.Donation;
 import br.ifsp.demo.infrastructure.repository.donation.DonationRepository;
 import br.ifsp.demo.infrastructure.repository.exam.ExamRepository;
-import br.ifsp.demo.exception.DonationNotFoundException;
+import br.ifsp.demo.presentation.exception.DonationNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package br.ifsp.demo.exception;
+package br.ifsp.demo.presentation.exception;
 
 public class InvalidDonationAnalysisException extends RuntimeException{
     public InvalidDonationAnalysisException(String message) {

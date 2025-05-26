@@ -1,4 +1,4 @@
-package br.ifsp.demo.exception;
+package br.ifsp.demo.presentation.exception;
 
 import lombok.Builder;
 import lombok.Getter;

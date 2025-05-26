@@ -5,7 +5,7 @@ import br.ifsp.demo.domain.model.donation.DonationStatus;
 import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.infrastructure.repository.exam.ExamRepository;
-import br.ifsp.demo.exception.ExamRequestNotAllowedException;
+import br.ifsp.demo.presentation.exception.ExamRequestNotAllowedException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
