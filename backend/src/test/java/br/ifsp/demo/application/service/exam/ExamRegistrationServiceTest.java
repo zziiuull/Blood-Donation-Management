@@ -129,27 +129,34 @@ class ExamRegistrationServiceTest {
             verify(examRepository, times(1)).save(any(ImmunohematologyExam.class));
         }
 
-        @Test
+        @ParameterizedTest
+        @MethodSource("serologicalScreeningExamForRejection")
         @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
         @DisplayName("Should reject serological screening exam")
-        void shouldRejectSerologicalScreeningExam() {
+        void shouldRejectSerologicalScreeningExam(SerologicalScreeningExamDTO exam) {
             when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(serologicalScreeningExam));
             when(examRepository.save(any(SerologicalScreeningExam.class))).thenReturn(serologicalScreeningExam);
 
-            SerologicalScreeningExam result = sut.registerRejectedExam(UUID.randomUUID(), rejectedSerologicalScreeningExamDTO, updatedAt);
+            SerologicalScreeningExam result = sut.registerRejectedExam(UUID.randomUUID(), exam, updatedAt);
 
             assertThat(result.getStatus()).isEqualTo(ExamStatus.REJECTED);
             assertThat(result.getUpdatedAt()).isEqualTo(updatedAt);
-            assertThat(result.getHepatitisB()).isEqualTo(DiseaseDetection.POSITIVE);
-            assertThat(result.getHepatitisC()).isEqualTo(DiseaseDetection.POSITIVE);
-            assertThat(result.getChagasDisease()).isEqualTo(DiseaseDetection.POSITIVE);
-            assertThat(result.getSyphilis()).isEqualTo(DiseaseDetection.POSITIVE);
-            assertThat(result.getAids()).isEqualTo(DiseaseDetection.POSITIVE);
-            assertThat(result.getHtlv1_2()).isEqualTo(DiseaseDetection.POSITIVE);
 
             verify(examRepository, times(1)).save(any(SerologicalScreeningExam.class));
+        }
+
+        static Stream<Arguments> serologicalScreeningExamForRejection() {
+            return Stream.of(
+                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE)),
+                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.NEGATIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE)),
+                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.POSITIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE)),
+                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE)),
+                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE)),
+                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.POSITIVE)),
+                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.NEGATIVE))
+            );
         }
     }
 
@@ -272,17 +279,6 @@ class ExamRegistrationServiceTest {
             assertThatThrownBy(() -> sut.registerApprovedExam(UUID.randomUUID(), exam, updatedAt)).isInstanceOf(InvalidExamAnalysisException.class);
         }
 
-        @ParameterizedTest
-        @MethodSource("invalidSerologicalScreeningExamForRejection")
-        @Tag("UnitTest")
-        @Tag("Structural")
-        @DisplayName("Should throw when analysis for rejecting serological screening exam is invalid")
-        void shouldThrowWhenAnalysisForRejectingSerologicalScreeningExamIsInvalid(SerologicalScreeningExamDTO exam) {
-            when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(serologicalScreeningExam));
-
-            assertThatThrownBy(() -> sut.registerRejectedExam(UUID.randomUUID(), exam, updatedAt)).isInstanceOf(InvalidExamAnalysisException.class);
-        }
-
         static Stream<Arguments> invalidSerologicalScreeningExamForApproval() {
             return Stream.of(
                     Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.POSITIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE)),
@@ -290,31 +286,18 @@ class ExamRegistrationServiceTest {
                     Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.POSITIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE)),
                     Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.POSITIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE)),
                     Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.POSITIVE, DiseaseDetection.NEGATIVE)),
-                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.POSITIVE)),
-                    Arguments.of(new SerologicalScreeningExamDTO(null, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE)),
-                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.NEGATIVE, null, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE)),
-                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, null, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE)),
-                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, null, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE)),
-                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, null, DiseaseDetection.NEGATIVE)),
-                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, null))
+                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.POSITIVE))
             );
         }
 
-        static Stream<Arguments> invalidSerologicalScreeningExamForRejection() {
-            return Stream.of(
-                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.NEGATIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE)),
-                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.POSITIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE)),
-                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE)),
-                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE)),
-                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.POSITIVE)),
-                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.NEGATIVE)),
-                    Arguments.of(new SerologicalScreeningExamDTO(null, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE)),
-                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.POSITIVE, null, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE)),
-                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, null, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE)),
-                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, null, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE)),
-                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, null, DiseaseDetection.POSITIVE)),
-                    Arguments.of(new SerologicalScreeningExamDTO(DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, DiseaseDetection.POSITIVE, null))
-            );
+        @Test
+        @Tag("UnitTest")
+        @Tag("Structural")
+        @DisplayName("Should throw when analysis for rejecting serological screening exam is invalid")
+        void shouldThrowWhenAnalysisForRejectingSerologicalScreeningExamIsInvalid() {
+            when(examRepository.findById(any(UUID.class))).thenReturn(Optional.ofNullable(serologicalScreeningExam));
+
+            assertThatThrownBy(() -> sut.registerRejectedExam(UUID.randomUUID(), approvedSerologicalScreeningExamDTO, updatedAt)).isInstanceOf(InvalidExamAnalysisException.class);
         }
     }
 }
