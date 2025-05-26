@@ -23,4 +23,13 @@ public class SerologicalScreeningExam extends Exam {
     public SerologicalScreeningExam() {
         super();
     }
+
+    public void updateResults(SerologicalScreeningExamDTO examDTO){
+        hepatitisB = examDTO.hepatitisB();
+        hepatitisC = examDTO.hepatitisC();
+        chagasDisease = examDTO.chagasDisease();
+        syphilis = examDTO.syphilis();
+        aids = examDTO.aids();
+        htlv1_2 = examDTO.htlv1_2();
+    }
 }

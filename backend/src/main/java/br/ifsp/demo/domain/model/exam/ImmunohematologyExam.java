@@ -20,4 +20,9 @@ public class ImmunohematologyExam extends Exam {
     public ImmunohematologyExam() {
         super();
     }
+
+    public void updateResults(ImmunohematologyExamDTO examDTO) {
+        irregularAntibodies = examDTO.irregularAntibodies();
+        bloodType = examDTO.bloodType();
+    }
 }
