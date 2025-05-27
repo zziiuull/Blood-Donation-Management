@@ -7,12 +7,12 @@ import br.ifsp.demo.domain.model.exam.Exam;
 import br.ifsp.demo.domain.model.exam.ExamStatus;
 import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
-import br.ifsp.demo.domain.repository.donation.DonationRepository;
-import br.ifsp.demo.domain.repository.exam.ExamRepository;
-import br.ifsp.demo.exception.CannotFinishDonationWithExamUnderAnalysisException;
-import br.ifsp.demo.exception.DonationNotFoundException;
-import br.ifsp.demo.exception.ExamNotFoundException;
-import br.ifsp.demo.exception.InvalidDonationAnalysisException;
+import br.ifsp.demo.infrastructure.repository.donation.DonationRepository;
+import br.ifsp.demo.infrastructure.repository.exam.ExamRepository;
+import br.ifsp.demo.presentation.exception.CannotFinishDonationWithExamUnderAnalysisException;
+import br.ifsp.demo.presentation.exception.DonationNotFoundException;
+import br.ifsp.demo.presentation.exception.ExamNotFoundException;
+import br.ifsp.demo.presentation.exception.InvalidDonationAnalysisException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -39,8 +39,7 @@ public class UpdateDonationService {
 
         isExamsAnalyzed(donationId, ExamStatus.APPROVED);
 
-        donation.setStatus(DonationStatus.APPROVED);
-        donation.setUpdatedAt(updatedAt);
+        donation.approve(updatedAt);
 
         Donation saved = donationRepository.save(donation);
 
@@ -80,8 +79,7 @@ public class UpdateDonationService {
 
         isExamsAnalyzed(donationId, ExamStatus.REJECTED);
 
-        donation.setStatus(DonationStatus.REJECTED);
-        donation.setUpdatedAt(updatedAt);
+        donation.reject(updatedAt);
 
         Donation saved = donationRepository.save(donation);
 

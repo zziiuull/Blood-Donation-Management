@@ -3,10 +3,10 @@ package br.ifsp.demo.application.service.exam;
 import br.ifsp.demo.application.service.dto.exam.ImmunohematologyExamDTO;
 import br.ifsp.demo.application.service.dto.exam.SerologicalScreeningExamDTO;
 import br.ifsp.demo.domain.model.exam.*;
-import br.ifsp.demo.domain.repository.exam.ExamRepository;
-import br.ifsp.demo.exception.ExamAlreadyAnalyzedException;
-import br.ifsp.demo.exception.ExamNotFoundException;
-import br.ifsp.demo.exception.InvalidExamAnalysisException;
+import br.ifsp.demo.infrastructure.repository.exam.ExamRepository;
+import br.ifsp.demo.presentation.exception.ExamAlreadyAnalyzedException;
+import br.ifsp.demo.presentation.exception.ExamNotFoundException;
+import br.ifsp.demo.presentation.exception.InvalidExamAnalysisException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -25,11 +25,8 @@ public class ExamRegistrationService {
         ImmunohematologyExam exam = retrieveImmunohematologyExam(examId);
 
         isUnderAnalysis(exam);
-
-        if (!isFieldsValidForApproving(examDTO)) throw new InvalidExamAnalysisException("Immunohematology exam has invalid field(s) for approving");
-
-        editExamData(exam, examDTO);
-        approveExam(exam, updatedAt);
+        exam.updateResults(examDTO);
+        exam.approve(updatedAt);
 
         return examRepository.save(exam);
     }
@@ -44,30 +41,12 @@ public class ExamRegistrationService {
         if (exam.getStatus() != ExamStatus.UNDER_ANALYSIS) throw new ExamAlreadyAnalyzedException("Can not approve exam already analyzed");
     }
 
-    private boolean isFieldsValidForApproving(ImmunohematologyExamDTO exam){
-        if (exam.bloodType() == null) return false;
-        return exam.irregularAntibodies() == IrregularAntibodies.NEGATIVE;
-    }
-
-    private void editExamData(ImmunohematologyExam exam, ImmunohematologyExamDTO examDTO){
-        exam.setIrregularAntibodies(examDTO.irregularAntibodies());
-        exam.setBloodType(examDTO.bloodType());
-    }
-
-    private void approveExam(Exam exam, LocalDateTime updatedAt) {
-        exam.setStatus(ExamStatus.APPROVED);
-        exam.setUpdatedAt(updatedAt);
-    }
-
     public SerologicalScreeningExam registerApprovedExam(UUID examId, SerologicalScreeningExamDTO examDTO, LocalDateTime updatedAt) {
         SerologicalScreeningExam exam = retrieveSerologicalScreeningExam(examId);
 
         isUnderAnalysis(exam);
-
-        if (!isFieldsValidForApproving(examDTO)) throw new InvalidExamAnalysisException("Serological screening exam has invalid field(s) for approving");
-
-        editExamData(exam, examDTO);
-        approveExam(exam, updatedAt);
+        exam.updateResults(examDTO);
+        exam.approve(updatedAt);
 
         return examRepository.save(exam);
     }
@@ -78,66 +57,23 @@ public class ExamRegistrationService {
         return (SerologicalScreeningExam) optionalExam.get();
     }
 
-    private boolean isFieldsValidForApproving(SerologicalScreeningExamDTO exam){
-        if (exam.hepatitisB() == null || exam.hepatitisB() == DiseaseDetection.POSITIVE) return false;
-        if (exam.hepatitisC() == null || exam.hepatitisC() == DiseaseDetection.POSITIVE) return false;
-        if (exam.chagasDisease() == null || exam.chagasDisease() == DiseaseDetection.POSITIVE) return false;
-        if (exam.syphilis() == null || exam.syphilis() == DiseaseDetection.POSITIVE) return false;
-        if (exam.aids() == null || exam.aids() == DiseaseDetection.POSITIVE) return false;
-        return exam.htlv1_2() != null && exam.htlv1_2() != DiseaseDetection.POSITIVE;
-    }
-
-    private void editExamData(SerologicalScreeningExam exam, SerologicalScreeningExamDTO examDTO){
-        exam.setHepatitisB(examDTO.hepatitisB());
-        exam.setHepatitisC(examDTO.hepatitisC());
-        exam.setChagasDisease(examDTO.chagasDisease());
-        exam.setSyphilis(examDTO.syphilis());
-        exam.setAids(examDTO.aids());
-        exam.setHtlv1_2(examDTO.htlv1_2());
-    }
-
     public ImmunohematologyExam registerRejectedExam(UUID examId, ImmunohematologyExamDTO examDTO, LocalDateTime updatedAt) {
         ImmunohematologyExam exam = retrieveImmunohematologyExam(examId);
 
         isUnderAnalysis(exam);
-
-        if (!isFieldsValidForRejecting(examDTO)) throw new InvalidExamAnalysisException("Immunohematology exam has invalid field(s) for rejecting");
-
-        editExamData(exam, examDTO);
-        rejectExam(exam, updatedAt);
+        exam.updateResults(examDTO);
+        exam.reject(updatedAt);
 
         return examRepository.save(exam);
-    }
-
-    private boolean isFieldsValidForRejecting(ImmunohematologyExamDTO exam){
-        if (exam.bloodType() == null) return false;
-        return exam.irregularAntibodies() == IrregularAntibodies.POSITIVE;
-    }
-
-    private void rejectExam(Exam exam, LocalDateTime updatedAt) {
-        exam.setStatus(ExamStatus.REJECTED);
-        exam.setUpdatedAt(updatedAt);
     }
 
     public SerologicalScreeningExam registerRejectedExam(UUID examId, SerologicalScreeningExamDTO examDTO, LocalDateTime updatedAt) {
         SerologicalScreeningExam exam = retrieveSerologicalScreeningExam(examId);
 
         isUnderAnalysis(exam);
-
-        if (!isFieldsValidForRejecting(examDTO)) throw new InvalidExamAnalysisException("Serological screening exam has invalid field(s) for rejecting");
-
-        editExamData(exam, examDTO);
-        rejectExam(exam, updatedAt);
+        exam.updateResults(examDTO);
+        exam.reject(updatedAt);
 
         return examRepository.save(exam);
-    }
-
-    private boolean isFieldsValidForRejecting(SerologicalScreeningExamDTO exam){
-        if (exam.hepatitisB() == null || exam.hepatitisB() == DiseaseDetection.NEGATIVE) return false;
-        if (exam.hepatitisC() == null || exam.hepatitisC() == DiseaseDetection.NEGATIVE) return false;
-        if (exam.chagasDisease() == null || exam.chagasDisease() == DiseaseDetection.NEGATIVE) return false;
-        if (exam.syphilis() == null || exam.syphilis() == DiseaseDetection.NEGATIVE) return false;
-        if (exam.aids() == null || exam.aids() == DiseaseDetection.NEGATIVE) return false;
-        return exam.htlv1_2() != null && exam.htlv1_2() != DiseaseDetection.NEGATIVE;
     }
 }

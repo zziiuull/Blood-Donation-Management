@@ -1,8 +1,8 @@
 package br.ifsp.demo.domain.model.physician;
 
 import br.ifsp.demo.domain.model.common.Cpf;
-import br.ifsp.demo.security.user.Role;
-import br.ifsp.demo.security.user.User;
+import br.ifsp.demo.presentation.security.user.Role;
+import br.ifsp.demo.presentation.security.user.User;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;

@@ -4,13 +4,11 @@ import br.ifsp.demo.domain.model.donation.Donation;
 import br.ifsp.demo.domain.model.donation.DonationStatus;
 import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
-import br.ifsp.demo.domain.repository.exam.ExamRepository;
-import br.ifsp.demo.exception.ExamNotFoundException;
-import br.ifsp.demo.exception.ExamRequestNotAllowedException;
+import br.ifsp.demo.infrastructure.repository.exam.ExamRepository;
+import br.ifsp.demo.presentation.exception.ExamRequestNotAllowedException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ExamRequestService {
