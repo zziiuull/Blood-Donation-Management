@@ -1,13 +1,11 @@
 "use client";
 
-import type { Appointment, Donation, Donor } from "@/types";
+import type { Donation } from "@/types";
 
 import { Icon } from "@iconify/react";
 import React, { useState } from "react";
 import { Tabs, Tab, Button } from "@heroui/react";
 
-import { AppointmentAutocomplete } from "./components/appoinmentAutocomplete";
-import { DonorAutocomplete } from "./components/donorAutocomplete";
 import { DonationAutocomplete } from "./components/donationAutocomplete";
 import DonorDetailsTable from "./components/donorDetailsTable";
 import ImmunohematologyDetailsTable from "./components/immunohematologyDetailsTable";
@@ -18,21 +16,11 @@ export default function Donation() {
   const [selectedDonation, setSelectedDonation] = useState<Donation | null>(
     null,
   );
-  const [selectedDonor, setSelectedDonor] = useState<Donor | null>(null);
-  const [selectedAppointment, setSelectedAppointment] =
-    useState<Appointment | null>(null);
-  const [activeTab, setActiveTab] = useState("register");
+
+  const [activeTab, setActiveTab] = useState("update");
 
   const handleDonationSelect = (donation: Donation | null) => {
     setSelectedDonation(donation);
-  };
-
-  const handleDonorSelect = (donor: Donor | null) => {
-    setSelectedDonor(donor);
-  };
-
-  const handleAppointmentSelect = (appointment: Appointment | null) => {
-    setSelectedAppointment(appointment);
   };
 
   const shouldShowSearch = activeTab === "update" || activeTab === "view";
@@ -46,71 +34,9 @@ export default function Donation() {
             <Tabs
               onSelectionChange={(key: React.Key) => {
                 setActiveTab(key as string);
-                setSelectedDonor(null);
-                setSelectedAppointment(null);
                 setSelectedDonation(null);
               }}
             >
-              <Tab key="register" title="Register donation">
-                <div className="flex flex-col gap-4 mt-4">
-                  <div className="flex flex-col gap-10 justify-evenly">
-                    <div>
-                      <h3 className="text-lg font-bold text-default-600">
-                        Step 1: Select a donor
-                      </h3>
-                      <DonorAutocomplete
-                        handleDonorSelect={handleDonorSelect}
-                      />
-                    </div>
-                    {selectedDonor != null && (
-                      <div>
-                        <h3 className="text-lg font-bold text-default-600">
-                          Step 2: Select an appointment
-                        </h3>
-                        <AppointmentAutocomplete
-                          handleAppointmentSelect={handleAppointmentSelect}
-                        />
-                      </div>
-                    )}
-                    {selectedAppointment != null && (
-                      <div>
-                        <h3 className="text-lg font-bold text-default-600">
-                          Step 3: Request immunohemalogy exam
-                        </h3>
-                        <Button
-                          startContent={
-                            <Icon className="text-xl" icon="lucide:plus" />
-                          }
-                          variant="faded"
-                        >
-                          Request
-                        </Button>
-                      </div>
-                    )}
-                    {selectedAppointment != null && (
-                      <div>
-                        <h3 className="text-lg font-bold text-default-600">
-                          Step 4: Request serological screening exam
-                        </h3>
-                        <Button
-                          startContent={
-                            <Icon className="text-xl" icon="lucide:plus" />
-                          }
-                          variant="faded"
-                        >
-                          Request
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                  {selectedAppointment != null && (
-                    <Button className="mt-4" variant="faded">
-                      Register donation
-                    </Button>
-                  )}
-                </div>
-              </Tab>
-
               <Tab
                 key="update"
                 className="flex flex-col gap-4"
@@ -145,7 +71,7 @@ export default function Donation() {
                       <Button
                         color="primary"
                         startContent={
-                          <Icon className="text-xl" icon="lucide:check" />
+                          <Icon className="text-xl " icon="lucide:check" />
                         }
                       >
                         Approve
