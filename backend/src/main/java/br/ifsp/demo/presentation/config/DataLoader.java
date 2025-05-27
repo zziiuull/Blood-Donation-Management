@@ -3,17 +3,19 @@ package br.ifsp.demo.presentation.config;
 import br.ifsp.demo.domain.model.common.BloodType;
 import br.ifsp.demo.domain.model.common.ContactInfo;
 import br.ifsp.demo.domain.model.common.Cpf;
-import br.ifsp.demo.domain.model.donation.Appointment;
-import br.ifsp.demo.domain.model.donation.AppointmentStatus;
-import br.ifsp.demo.domain.model.donation.CollectionSite;
+import br.ifsp.demo.domain.model.donation.*;
 import br.ifsp.demo.domain.model.donor.Donor;
 import br.ifsp.demo.domain.model.donor.Sex;
+import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
+import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.domain.model.physician.Crm;
 import br.ifsp.demo.domain.model.physician.Physician;
 import br.ifsp.demo.domain.model.physician.State;
 import br.ifsp.demo.infrastructure.repository.appointment.AppointmentRepository;
 import br.ifsp.demo.infrastructure.repository.collectionSite.CollectionSiteRepository;
+import br.ifsp.demo.infrastructure.repository.donation.DonationRepository;
 import br.ifsp.demo.infrastructure.repository.donor.DonorRepository;
+import br.ifsp.demo.infrastructure.repository.exam.ExamRepository;
 import br.ifsp.demo.presentation.security.user.JpaUserRepository;
 import br.ifsp.demo.presentation.security.user.Role;
 import org.slf4j.Logger;
@@ -32,57 +34,116 @@ public class DataLoader implements CommandLineRunner {
 
     private final DonorRepository donorRepository;
     private final AppointmentRepository appointmentRepository;
+    private final DonationRepository donationRepository;
     private final CollectionSiteRepository collectionSiteRepository;
+    private final ExamRepository examRepository;
     private final JpaUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public DataLoader(DonorRepository donorRepository, AppointmentRepository appointmentRepository, CollectionSiteRepository collectionSiteRepository, JpaUserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public DataLoader(
+        DonorRepository donorRepository,
+        AppointmentRepository appointmentRepository,
+        CollectionSiteRepository collectionSiteRepository,
+        ExamRepository examRepository,
+        JpaUserRepository userRepository,
+        PasswordEncoder passwordEncoder,
+        DonationRepository donationRepository
+    ) {
         this.donorRepository = donorRepository;
         this.appointmentRepository = appointmentRepository;
         this.collectionSiteRepository = collectionSiteRepository;
+        this.examRepository = examRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.donationRepository = donationRepository;
     }
 
     @Override
     public void run(String... args) throws Exception {
-        ContactInfo donorContactInfo = new ContactInfo(
-                "weverton@email.com",
-                "11991239867",
-                "Rua da Ponte Caída, n. 101, Itaquaquecetuba/SP"
+        CollectionSite site = new CollectionSite(
+                "Banco de Doação de Sorocaba",
+                new ContactInfo("doesangue.sorocaba@email.com", "1533761530", "Av. Anhanguera, n. 715, Sorocaba/SP")
         );
-        Donor savedDonor = donorRepository.save(new Donor(
+        CollectionSite savedCollectionSite = collectionSiteRepository.save(site);
+        LOGGER.info("CollectionSite id: {}", savedCollectionSite.getId());
+
+        Donor donor1 = new Donor(
                 "Weverton",
                 new Cpf("12345678955"),
-                donorContactInfo,
+                new ContactInfo("weverton@email.com", "11991239867", "Rua da Ponte Caída, n. 101, Itaquaquecetuba/SP"),
                 LocalDate.of(1990, 5, 20),
                 85.0,
                 Sex.MALE,
                 BloodType.O_POS
-        ));
-        LOGGER.info("Donor id: {}", savedDonor.getId());
-
-        ContactInfo siteContactInfo = new ContactInfo(
-                "doesangue.sorocaba@email.com",
-                "1533761530",
-                "Av. Anhanguera, n. 715, Sorocaba/SP"
         );
-        CollectionSite site = new CollectionSite(
-                "Banco de Doação de Sorocaba",
-                siteContactInfo
-        );
-        collectionSiteRepository.save(site);
+        Donor savedDonor1 = donorRepository.save(donor1);
+        LOGGER.info("Donor1 id: {}", savedDonor1.getId());
 
-        Appointment appointment = new Appointment(
+        Donor donor2 = new Donor(
+                "Ana Beatriz",
+                new Cpf("98765432100"),
+                new ContactInfo("ana@email.com", "11998887766", "Rua das Flores, n. 25, Campinas/SP"),
+                LocalDate.of(1995, 8, 10),
+                60.0,
+                Sex.FEMALE,
+                BloodType.A_NEG
+        );
+        Donor savedDonor2 = donorRepository.save(donor2);
+        LOGGER.info("Donor2 id: {}", savedDonor2.getId());
+
+        Appointment appointment1 = new Appointment(
                 LocalDateTime.now().plusDays(1),
                 AppointmentStatus.SCHEDULED,
                 site,
-                "First donation"
+                "Primeira doação"
         );
-        Appointment savedAppointment = appointmentRepository.save(appointment);
-        LOGGER.info("Appointment id: {}", savedAppointment.getId());
+        Appointment savedAppointment1 = appointmentRepository.save(appointment1);
+        LOGGER.info("Appointment1 id: {}", savedAppointment1.getId());
 
-        final Physician physician = new Physician(
+        Appointment appointment2 = new Appointment(
+                LocalDateTime.now().plusDays(2),
+                AppointmentStatus.SCHEDULED,
+                site,
+                "Segunda doação"
+        );
+        Appointment savedAppointment2 = appointmentRepository.save(appointment2);
+        LOGGER.info("Appointment2 id: {}", savedAppointment2.getId());
+
+        Donation donation1 = new Donation(
+                savedDonor1,
+                savedAppointment1,
+                DonationStatus.UNDER_ANALYSIS
+        );
+        Donation savedDonation1 = donationRepository.save(donation1);
+        LOGGER.info("Donation1 id: {}", savedDonation1.getId());
+
+        Donation donation2 = new Donation(
+                savedDonor2,
+                savedAppointment2,
+                DonationStatus.UNDER_ANALYSIS
+        );
+        Donation savedDonation2 = donationRepository.save(donation2);
+        LOGGER.info("Donation2 id: {}", savedDonation2.getId());
+
+        ImmunohematologyExam immunoExam1 = new ImmunohematologyExam(savedDonation1);
+        SerologicalScreeningExam seroExam1 = new SerologicalScreeningExam(savedDonation1);
+
+        ImmunohematologyExam immunoExam2 = new ImmunohematologyExam(savedDonation2);
+        SerologicalScreeningExam seroExam2 = new SerologicalScreeningExam(savedDonation2);
+
+        immunoExam1 = examRepository.save(immunoExam1);
+        LOGGER.info("ImmunohematologyExam1 id: {}", immunoExam1.getId());
+
+        seroExam1 = examRepository.save(seroExam1);
+        LOGGER.info("SerologicalScreeningExam1 id: {}", seroExam1.getId());
+
+        immunoExam2 = examRepository.save(immunoExam2);
+        LOGGER.info("ImmunohematologyExam2 id: {}", immunoExam2.getId());
+
+        seroExam2 = examRepository.save(seroExam2);
+        LOGGER.info("SerologicalScreeningExam2 id: {}", seroExam2.getId());
+
+        Physician physician = new Physician(
                 UUID.randomUUID(),
                 "John",
                 "Doe",
@@ -90,8 +151,9 @@ public class DataLoader implements CommandLineRunner {
                 passwordEncoder.encode("12345678"),
                 Role.PHYSICIAN,
                 new Cpf("12345678911"),
-                new Crm("123", State.valueOf("SP"))
+                new Crm("123", State.SP)
         );
-        userRepository.save(physician);
+        Physician savedPhysician = userRepository.save(physician);
+        LOGGER.info("Physician id: {}", savedPhysician.getId());
     }
 }
