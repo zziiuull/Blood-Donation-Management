@@ -1,9 +1,9 @@
 import { Autocomplete, AutocompleteItem, Chip } from "@heroui/react";
+import { Icon } from "@iconify/react";
 
 import { donations } from "./donations";
 
 import { formatDateTime } from "@/utils/utils";
-import { SearchIcon } from "@/components/icons";
 import { Donation, DonationStatus } from "@/types";
 
 interface DonationAutocompleteProps {
@@ -60,7 +60,7 @@ export const DonationAutocomplete = ({
       radius="lg"
       size="sm"
       startContent={
-        <SearchIcon className="text-default-400" size={20} strokeWidth={2.5} />
+        <Icon className="text-xl text-default-400" icon="lucide:search" />
       }
       variant="flat"
       onSelectionChange={(id) => {

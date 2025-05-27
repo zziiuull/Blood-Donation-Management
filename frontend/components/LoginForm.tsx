@@ -2,7 +2,7 @@
 
 import { Button, Input, Form } from "@heroui/react";
 import { useState } from "react";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { Icon } from "@iconify/react";
 
 import FormContainer from "./FormContainer";
 
@@ -41,9 +41,15 @@ export default function LoginForm() {
               onClick={togglePasswordVisibility}
             >
               {isPasswordVisible ? (
-                <FaEye className="text-2xl text-default-400 pointer-events-none" />
+                <Icon
+                  className="text-2xl text-default-400 pointer-events-none"
+                  icon="lucide:eye"
+                />
               ) : (
-                <FaEyeSlash className="text-2xl text-default-400 pointer-events-none" />
+                <Icon
+                  className="text-2xl text-default-400 pointer-events-none"
+                  icon="lucide:eye-closed"
+                />
               )}
             </button>
           }
