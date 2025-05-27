@@ -1,8 +1,14 @@
-import axios from 'axios';
+import axios from 'axios";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function getImmunoExamByDonationId(donationId: string) {
   const res = await axios.get(`${API_URL}/exams/immunohematology/${donationId}`);
+  return res.data;
+}
+
+export async function updateImmunoExam(examId: string, data: any, approve = true) {
+  const endpoint = approve ? 'approve' : 'reject';
+  const res = await axios.post(`${API_URL}/exams/immunohematology/${examId}/${endpoint}`, data);
   return res.data;
 }
