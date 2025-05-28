@@ -59,7 +59,5 @@ class DonorServiceTest {
 
             verify(donorRepository, times(1)).findAll();
         }
-
     }
-
 }
