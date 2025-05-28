@@ -14,6 +14,8 @@ import ImmunohematologyDetailsTable from "./components/immunohematologyDetailsTa
 import { immunohemalogyExam, serologicalExam } from "./components/exams";
 import SerologicalDetailsTable from "./components/serologicalExamDetailsTable";
 
+import { donationStatusMap } from "@/utils/utils";
+
 export default function Donation() {
   const [selectedDonation, setSelectedDonation] = useState<Donation | null>(
     null,
@@ -96,6 +98,12 @@ export default function Donation() {
                 {selectedDonation && (
                   <>
                     <div className="flex flex-col gap-4">
+                      <h3 className="text-xl font-bold text-default-600">
+                        Donation status:{" "}
+                        {donationStatusMap.get(
+                          selectedDonation?.donationStatus,
+                        )}
+                      </h3>
                       <h3 className="text-lg font-bold text-default-600">
                         Donor
                       </h3>
@@ -148,6 +156,12 @@ export default function Donation() {
                 {selectedDonation && (
                   <>
                     <div className="flex flex-col gap-4">
+                      <h3 className="text-xl font-bold text-default-600">
+                        Donation status:{" "}
+                        {donationStatusMap.get(
+                          selectedDonation?.donationStatus,
+                        )}
+                      </h3>
                       <h3 className="text-lg font-bold text-default-600">
                         Donor
                       </h3>

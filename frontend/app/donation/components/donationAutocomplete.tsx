@@ -5,16 +5,11 @@ import { donations } from "./donations";
 
 import { formatDateTime } from "@/utils/utils";
 import { Donation, DonationStatus } from "@/types";
+import { donationStatusMap } from "@/utils/utils";
 
 interface DonationAutocompleteProps {
   handleDonationSelect: (donation: Donation | null) => void;
 }
-
-const donationStatusMap: Map<DonationStatus, string> = new Map([
-  ["APPROVED", "APPROVED"],
-  ["REJECTED", "REJECTED"],
-  ["UNDER_ANALYSIS", "UNDER ANALYSIS"],
-]);
 
 export const DonationAutocomplete = ({
   handleDonationSelect,
@@ -59,9 +54,7 @@ export const DonationAutocomplete = ({
       }}
       radius="lg"
       size="sm"
-      startContent={
-        <Icon className="text-xl text-default-400" icon="lucide:search" />
-      }
+      startContent={<Icon className="text-default-400" icon="lucide:search" />}
       variant="flat"
       onSelectionChange={(id) => {
         const donation = donations.find((d) => d.id === id);
