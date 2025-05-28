@@ -1,18 +1,44 @@
 import { Autocomplete, AutocompleteItem, Chip } from "@heroui/react";
 import { Icon } from "@iconify/react";
-
-import { appointments } from "./appointments";
+import { useEffect, useState } from "react";
 
 import { formatDateTime } from "@/utils/utils";
 import { Appointment } from "@/types";
+import axios from "@/services/axios";
 
 interface AppointmentAutocompleteProps {
   handleAppointmentSelect: (appointment: Appointment | null) => void;
 }
 
+const loadAppointments = async () => {
+  try {
+    const result = await axios.get<Appointment>("/api/v1/appointment", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+
+    if (result.status === 200) return result.data;
+  } catch (error) {
+    return [];
+  }
+};
+
 export const AppointmentAutocomplete = ({
   handleAppointmentSelect,
 }: AppointmentAutocompleteProps) => {
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await loadAppointments();
+
+      setAppointments(data);
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <Autocomplete
       aria-label="Select an appointment"
