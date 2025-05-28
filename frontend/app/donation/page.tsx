@@ -13,9 +13,12 @@ import DonorDetailsTable from "./components/donorDetailsTable";
 import ImmunohematologyDetailsTable from "./components/immunohematologyDetailsTable";
 import { immunohemalogyExam, serologicalExam } from "./components/exams";
 import SerologicalDetailsTable from "./components/serologicalExamDetailsTable";
+import { ExamCheckbox } from "./components/examCheckbox";
 
 import axios from "@/services/axios";
 import { donationStatusMap } from "@/utils/utils";
+import showFailToast from "@/services/toast/showFailToast";
+import showSuccessToast from "@/services/toast/showSuccessToast";
 
 export default function Donation() {
   const [selectedDonation, setSelectedDonation] = useState<Donation | null>(
@@ -25,6 +28,9 @@ export default function Donation() {
   const [selectedAppointment, setSelectedAppointment] =
     useState<Appointment | null>(null);
   const [activeTab, setActiveTab] = useState("register");
+  const [isSelectedImmunoExam, setIsSelectedImmunoExam] =
+    useState<boolean>(false);
+  const [isSelectedSeroExam, setIsSelectedSeroExam] = useState<boolean>(false);
 
   const handleDonationSelect = (donation: Donation | null) => {
     setSelectedDonation(donation);
@@ -49,10 +55,64 @@ export default function Donation() {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "application/json",
           },
         },
       );
+
+      console.log(result);
+      if (result.status === 200) {
+        const donationId = result.data.id;
+
+        showSuccessToast("Donation requested");
+
+        if (isSelectedImmunoExam) {
+          await handleImmunoExamRequest(donationId);
+        }
+        if (isSelectedSeroExam) {
+          await handleSeroExamRequest(donationId);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      showFailToast(error.response.data.message);
+    }
+  };
+
+  const handleImmunoExamRequest = async (donationId: string) => {
+    try {
+      const result = await axios.post(
+        `/api/v1/exam/request/immunohematology/${donationId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        },
+      );
+
+      console.log(result);
+      if (result.status === 200) {
+        showSuccessToast("Immunohematology exam requested");
+      }
+    } catch (error) {}
+  };
+
+  const handleSeroExamRequest = async (donationId: string) => {
+    try {
+      const result = await axios.post(
+        `/api/v1/exam/request/serologicalscreening/${donationId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        },
+      );
+
+      console.log(result);
+      if (result.status === 200) {
+        showSuccessToast("Serological screening exam requested");
+      }
     } catch (error) {}
   };
 
@@ -70,6 +130,8 @@ export default function Donation() {
                 setSelectedDonor(null);
                 setSelectedAppointment(null);
                 setSelectedDonation(null);
+                setIsSelectedImmunoExam(false);
+                setIsSelectedSeroExam(false);
               }}
             >
               <Tab key="register" title="Register donation">
@@ -91,6 +153,27 @@ export default function Donation() {
                         <AppointmentAutocomplete
                           handleAppointmentSelect={handleAppointmentSelect}
                         />
+                      </div>
+                    )}
+                    {selectedAppointment != null && (
+                      <div className="flex flex-col gap-2">
+                        <h3 className="text-lg font-bold text-default-600">
+                          Step 3: Select required exams
+                        </h3>
+                        <div className="flex gap-8">
+                          <ExamCheckbox
+                            description="Blood typing and compatibility testing"
+                            isSelected={isSelectedImmunoExam}
+                            name="Immunohematology exam"
+                            onChange={setIsSelectedImmunoExam}
+                          />
+                          <ExamCheckbox
+                            description="Infectious disease screening"
+                            isSelected={isSelectedSeroExam}
+                            name="Serological Screening exam"
+                            onChange={setIsSelectedSeroExam}
+                          />
+                        </div>
                       </div>
                     )}
                   </div>
