@@ -1,16 +1,10 @@
 package br.ifsp.demo.application.service.appointment;
 
-import br.ifsp.demo.application.service.donor.DonorService;
-import br.ifsp.demo.domain.model.common.BloodType;
 import br.ifsp.demo.domain.model.common.ContactInfo;
-import br.ifsp.demo.domain.model.common.Cpf;
 import br.ifsp.demo.domain.model.donation.Appointment;
 import br.ifsp.demo.domain.model.donation.AppointmentStatus;
 import br.ifsp.demo.domain.model.donation.CollectionSite;
-import br.ifsp.demo.domain.model.donor.Donor;
-import br.ifsp.demo.domain.model.donor.Sex;
 import br.ifsp.demo.infrastructure.repository.appointment.AppointmentRepository;
-import br.ifsp.demo.infrastructure.repository.donor.DonorRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -58,7 +52,7 @@ class AppointmentServiceTest {
 
             when(appointmentRepository.findAll()).thenReturn(appointments);
 
-            List<Donor> result = appointmentService.getAll();
+            List<Appointment> result = appointmentService.getAll();
 
             assertThat(result).isNotNull();
             assertThat(result).isEqualTo(appointments);
