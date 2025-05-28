@@ -29,22 +29,51 @@ export default function UpdateSerologicalExamPage() {
     htlv1_2: '',
   });
 
+  // useEffect(() => {
+  //   if (donationId) {
+  //     getSerologicalExamByDonationId(donationId as string).then((data) => {
+  //       setExam(data);
+  //       setObservations(data.observations ?? '');
+  //       setFields({
+  //         hepatitisB: data.hepatitisB ?? '',
+  //         hepatitisC: data.hepatitisC ?? '',
+  //         chagasDisease: data.chagasDisease ?? '',
+  //         syphilis: data.syphilis ?? '',
+  //         aids: data.aids ?? '',
+  //         htlv1_2: data.htlv1_2 ?? '',
+  //       });
+  //     });
+  //   }
+  // }, [donationId]);
+
   useEffect(() => {
-    if (donationId) {
-      getSerologicalExamByDonationId(donationId as string).then((data) => {
-        setExam(data);
-        setObservations(data.observations ?? '');
-        setFields({
-          hepatitisB: data.hepatitisB ?? '',
-          hepatitisC: data.hepatitisC ?? '',
-          chagasDisease: data.chagasDisease ?? '',
-          syphilis: data.syphilis ?? '',
-          aids: data.aids ?? '',
-          htlv1_2: data.htlv1_2 ?? '',
-        });
-      });
-    }
-  }, [donationId]);
+    const mockExam = {
+      id: 'mock-id-123',
+      observations: 'Paciente saudável.',
+      hepatitisB: 'NEGATIVE',
+      hepatitisC: 'NEGATIVE',
+      chagasDisease: 'NEGATIVE',
+      syphilis: 'NEGATIVE',
+      aids: 'NEGATIVE',
+      htlv1_2: 'NEGATIVE',
+      donation: {
+        id: 'mock-donation-id',
+        status: 'UNDER_ANALYSIS',
+      },
+      status: 'UNDER_ANALYSIS',
+    };
+  
+    setExam(mockExam);
+    setObservations(mockExam.observations);
+    setFields({
+      hepatitisB: mockExam.hepatitisB,
+      hepatitisC: mockExam.hepatitisC,
+      chagasDisease: mockExam.chagasDisease,
+      syphilis: mockExam.syphilis,
+      aids: mockExam.aids,
+      htlv1_2: mockExam.htlv1_2,
+    });
+  }, []);
 
   const handleChange = (key: string, value: string) => {
     setFields((prev) => ({ ...prev, [key]: value }));
