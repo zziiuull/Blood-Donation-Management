@@ -1,18 +1,44 @@
 import { Autocomplete, AutocompleteItem, Divider } from "@heroui/react";
 import { Icon } from "@iconify/react";
-
-import { donors } from "./donors";
+import { useState, useEffect } from "react";
 
 import { bloodTypeMap } from "@/utils/utils";
 import { Donor } from "@/types";
+import axios from "@/services/axios";
 
 interface DonorAutocompleteProps {
   handleDonorSelect: (donor: Donor | null) => void;
 }
 
+const loadDonors = async () => {
+  try {
+    const result = await axios.get("/api/v1/donor", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+
+    if (result.status === 200) return result.data;
+  } catch (error) {
+    return [];
+  }
+};
+
 export const DonorAutocomplete = ({
   handleDonorSelect,
 }: DonorAutocompleteProps) => {
+  const [donors, setDonors] = useState<Donor[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await loadDonors();
+
+      setDonors(data);
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <Autocomplete
       aria-label="Select a donor"
