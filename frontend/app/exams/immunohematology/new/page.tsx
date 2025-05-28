@@ -1,5 +1,5 @@
-import ImmunoExamForm from '@/components/forms/ImmunoExamForm';
+// import ImmunoExamForm from '@/components/forms/ImmunoExamForm';
 
-export default function ImmunohematologyExamPage() {
-  return <ImmunoExamForm />;
-}
+// export default function ImmunohematologyExamPage() {
+//   return <ImmunoExamForm />;
+// }
