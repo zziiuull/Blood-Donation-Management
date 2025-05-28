@@ -14,6 +14,7 @@ import ImmunohematologyDetailsTable from "./components/immunohematologyDetailsTa
 import { immunohemalogyExam, serologicalExam } from "./components/exams";
 import SerologicalDetailsTable from "./components/serologicalExamDetailsTable";
 
+import axios from "@/services/axios";
 import { donationStatusMap } from "@/utils/utils";
 
 export default function Donation() {
@@ -35,6 +36,24 @@ export default function Donation() {
 
   const handleAppointmentSelect = (appointment: Appointment | null) => {
     setSelectedAppointment(appointment);
+  };
+
+  const handleRequestDonation = async () => {
+    try {
+      const result = await axios.post(
+        "/api/v1/donation",
+        {
+          donorId: selectedDonor?.id,
+          appointmentId: selectedAppointment?.id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+    } catch (error) {}
   };
 
   const shouldShowSearch = activeTab === "update" || activeTab === "view";
@@ -76,7 +95,11 @@ export default function Donation() {
                     )}
                   </div>
                   {selectedAppointment != null && selectedDonor != null && (
-                    <Button className="mt-4" variant="faded">
+                    <Button
+                      className="mt-4"
+                      variant="faded"
+                      onPress={handleRequestDonation}
+                    >
                       Register donation
                     </Button>
                   )}
