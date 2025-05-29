@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Navbar as HeroUINavbar,
   NavbarContent,
@@ -7,10 +9,13 @@ import {
 import { link as linkStyles } from "@heroui/theme";
 import NextLink from "next/link";
 import clsx from "clsx";
+import { useRouter } from "next/navigation";
 
 import { siteConfig } from "@/config/site";
 
 export const Navbar = () => {
+  const router = useRouter();
+
   return (
     <HeroUINavbar maxWidth="xl" position="sticky">
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
@@ -35,6 +40,14 @@ export const Navbar = () => {
             </NavbarItem>
           ))}
         </ul>
+        <button
+          onClick={() => {
+            localStorage.removeItem("token");
+            router.push("/login");
+          }}
+        >
+          Logout
+        </button>
       </NavbarContent>
     </HeroUINavbar>
   );

@@ -1,18 +1,27 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Tabs, Tab } from "@heroui/react";
+import { useRouter } from "next/navigation";
 
 import RegisterDonationTab from "./components/registerDonationTab";
 import UpdateDonationTab from "./components/updateDonationTab";
 import ViewDonationTab from "./components/viewDonationTab";
 
 export default function Donation() {
+  const router = useRouter();
+
   const [activeTab, setActiveTab] = useState("register");
 
   const handleTabChange = (key: React.Key) => {
     setActiveTab(key as string);
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (!token) router.push("/login");
+  });
 
   return (
     <div>
