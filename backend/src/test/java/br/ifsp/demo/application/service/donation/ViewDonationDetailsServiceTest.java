@@ -1,6 +1,7 @@
 package br.ifsp.demo.application.service.donation;
 
 import br.ifsp.demo.application.service.dto.donation.DonationDetailsDTO;
+import br.ifsp.demo.application.service.dto.donation.DonationWithRelations;
 import br.ifsp.demo.domain.model.donation.Donation;
 import br.ifsp.demo.domain.model.donation.DonationStatus;
 import br.ifsp.demo.domain.model.exam.ExamStatus;
@@ -85,6 +86,40 @@ class ViewDonationDetailsServiceTest {
             });
 
             verify(donationRepository, times(1)).findById(donationId);
+            verify(examRepository, times(1)).findAllByDonationId(donationId);
+        }
+
+        @Test
+        @Tag("Functional")
+        @Tag("TDD")
+        @Tag("UnitTest")
+        @DisplayName("Should return donation with exams (relations) for all donations")
+        void shouldReturnDonationWithRelationsForAllDonations() {
+            UUID donationId = UUID.randomUUID();
+
+            Donation donation = mock(Donation.class);
+            when(donation.getId()).thenReturn(donationId);
+            when(donation.getStatus()).thenReturn(DonationStatus.UNDER_ANALYSIS);
+
+            ImmunohematologyExam immunohematologyExam = mock(ImmunohematologyExam.class);
+
+            SerologicalScreeningExam serologicalScreeningExam = mock(SerologicalScreeningExam.class);
+
+            when(donationRepository.findAll()).thenReturn(List.of(donation));
+            when(examRepository.findAllByDonationId(donationId))
+                    .thenReturn(List.of(immunohematologyExam, serologicalScreeningExam));
+
+            List<DonationWithRelations> result = sut.getAllDonationsWithRelations();
+
+            assertThat(result).isNotNull().hasSize(1);
+
+            DonationWithRelations dto = result.getFirst();
+            assertThat(dto.id()).isEqualTo(donationId);
+            assertThat(dto.status()).isEqualTo(DonationStatus.UNDER_ANALYSIS);
+            assertThat(dto.immunohematologyExam()).isEqualTo(immunohematologyExam);
+            assertThat(dto.serologicalScreeningExam()).isEqualTo(serologicalScreeningExam);
+
+            verify(donationRepository, times(1)).findAll();
             verify(examRepository, times(1)).findAllByDonationId(donationId);
         }
     }

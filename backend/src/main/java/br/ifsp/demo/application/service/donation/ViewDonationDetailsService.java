@@ -1,11 +1,19 @@
 package br.ifsp.demo.application.service.donation;
 
 import br.ifsp.demo.application.service.dto.donation.DonationDetailsDTO;
+import br.ifsp.demo.application.service.dto.donation.DonationWithRelations;
 import br.ifsp.demo.application.service.dto.exam.ExamDTO;
 import br.ifsp.demo.domain.model.donation.Donation;
+import br.ifsp.demo.domain.model.exam.Exam;
+import br.ifsp.demo.domain.model.exam.ExamStatus;
+import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
+import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.infrastructure.repository.donation.DonationRepository;
 import br.ifsp.demo.infrastructure.repository.exam.ExamRepository;
+import br.ifsp.demo.presentation.exception.CannotFinishDonationWithExamUnderAnalysisException;
 import br.ifsp.demo.presentation.exception.DonationNotFoundException;
+import br.ifsp.demo.presentation.exception.ExamNotFoundException;
+import br.ifsp.demo.presentation.exception.InvalidDonationAnalysisException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -40,5 +48,26 @@ public class ViewDonationDetailsService {
                 donation.getUpdatedAt(),
                 exams
         );
+    }
+
+    public List<DonationWithRelations> getAllDonationsWithRelations() {
+        List<Donation> donations = donationRepository.findAll();
+
+        return donations.stream().map(donation -> {
+            List<Exam> exams = examRepository.findAllByDonationId(donation.getId());
+            ImmunohematologyExam immunoExam = exams.stream()
+                    .filter(ImmunohematologyExam.class::isInstance)
+                    .map(ImmunohematologyExam.class::cast)
+                    .findFirst()
+                    .orElse(null);
+
+            SerologicalScreeningExam serologicalExam = exams.stream()
+                    .filter(SerologicalScreeningExam.class::isInstance)
+                    .map(SerologicalScreeningExam.class::cast)
+                    .findFirst()
+                    .orElse(null);
+
+            return new DonationWithRelations(donation, immunoExam, serologicalExam);
+        }).collect(Collectors.toList());
     }
 }
