@@ -1,7 +1,5 @@
-import type { Donation } from "@/types";
-
 import { Icon } from "@iconify/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@heroui/react";
 
 import { DonationAutocomplete } from "./donationAutocomplete";
@@ -9,6 +7,7 @@ import DonorDetailsTable from "./donorDetailsTable";
 import ImmunohematologyDetailsTable from "./immunohematologyDetailsTable";
 import SerologicalDetailsTable from "./serologicalExamDetailsTable";
 
+import { ExamStatus, type Donation } from "@/types";
 import axios from "@/services/axios";
 import { donationStatusMap } from "@/utils/utils";
 import showFailToast from "@/services/toast/showFailToast";
@@ -35,6 +34,10 @@ export default function UpdateDonationTab() {
       return [];
     }
   };
+
+  useEffect(() => {
+    console.log(selectedDonation);
+  }, [selectedDonation]);
 
   const fetchUpdatedDonation = async (donationId: string) => {
     try {
@@ -192,6 +195,7 @@ export default function UpdateDonationTab() {
             {selectedDonation.immunohematologyExam ? (
               <ImmunohematologyDetailsTable
                 exam={selectedDonation.immunohematologyExam}
+                type="update"
               />
             ) : (
               <Button
@@ -213,6 +217,7 @@ export default function UpdateDonationTab() {
             {selectedDonation.serologicalScreeningExam ? (
               <SerologicalDetailsTable
                 exam={selectedDonation.serologicalScreeningExam}
+                type="update"
               />
             ) : (
               <Button
@@ -230,7 +235,11 @@ export default function UpdateDonationTab() {
           </div>
 
           {selectedDonation.immunohematologyExam &&
-            selectedDonation.serologicalScreeningExam && (
+            selectedDonation.serologicalScreeningExam &&
+            selectedDonation.serologicalScreeningExam.status ==
+              ExamStatus.UNDER_ANALYSIS &&
+            selectedDonation.immunohematologyExam.status ==
+              ExamStatus.UNDER_ANALYSIS && (
               <>
                 <div className="flex items-center justify-center gap-2">
                   <Button

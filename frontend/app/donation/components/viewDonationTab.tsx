@@ -42,12 +42,14 @@ export default function ViewDonationTab() {
             </h3>
             <ImmunohematologyDetailsTable
               exam={selectedDonation.immunohematologyExam}
+              type="view"
             />
             <h3 className="text-lg font-bold text-default-600">
               Serological screening exam
             </h3>
             <SerologicalDetailsTable
               exam={selectedDonation.serologicalScreeningExam}
+              type="view"
             />
           </div>
         </>
