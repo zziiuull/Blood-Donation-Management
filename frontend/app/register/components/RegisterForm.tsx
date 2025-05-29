@@ -3,56 +3,50 @@
 import { Button, Input, Select, SelectItem, Form } from "@heroui/react";
 import { useState } from "react";
 import { Icon } from "@iconify/react";
+import { useRouter } from "next/navigation";
+
+import states from "./states";
 
 import FormContainer from "@/components/form/FormContainer";
 import InputContainer from "@/components/form/InputContainer";
+import axios from "@/services/axios";
+import showFailToast from "@/services/toast/showFailToast";
 
 export default function RegisterForm() {
+  const router = useRouter();
+
   const [name, setName] = useState("");
   const [lastname, setLastname] = useState("");
   const [cpf, setCpf] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [crm, setCrm] = useState("");
-  const [state, setState] = useState("");
+  const [state, setState] = useState(new Set([]));
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const togglePasswordVisibility = () =>
     setIsPasswordVisible(!isPasswordVisible);
 
-  const states = [
-    { key: "AC", label: "Acre" },
-    { key: "AL", label: "Alagoas" },
-    { key: "AP", label: "Amapá" },
-    { key: "AM", label: "Amazonas" },
-    { key: "BA", label: "Bahia" },
-    { key: "CE", label: "Ceará" },
-    { key: "DF", label: "Distrito Federal" },
-    { key: "ES", label: "Espírito Santo" },
-    { key: "GO", label: "Goiás" },
-    { key: "MA", label: "Maranhão" },
-    { key: "MT", label: "Mato Grosso" },
-    { key: "MS", label: "Mato Grosso do Sul" },
-    { key: "MG", label: "Minas Gerais" },
-    { key: "PA", label: "Pará" },
-    { key: "PB", label: "Paraíba" },
-    { key: "PR", label: "Paraná" },
-    { key: "PE", label: "Pernambuco" },
-    { key: "PI", label: "Piauí" },
-    { key: "RJ", label: "Rio de Janeiro" },
-    { key: "RN", label: "Rio Grande do Norte" },
-    { key: "RS", label: "Rio Grande do Sul" },
-    { key: "RO", label: "Rondônia" },
-    { key: "RR", label: "Roraima" },
-    { key: "SC", label: "Santa Catarina" },
-    { key: "SP", label: "São Paulo" },
-    { key: "SE", label: "Sergipe" },
-    { key: "TO", label: "Tocantins" },
-  ];
-
   async function handleSubmit(e) {
     e.preventDefault();
+    try {
+      await axios.post(`/api/v1/register`, {
+        name,
+        lastname,
+        email,
+        password,
+        cpf,
+        phone,
+        address,
+        crmNumber: crm,
+        crmState: state.values().next().value,
+      });
+
+      router.push("/donation");
+    } catch (error) {
+      showFailToast(error.response.data.message);
+    }
   }
 
   return (
@@ -172,14 +166,14 @@ export default function RegisterForm() {
             onValueChange={setPassword}
           />
         </InputContainer>
+        <Button
+          className="text-xl py-6 rounded-full"
+          color="primary"
+          type="submit"
+        >
+          Register
+        </Button>
       </Form>
-      <Button
-        className="text-xl py-6 rounded-full"
-        color="primary"
-        type="submit"
-      >
-        Register
-      </Button>
     </FormContainer>
   );
 }
