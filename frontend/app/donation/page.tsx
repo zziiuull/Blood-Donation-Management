@@ -1,28 +1,4 @@
 "use client";
-import type { Donation } from "@/types";
-
-import { Icon } from "@iconify/react";
-import React, { useState } from "react";
-import { Tabs, Tab, Button } from "@heroui/react";
-
-import { DonationAutocomplete } from "./components/donationAutocomplete";
-import DonorDetailsTable from "./components/donorDetailsTable";
-import ImmunohematologyDetailsTable from "./components/immunohematologyDetailsTable";
-import { immunohemalogyExam, serologicalExam } from "./components/exams";
-import SerologicalDetailsTable from "./components/serologicalExamDetailsTable";
-
-export default function Donation() {
-  const [selectedDonation, setSelectedDonation] = useState<Donation | null>(
-    null,
-  );
-
-  const [activeTab, setActiveTab] = useState("update");
-
-  const handleDonationSelect = (donation: Donation | null) => {
-    setSelectedDonation(donation);
-  };
-
-  const shouldShowSearch = activeTab === "update" || activeTab === "view";
 
 import React, { useEffect, useState } from "react";
 import { Tabs, Tab } from "@heroui/react";
