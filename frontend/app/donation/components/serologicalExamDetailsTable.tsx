@@ -7,9 +7,9 @@ import {
   TableRow,
 } from "@heroui/react";
 import React from "react";
+import { Link } from "@heroui/react";
 
-import { SerologicalScreeningExam } from "@/types";
-
+import { ExamStatus, SerologicalScreeningExam } from "@/types";
 import { formatDateTime, examStatusMap } from "@/utils/utils";
 
 export const columns = [
@@ -22,14 +22,17 @@ export const columns = [
   { name: "SYPHILIS", uid: "syphilis" },
   { name: "AIDS", uid: "aids" },
   { name: "HTLV I/II", uid: "htlv1_2" },
+  { name: "ACTION", uid: "action" },
 ];
 
 interface SerologicalDetailsTableProps {
   exam: SerologicalScreeningExam | null | undefined;
+  type: string;
 }
 
 export default function SerologicalDetailsTable({
   exam,
+  type,
 }: SerologicalDetailsTableProps) {
   const renderCell = React.useCallback(
     (exam: SerologicalScreeningExam, columnKey: React.Key) => {
@@ -115,6 +118,27 @@ export default function SerologicalDetailsTable({
                 {exam.htlv1_2 ?? "N/A"}
               </p>
             </div>
+          );
+        case "action":
+          if (type === "view") {
+            return (
+              <Link
+                className=""
+                href={`/exams/serological-screening/${exam.donation?.id}/view`}
+              >
+                View
+              </Link>
+            );
+          }
+
+          return (
+            <Link
+              className=""
+              href={`/exams/serological-screening/${exam.donation?.id}`}
+              isDisabled={exam.status != ExamStatus.UNDER_ANALYSIS}
+            >
+              Update
+            </Link>
           );
 
         default:

@@ -7,8 +7,9 @@ import {
   TableRow,
 } from "@heroui/react";
 import React from "react";
+import { Link } from "@heroui/react";
 
-import { ImmunohemalogyExam } from "@/types";
+import { ExamStatus, ImmunohemalogyExam } from "@/types";
 import { bloodTypeMap, examStatusMap, formatDateTime } from "@/utils/utils";
 
 export const columns = [
@@ -17,14 +18,17 @@ export const columns = [
   { name: "UPDATED AT", uid: "updatedAt" },
   { name: "BLOOD TYPE", uid: "bloodType" },
   { name: "IRREGULAR ANTIBODIES", uid: "irregularAntibodies" },
+  { name: "ACTION", uid: "action" },
 ];
 
 interface ImmunohematologyTableProps {
   exam: ImmunohemalogyExam | null | undefined;
+  type: string;
 }
 
 export default function ImmunohematologyDetailsTable({
   exam,
+  type,
 }: ImmunohematologyTableProps) {
   const renderCell = React.useCallback(
     (exam: ImmunohemalogyExam, columnKey: React.Key) => {
@@ -78,6 +82,27 @@ export default function ImmunohematologyDetailsTable({
                 {exam.irregularAntibodies ?? "N/A"}
               </p>
             </div>
+          );
+        case "action":
+          if (type === "view") {
+            return (
+              <Link
+                className=""
+                href={`/exams/immunohematology/${exam.donation?.id}/view`}
+              >
+                View
+              </Link>
+            );
+          }
+
+          return (
+            <Link
+              className=""
+              href={`/exams/immunohematology/${exam.donation?.id}`}
+              isDisabled={exam.status != ExamStatus.UNDER_ANALYSIS}
+            >
+              Update
+            </Link>
           );
         default:
           return (
