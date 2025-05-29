@@ -16,7 +16,7 @@ export default function RegisterPage() {
   });
 
   return (
-    <div className="flex flex-col items-center p-4">
+    <div className="flex flex-col items-center justify-center p-4 h-full">
       <RegisterForm />
       <Link className="mt-5 underline text-slate-500" href="/login">
         Login
