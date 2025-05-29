@@ -4,8 +4,8 @@ import { Button, Input, Select, SelectItem, Form } from "@heroui/react";
 import { useState } from "react";
 import { Icon } from "@iconify/react";
 
-import FormContainer from "./FormContainer";
-import InputContainer from "./InputContainer";
+import FormContainer from "@/components/form/FormContainer";
+import InputContainer from "@/components/form/InputContainer";
 
 export default function RegisterForm() {
   const [name, setName] = useState("");

@@ -4,7 +4,7 @@ import { Button, Input, Form } from "@heroui/react";
 import { useState } from "react";
 import { Icon } from "@iconify/react";
 
-import FormContainer from "./FormContainer";
+import FormContainer from "@/components/form/FormContainer";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
