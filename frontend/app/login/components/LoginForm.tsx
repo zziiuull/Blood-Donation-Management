@@ -3,10 +3,15 @@
 import { Button, Input, Form } from "@heroui/react";
 import { useState } from "react";
 import { Icon } from "@iconify/react";
+import { useRouter } from "next/navigation";
 
 import FormContainer from "@/components/form/FormContainer";
+import axios from "@/services/axios";
+import showFailToast from "@/services/toast/showFailToast";
 
 export default function LoginForm() {
+  const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -15,6 +20,17 @@ export default function LoginForm() {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    try {
+      const result = await axios.post(`/api/v1/authenticate`, {
+        username: email,
+        password,
+      });
+
+      localStorage.setItem("token", result.data.token);
+      router.push("/donation");
+    } catch (error) {
+      showFailToast(error.message);
+    }
   }
 
   return (
