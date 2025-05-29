@@ -12,7 +12,7 @@ interface AppointmentAutocompleteProps {
 
 const loadAppointments = async () => {
   try {
-    const result = await axios.get<Appointment>("/api/v1/appointment", {
+    const result = await axios.get<Appointment[]>("/api/v1/appointment", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
@@ -33,7 +33,7 @@ export const AppointmentAutocomplete = ({
     const fetchData = async () => {
       const data = await loadAppointments();
 
-      setAppointments(data);
+      setAppointments(data ?? []);
     };
 
     fetchData();

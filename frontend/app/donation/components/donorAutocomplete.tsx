@@ -12,7 +12,7 @@ interface DonorAutocompleteProps {
 
 const loadDonors = async () => {
   try {
-    const result = await axios.get<Donor>("/api/v1/donor", {
+    const result = await axios.get<Donor[]>("/api/v1/donor", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
@@ -33,7 +33,7 @@ export const DonorAutocomplete = ({
     const fetchData = async () => {
       const data = await loadDonors();
 
-      setDonors(data);
+      setDonors(data ?? []);
     };
 
     fetchData();
