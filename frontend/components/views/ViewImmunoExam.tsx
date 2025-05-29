@@ -7,6 +7,9 @@ import {
   Divider,
 } from '@heroui/react';
 import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+
+import { getImmunoExamByDonationId } from '@/services/api';
 
 type BloodType =
   | 'A_POS' | 'A_NEG'
@@ -33,26 +36,25 @@ interface ImmunohematologyExam {
 
 export default function ViewImmunoExam() {
   const [exam, setExam] = useState<ImmunohematologyExam | null>(null);
+  const [error, setError] = useState('');
+  const uParams = useParams();
+  const donationId = uParams.donationId as string;
 
   useEffect(() => {
-    // Dados simulados
-    const mockExam: ImmunohematologyExam = {
-      id: 'mock-id-123',
-      bloodType: 'O_POS',
-      irregularAntibodies: 'NEGATIVE',
-      observations: 'Paciente sem alterações imunológicas.',
-      status: 'APPROVED',
-      createdAt: '2025-05-27T14:00:00',
-      updatedAt: '2025-05-28T16:30:00',
-      donation: {
-        id: 'mock-donation-id',
-        status: 'UNDER_ANALYSIS',
-      },
-    };
+      if (!donationId) {
+        setError('Parâmetro donationId não fornecido.');
+        return;
+      }
+  
+      getImmunoExamByDonationId(donationId)
+      .then((exam) => setExam(exam))
+      .catch((err) => {
+        console.error(err);
+        setError('Erro ao buscar o exame.');
+      });
+    }, [donationId]);
 
-    setExam(mockExam);
-  }, []);
-
+  if (error) return <p className="text-center text-red-500 mt-10">{error}</p>;
   if (!exam) return <p className="text-center mt-10">Carregando exame...</p>;
 
   return (
@@ -63,9 +65,12 @@ export default function ViewImmunoExam() {
         <CardBody className="flex flex-col gap-4 text-base">
           <div><strong>ID do Exame:</strong> {exam.id}</div>
           <div><strong>Status:</strong> {exam.status}</div>
-          <div><strong>Tipo Sanguíneo:</strong> {exam.bloodType.replace('_', ' ').replace('POS', '+').replace('NEG', '-')}</div>
+          <div>
+          <strong>Tipo Sanguíneo:</strong>{' '}
+          {exam.bloodType?.replace('_', ' ').replace('POS', '+').replace('NEG', '-') || 'Não informado'}
+        </div>
           <div><strong>Anticorpos Irregulares:</strong> {exam.irregularAntibodies === 'NEGATIVE' ? 'Negativo' : 'Positivo'}</div>
-          <div><strong>Observações:</strong> {exam.observations || 'Sem observações'}</div>
+          <div><strong>Observações:</strong> {exam.observations ?? 'Sem observações'}</div>
           <div><strong>Data de criação:</strong> {new Date(exam.createdAt).toLocaleString()}</div>
           <div><strong>Última atualização:</strong> {new Date(exam.updatedAt).toLocaleString()}</div>
         </CardBody>
