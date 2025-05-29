@@ -1,5 +1,6 @@
 import { Autocomplete, AutocompleteItem, Chip } from "@heroui/react";
 import { Icon } from "@iconify/react";
+
 import { useState, useEffect } from "react";
 
 import { formatDateTime } from "@/utils/utils";
@@ -28,6 +29,7 @@ const loadDonations = async () => {
 export const DonationAutocomplete = ({
   handleDonationSelect,
 }: DonationAutocompleteProps) => {
+
   const [donations, setDonations] = useState<Donation[]>([]);
 
   useEffect(() => {

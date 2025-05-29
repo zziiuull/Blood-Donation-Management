@@ -9,6 +9,7 @@ import {
 import React from "react";
 
 import { SerologicalScreeningExam } from "@/types";
+
 import { formatDateTime, examStatusMap } from "@/utils/utils";
 
 export const columns = [
