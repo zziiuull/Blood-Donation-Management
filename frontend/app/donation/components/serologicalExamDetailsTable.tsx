@@ -9,7 +9,7 @@ import {
 import React from "react";
 
 import { SerologicalScreeningExam } from "@/types";
-import { formatDateTime } from "@/utils/utils";
+import { formatDateTime, examStatusMap } from "@/utils/utils";
 
 export const columns = [
   { name: "STATUS", uid: "status" },
@@ -24,7 +24,7 @@ export const columns = [
 ];
 
 interface SerologicalDetailsTableProps {
-  exam: SerologicalScreeningExam;
+  exam: SerologicalScreeningExam | null | undefined;
 }
 
 export default function SerologicalDetailsTable({
@@ -47,7 +47,7 @@ export default function SerologicalDetailsTable({
           return (
             <div className="flex flex-col">
               <p className="text-bold text-sm capitalize text-default-400">
-                {exam.status}
+                {examStatusMap.get(exam.status)}
               </p>
             </div>
           );
@@ -55,7 +55,7 @@ export default function SerologicalDetailsTable({
           return (
             <div className="flex flex-col">
               <p className="text-bold text-sm capitalize text-default-400">
-                {formatDateTime(exam.createdAt)}
+                {formatDateTime(exam.createdAt ?? "") || "N/A"}
               </p>
             </div>
           );
@@ -63,7 +63,7 @@ export default function SerologicalDetailsTable({
           return (
             <div className="flex flex-col">
               <p className="text-bold text-sm capitalize text-default-400">
-                {formatDateTime(exam.updatedAt)}
+                {formatDateTime(exam.updatedAt ?? "") || "N/A"}
               </p>
             </div>
           );
@@ -71,7 +71,7 @@ export default function SerologicalDetailsTable({
           return (
             <div className="flex flex-col">
               <p className="text-bold text-sm capitalize text-default-400">
-                {exam.hepatitisB}
+                {exam.hepatitisB ?? "N/A"}
               </p>
             </div>
           );
@@ -79,7 +79,7 @@ export default function SerologicalDetailsTable({
           return (
             <div className="flex flex-col">
               <p className="text-bold text-sm capitalize text-default-400">
-                {exam.hepatitisC}
+                {exam.hepatitisC ?? "N/A"}
               </p>
             </div>
           );
@@ -87,7 +87,7 @@ export default function SerologicalDetailsTable({
           return (
             <div className="flex flex-col">
               <p className="text-bold text-sm capitalize text-default-400">
-                {exam.chagasDisease}
+                {exam.chagasDisease ?? "N/A"}
               </p>
             </div>
           );
@@ -95,7 +95,7 @@ export default function SerologicalDetailsTable({
           return (
             <div className="flex flex-col">
               <p className="text-bold text-sm capitalize text-default-400">
-                {exam.syphilis}
+                {exam.syphilis ?? "N/A"}
               </p>
             </div>
           );
@@ -103,7 +103,7 @@ export default function SerologicalDetailsTable({
           return (
             <div className="flex flex-col">
               <p className="text-bold text-sm capitalize text-default-400">
-                {exam.aids}
+                {exam.aids ?? "N/A"}
               </p>
             </div>
           );
@@ -111,7 +111,7 @@ export default function SerologicalDetailsTable({
           return (
             <div className="flex flex-col">
               <p className="text-bold text-sm capitalize text-default-400">
-                {exam.htlv1_2}
+                {exam.htlv1_2 ?? "N/A"}
               </p>
             </div>
           );
@@ -141,12 +141,16 @@ export default function SerologicalDetailsTable({
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody emptyContent="No exams found" items={[exam]}>
+      <TableBody emptyContent="No exam found" items={[exam]}>
         {(item) => (
-          <TableRow key={item.id}>
-            {(columnKey) => (
-              <TableCell>{renderCell(item, columnKey)}</TableCell>
-            )}
+          <TableRow key={item?.id}>
+            {(columnKey) =>
+              item ? (
+                <TableCell>{renderCell(item, columnKey)}</TableCell>
+              ) : (
+                <TableCell>N/A</TableCell>
+              )
+            }
           </TableRow>
         )}
       </TableBody>
