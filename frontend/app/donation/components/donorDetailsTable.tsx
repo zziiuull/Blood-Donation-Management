@@ -32,15 +32,13 @@ export default function DonorDetailsTable({ donor }: DonorDetailsTableProps) {
       case "name":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-sm capitalize text-default-400">
-              {donor.name}
-            </p>
+            <p className="text-bold text-sm text-default-400">{donor.name}</p>
           </div>
         );
       case "email":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-sm capitalize text-default-400">
+            <p className="text-bold text-sm text-default-400">
               {donor.contactInfo.email}
             </p>
           </div>
@@ -48,23 +46,21 @@ export default function DonorDetailsTable({ donor }: DonorDetailsTableProps) {
       case "cpf":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-sm capitalize text-default-400">
-              {donor.cpf}
+            <p className="text-bold text-sm text-default-400">
+              {donor.cpf.number}
             </p>
           </div>
         );
       case "weight":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-sm capitalize text-default-400">
-              {donor.weight}
-            </p>
+            <p className="text-bold text-sm text-default-400">{donor.weight}</p>
           </div>
         );
       case "birthDate":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-sm capitalize text-default-400">
+            <p className="text-bold text-sm text-default-400">
               {formatDate(donor.birthDate)}
             </p>
           </div>
@@ -72,9 +68,7 @@ export default function DonorDetailsTable({ donor }: DonorDetailsTableProps) {
       case "sex":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-sm capitalize text-default-400">
-              {donor.sex}
-            </p>
+            <p className="text-bold text-sm text-default-400">{donor.sex}</p>
           </div>
         );
       default:

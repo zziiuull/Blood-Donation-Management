@@ -1,20 +1,18 @@
 import { Autocomplete, AutocompleteItem, Chip } from "@heroui/react";
 import { Icon } from "@iconify/react";
-
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { formatDateTime } from "@/utils/utils";
-import { Donation, DonationStatus } from "@/types";
-import { donationStatusMap } from "@/utils/utils";
+import { Appointment } from "@/types";
 import axios from "@/services/axios";
 
-interface DonationAutocompleteProps {
-  handleDonationSelect: (donation: Donation | null) => void;
+interface AppointmentAutocompleteProps {
+  handleAppointmentSelect: (appointment: Appointment | null) => void;
 }
 
-const loadDonations = async () => {
+const loadAppointments = async () => {
   try {
-    const result = await axios.get<Donation[]>("/api/v1/donation", {
+    const result = await axios.get<Appointment[]>("/api/v1/appointment", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
@@ -26,17 +24,16 @@ const loadDonations = async () => {
   }
 };
 
-export const DonationAutocomplete = ({
-  handleDonationSelect,
-}: DonationAutocompleteProps) => {
-
-  const [donations, setDonations] = useState<Donation[]>([]);
+export const AppointmentAutocomplete = ({
+  handleAppointmentSelect,
+}: AppointmentAutocompleteProps) => {
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await loadDonations();
+      const data = await loadAppointments();
 
-      setDonations(data ?? []);
+      setAppointments(data ?? []);
     };
 
     fetchData();
@@ -44,12 +41,12 @@ export const DonationAutocomplete = ({
 
   return (
     <Autocomplete
-      aria-label="Select a donation"
+      aria-label="Select an appointment"
       classNames={{
         listboxWrapper: "max-h-[320px]",
         selectorButton: "text-default-500",
       }}
-      defaultItems={donations}
+      defaultItems={appointments}
       inputProps={{
         classNames: {
           input: "ml-1",
@@ -72,7 +69,7 @@ export const DonationAutocomplete = ({
           ],
         },
       }}
-      placeholder="Select a donation"
+      placeholder="Select an appointment"
       popoverProps={{
         offset: 10,
         classNames: {
@@ -81,40 +78,49 @@ export const DonationAutocomplete = ({
         },
       }}
       radius="lg"
-      size="sm"
       startContent={<Icon className="text-default-400" icon="lucide:search" />}
       variant="flat"
       onSelectionChange={(id) => {
-        const donation = donations.find((d) => d.id === id);
+        const appointment = appointments.find((d) => d.id === id);
 
-        handleDonationSelect(donation || null);
+        if (appointment) {
+          handleAppointmentSelect({
+            ...appointment,
+            status: appointment.status as Appointment["status"],
+          });
+        } else {
+          handleAppointmentSelect(null);
+        }
       }}
     >
       {(item) => (
-        <AutocompleteItem key={item.id} textValue={item.donor?.name}>
+        <AutocompleteItem
+          key={item.id}
+          textValue={`${formatDateTime(item.appointmentDate)} - ${item.collectionSite.name}`}
+        >
           <div className="flex justify-between items-center">
             <div className="flex gap-2 items-center">
               <div className="flex flex-col">
                 <span className="text-small font-semibold">
-                  {item.donor?.name}
+                  {formatDateTime(item.appointmentDate)}
                 </span>
                 <span className="text-tiny text-default-400">
-                  {`${formatDateTime(item.createdAt)} - ${item.appointment?.collectionSite.name}`}
+                  {item.collectionSite.name}
                 </span>
               </div>
             </div>
             <Chip
               className="ml-auto text-tiny font-bold"
               color={
-                item.status === DonationStatus.UNDER_ANALYSIS
+                item.status === "SCHEDULED"
                   ? "warning"
-                  : item.status === DonationStatus.REJECTED
+                  : item.status === "CANCELED"
                     ? "danger"
                     : "success"
               }
               variant="dot"
             >
-              {item.status ? donationStatusMap.get(item.status) : ""}
+              {item.status}
             </Chip>
           </div>
         </AutocompleteItem>

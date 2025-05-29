@@ -165,10 +165,14 @@
                     <targetClasses>
                         <param>br.ifsp.demo.application.service.donation*</param>
                         <param>br.ifsp.demo.application.service.exam*</param>
+                        <param>br.ifsp.demo.application.service.donor*</param>
+                        <param>br.ifsp.demo.application.service.appointment*</param>
                     </targetClasses>
                     <targetTests>
                         <param>br.ifsp.demo.application.service.donation*</param>
                         <param>br.ifsp.demo.application.service.exam*</param>
+                        <param>br.ifsp.demo.application.service.donor*</param>
+                        <param>br.ifsp.demo.application.service.appointment*</param>
                     </targetTests>
                 </configuration>
             </plugin>

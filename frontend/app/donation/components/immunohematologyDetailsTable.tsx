@@ -9,7 +9,7 @@ import {
 import React from "react";
 
 import { ImmunohemalogyExam } from "@/types";
-import { bloodTypeMap, formatDateTime } from "@/utils/utils";
+import { bloodTypeMap, examStatusMap, formatDateTime } from "@/utils/utils";
 
 export const columns = [
   { name: "STATUS", uid: "status" },
@@ -20,7 +20,7 @@ export const columns = [
 ];
 
 interface ImmunohematologyTableProps {
-  exam: ImmunohemalogyExam;
+  exam: ImmunohemalogyExam | null | undefined;
 }
 
 export default function ImmunohematologyDetailsTable({
@@ -43,7 +43,7 @@ export default function ImmunohematologyDetailsTable({
           return (
             <div className="flex flex-col">
               <p className="text-bold text-sm capitalize text-default-400">
-                {exam.status}
+                {examStatusMap.get(exam.status)}
               </p>
             </div>
           );
@@ -51,7 +51,7 @@ export default function ImmunohematologyDetailsTable({
           return (
             <div className="flex flex-col">
               <p className="text-bold text-sm capitalize text-default-400">
-                {formatDateTime(exam.createdAt)}
+                {formatDateTime(exam.createdAt ?? "") || "N/A"}
               </p>
             </div>
           );
@@ -59,7 +59,7 @@ export default function ImmunohematologyDetailsTable({
           return (
             <div className="flex flex-col">
               <p className="text-bold text-sm capitalize text-default-400">
-                {formatDateTime(exam.updatedAt)}
+                {formatDateTime(exam.updatedAt ?? "") || "N/A"}
               </p>
             </div>
           );
@@ -67,7 +67,7 @@ export default function ImmunohematologyDetailsTable({
           return (
             <div className="flex flex-col">
               <p className="text-bold text-sm capitalize text-default-400">
-                {bloodTypeMap.get(exam.bloodType)}
+                {bloodTypeMap.get(exam.bloodType) ?? "N/A"}
               </p>
             </div>
           );
@@ -75,7 +75,7 @@ export default function ImmunohematologyDetailsTable({
           return (
             <div className="flex flex-col">
               <p className="text-bold text-sm capitalize text-default-400">
-                {exam.irregularAntibodies}
+                {exam.irregularAntibodies ?? "N/A"}
               </p>
             </div>
           );
@@ -104,12 +104,16 @@ export default function ImmunohematologyDetailsTable({
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody emptyContent="No exams found" items={[exam]}>
+      <TableBody emptyContent="No exam found" items={[exam]}>
         {(item) => (
-          <TableRow key={item.id}>
-            {(columnKey) => (
-              <TableCell>{renderCell(item, columnKey)}</TableCell>
-            )}
+          <TableRow key={item?.id}>
+            {(columnKey) =>
+              item ? (
+                <TableCell>{renderCell(item, columnKey)}</TableCell>
+              ) : (
+                <TableCell>N/A</TableCell>
+              )
+            }
           </TableRow>
         )}
       </TableBody>

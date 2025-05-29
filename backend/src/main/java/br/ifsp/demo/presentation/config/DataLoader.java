@@ -6,16 +6,12 @@ import br.ifsp.demo.domain.model.common.Cpf;
 import br.ifsp.demo.domain.model.donation.*;
 import br.ifsp.demo.domain.model.donor.Donor;
 import br.ifsp.demo.domain.model.donor.Sex;
-import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
-import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.domain.model.physician.Crm;
 import br.ifsp.demo.domain.model.physician.Physician;
 import br.ifsp.demo.domain.model.physician.State;
 import br.ifsp.demo.infrastructure.repository.appointment.AppointmentRepository;
 import br.ifsp.demo.infrastructure.repository.collectionSite.CollectionSiteRepository;
-import br.ifsp.demo.infrastructure.repository.donation.DonationRepository;
 import br.ifsp.demo.infrastructure.repository.donor.DonorRepository;
-import br.ifsp.demo.infrastructure.repository.exam.ExamRepository;
 import br.ifsp.demo.presentation.security.user.JpaUserRepository;
 import br.ifsp.demo.presentation.security.user.Role;
 import org.slf4j.Logger;
@@ -34,9 +30,7 @@ public class DataLoader implements CommandLineRunner {
 
     private final DonorRepository donorRepository;
     private final AppointmentRepository appointmentRepository;
-    private final DonationRepository donationRepository;
     private final CollectionSiteRepository collectionSiteRepository;
-    private final ExamRepository examRepository;
     private final JpaUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -44,18 +38,14 @@ public class DataLoader implements CommandLineRunner {
         DonorRepository donorRepository,
         AppointmentRepository appointmentRepository,
         CollectionSiteRepository collectionSiteRepository,
-        ExamRepository examRepository,
         JpaUserRepository userRepository,
-        PasswordEncoder passwordEncoder,
-        DonationRepository donationRepository
+        PasswordEncoder passwordEncoder
     ) {
         this.donorRepository = donorRepository;
         this.appointmentRepository = appointmentRepository;
         this.collectionSiteRepository = collectionSiteRepository;
-        this.examRepository = examRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.donationRepository = donationRepository;
     }
 
     @Override
@@ -108,40 +98,6 @@ public class DataLoader implements CommandLineRunner {
         );
         Appointment savedAppointment2 = appointmentRepository.save(appointment2);
         LOGGER.info("Appointment2 id: {}", savedAppointment2.getId());
-
-        Donation donation1 = new Donation(
-                savedDonor1,
-                savedAppointment1,
-                DonationStatus.UNDER_ANALYSIS
-        );
-        Donation savedDonation1 = donationRepository.save(donation1);
-        LOGGER.info("Donation1 id: {}", savedDonation1.getId());
-
-        Donation donation2 = new Donation(
-                savedDonor2,
-                savedAppointment2,
-                DonationStatus.UNDER_ANALYSIS
-        );
-        Donation savedDonation2 = donationRepository.save(donation2);
-        LOGGER.info("Donation2 id: {}", savedDonation2.getId());
-
-        ImmunohematologyExam immunoExam1 = new ImmunohematologyExam(savedDonation1);
-        SerologicalScreeningExam seroExam1 = new SerologicalScreeningExam(savedDonation1);
-
-        ImmunohematologyExam immunoExam2 = new ImmunohematologyExam(savedDonation2);
-        SerologicalScreeningExam seroExam2 = new SerologicalScreeningExam(savedDonation2);
-
-        immunoExam1 = examRepository.save(immunoExam1);
-        LOGGER.info("ImmunohematologyExam1 id: {}", immunoExam1.getId());
-
-        seroExam1 = examRepository.save(seroExam1);
-        LOGGER.info("SerologicalScreeningExam1 id: {}", seroExam1.getId());
-
-        immunoExam2 = examRepository.save(immunoExam2);
-        LOGGER.info("ImmunohematologyExam2 id: {}", immunoExam2.getId());
-
-        seroExam2 = examRepository.save(seroExam2);
-        LOGGER.info("SerologicalScreeningExam2 id: {}", seroExam2.getId());
 
         Physician physician = new Physician(
                 UUID.randomUUID(),

@@ -1,4 +1,4 @@
-import { BloodType } from "@/types";
+import { BloodType, DonationStatus, ExamStatus } from "@/types";
 
 export const formatDateTime = (isoString: string) => {
   const date = new Date(isoString);
@@ -31,4 +31,16 @@ export const bloodTypeMap: Map<BloodType, string> = new Map([
   [BloodType.AB_NEG, "AB-"],
   [BloodType.O_POS, "O+"],
   [BloodType.O_NEG, "O-"],
+]);
+
+export const donationStatusMap: Map<DonationStatus, string> = new Map([
+  [DonationStatus.APPROVED, "APPROVED"],
+  [DonationStatus.REJECTED, "REJECTED"],
+  [DonationStatus.UNDER_ANALYSIS, "UNDER ANALYSIS"],
+]);
+
+export const examStatusMap: Map<ExamStatus, string> = new Map([
+  [ExamStatus.APPROVED, "APPROVED"],
+  [ExamStatus.REJECTED, "REJECTED"],
+  [ExamStatus.UNDER_ANALYSIS, "UNDER ANALYSIS"],
 ]);

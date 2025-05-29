@@ -30,7 +30,7 @@ export type Donor = {
   id: string;
   name: string;
   contactInfo: ContactInfo;
-  cpf: string;
+  cpf: { number: string };
   weight: number;
   birthDate: string;
   sex: Sex;
@@ -78,26 +78,28 @@ export enum DonationStatus {
 
 export type Donation = {
   id: string;
-  donor: Donor;
-  appointment: Appointment;
-  donationStatus: DonationStatus;
+  donor?: Donor;
+  appointment?: Appointment;
+  status?: DonationStatus;
   createdAt: string;
   updatedAt: string;
-  notes: string;
+  immunohematologyExam?: ImmunohemalogyExam;
+  serologicalScreeningExam?: SerologicalScreeningExam;
 };
 
 export enum ExamStatus {
   APPROVED = "APPROVED",
   REJECTED = "REJECTED",
-  UNDER_ANALYSISCANCELED = "UNDER_ANALYSIS",
+  UNDER_ANALYSIS = "UNDER_ANALYSIS",
 }
 export type Exam = {
   id: string;
   name?: string;
-  donation: Donation;
+  donation?: Donation;
   status: ExamStatus;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
+  performedAt?: string;
   observations?: string;
 };
 
