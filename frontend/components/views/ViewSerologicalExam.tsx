@@ -1,22 +1,18 @@
-'use client';
+"use client";
 
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  Divider,
-} from '@heroui/react';
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { Card, CardBody, CardHeader, Divider } from "@heroui/react";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 
-import { getSerologicalExamByDonationId } from '@/services/api';
+import { formatDateTime } from "@/utils/utils";
+import { getSerologicalExamByDonationId } from "@/services/api";
 
-type DiseaseDetection = 'POSITIVE' | 'NEGATIVE';
-type ExamStatus = 'UNDER_ANALYSIS' | 'APPROVED' | 'REJECTED';
+type DiseaseDetection = "POSITIVE" | "NEGATIVE";
+type ExamStatus = "UNDER_ANALYSIS" | "APPROVED" | "REJECTED";
 
 interface SerologicalScreeningExam {
   id: string;
-  status: ExamStatus;
+  examStatus: ExamStatus;
   hepatitisB: DiseaseDetection;
   hepatitisC: DiseaseDetection;
   chagasDisease: DiseaseDetection;
@@ -33,45 +29,72 @@ interface SerologicalScreeningExam {
 }
 
 export default function ViewSerologicalExam() {
-    const [exam, setExam] = useState<SerologicalScreeningExam | null>(null);
-    const [error, setError] = useState('');
-    const uParams = useParams();
-    const donationId = uParams.donationId as string;
+  const [exam, setExam] = useState<SerologicalScreeningExam | null>(null);
+  const [error, setError] = useState("");
+  const uParams = useParams();
+  const donationId = uParams.donationId as string;
 
   useEffect(() => {
     if (!donationId) {
-      setError('Parâmetro donationId não fornecido.');
+      setError("Parâmetro donationId não fornecido.");
+
       return;
     }
 
     getSerologicalExamByDonationId(donationId)
-    .then((exam) => setExam(exam))
-    .catch((err) => {
-      console.error(err);
-      setError('Erro ao buscar o exame.');
-    });
+      .then((exam) => setExam(exam))
+      .catch((err) => {
+        console.error(err);
+        setError("Erro ao buscar o exame.");
+      });
   }, [donationId]);
 
-    if (error) return <p className="text-center text-red-500 mt-10">{error}</p>;
-    if (!exam) return <p className="text-center mt-10">Carregando exame...</p>;
+  if (error) return <p className="text-center text-red-500 mt-10">{error}</p>;
+  if (!exam) return <p className="text-center mt-10">Carregando exame...</p>;
 
   return (
     <div className="flex justify-center items-center min-h-screen">
       <Card className="max-w-xl w-full">
-        <CardHeader className="text-xl font-bold">Visualizar Exame Sorológico</CardHeader>
+        <CardHeader className="text-xl font-bold">
+          Visualizar Exame Sorológico
+        </CardHeader>
         <Divider />
         <CardBody className="flex flex-col gap-4 text-base">
-          <div><strong>ID do Exame:</strong> {exam.id}</div>
-          <div><strong>Status:</strong> {exam.status}</div>
-          <div><strong>Hepatite B:</strong> {exam.hepatitisB}</div>
-          <div><strong>Hepatite C:</strong> {exam.hepatitisC}</div>
-          <div><strong>Doença de Chagas:</strong> {exam.chagasDisease}</div>
-          <div><strong>Sífilis:</strong> {exam.syphilis}</div>
-          <div><strong>AIDS:</strong> {exam.aids}</div>
-          <div><strong>HTLV 1/2:</strong> {exam.htlv1_2}</div>
-          <div><strong>Observações:</strong> {exam.observations || 'Sem observações'}</div>
-          <div><strong>Data de criação:</strong> {new Date(exam.createdAt).toLocaleString()}</div>
-          <div><strong>Última atualização:</strong> {new Date(exam.updatedAt).toLocaleString()}</div>
+          <div>
+            <strong>ID do Exame:</strong> {exam.id}
+          </div>
+          <div>
+            <strong>Status:</strong> {exam.examStatus}
+          </div>
+          <div>
+            <strong>Hepatite B:</strong> {exam.hepatitisB}
+          </div>
+          <div>
+            <strong>Hepatite C:</strong> {exam.hepatitisC}
+          </div>
+          <div>
+            <strong>Doença de Chagas:</strong> {exam.chagasDisease}
+          </div>
+          <div>
+            <strong>Sífilis:</strong> {exam.syphilis}
+          </div>
+          <div>
+            <strong>AIDS:</strong> {exam.aids}
+          </div>
+          <div>
+            <strong>HTLV 1/2:</strong> {exam.htlv1_2}
+          </div>
+          <div>
+            <strong>Observações:</strong>{" "}
+            {exam.observations || "Sem observações"}
+          </div>
+          <div>
+            <strong>Data de criação:</strong> {formatDateTime(exam.createdAt)}
+          </div>
+          <div>
+            <strong>Última atualização:</strong>{" "}
+            {formatDateTime(exam.updatedAt)}
+          </div>
         </CardBody>
       </Card>
     </div>
