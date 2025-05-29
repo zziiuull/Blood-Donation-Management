@@ -40,8 +40,6 @@ export const DonationAutocomplete = ({
     fetchData();
   }, []);
 
-  console.log(donations);
-
   return (
     <Autocomplete
       aria-label="Select a donation"

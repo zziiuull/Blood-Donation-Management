@@ -39,12 +39,10 @@ export default function RegisterDonationTab() {
         },
       );
 
-      console.log(result);
       if (result.status === 200) {
         showSuccessToast("Immunohematology exam requested");
       }
     } catch (error) {
-      console.log(error);
       if (error.response.data.message) {
         showFailToast(error.response.data.message);
       } else {
@@ -65,12 +63,10 @@ export default function RegisterDonationTab() {
         },
       );
 
-      console.log(result);
       if (result.status === 200) {
         showSuccessToast("Serological screening exam requested");
       }
     } catch (error) {
-      console.log(error);
       if (error.response.data.message) {
         showFailToast(error.response.data.message);
       } else {
@@ -94,7 +90,6 @@ export default function RegisterDonationTab() {
         },
       );
 
-      console.log(result);
       if (result.status === 200) {
         const donationId = result.data.id;
 
@@ -113,7 +108,6 @@ export default function RegisterDonationTab() {
         setIsSelectedSeroExam(false);
       }
     } catch (error) {
-      console.log(error);
       if (error.response.data.message) {
         showFailToast(error.response.data.message);
       } else {

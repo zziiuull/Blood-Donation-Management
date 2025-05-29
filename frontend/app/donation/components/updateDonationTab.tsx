@@ -47,7 +47,7 @@ export default function UpdateDonationTab() {
         setSelectedDonation(updatedDonation);
       }
     } catch (error) {
-      console.log("Error fetching updated donation:", error);
+      showFailToast("Error fetching updated donation:" + error.message);
     }
   };
 
@@ -68,14 +68,12 @@ export default function UpdateDonationTab() {
         },
       );
 
-      console.log(result);
       if (result.status === 200) {
         showSuccessToast("Immunohematology exam requested");
 
         await fetchUpdatedDonation(donationId);
       }
     } catch (error) {
-      console.log(error);
       if (error.response.data.message) {
         showFailToast(error.response.data.message);
       } else {
@@ -99,14 +97,12 @@ export default function UpdateDonationTab() {
         },
       );
 
-      console.log(result);
       if (result.status === 200) {
         showSuccessToast("Serological screening exam requested");
 
         await fetchUpdatedDonation(donationId);
       }
     } catch (error) {
-      console.log(error);
       if (error.response.data.message) {
         showFailToast(error.response.data.message);
       } else {
@@ -129,14 +125,12 @@ export default function UpdateDonationTab() {
         },
       );
 
-      console.log(result);
       if (result.status === 200) {
         showSuccessToast("Donation approved");
 
         await fetchUpdatedDonation(donationId);
       }
     } catch (error) {
-      console.log(error);
       if (error.response.data.message) {
         showFailToast(error.response.data.message);
       } else {
@@ -157,14 +151,12 @@ export default function UpdateDonationTab() {
         },
       );
 
-      console.log(result);
       if (result.status === 200) {
         showSuccessToast("Donation rejected");
 
         await fetchUpdatedDonation(donationId);
       }
     } catch (error) {
-      console.log(error);
       if (error.response.data.message) {
         showFailToast(error.response.data.message);
       } else {
