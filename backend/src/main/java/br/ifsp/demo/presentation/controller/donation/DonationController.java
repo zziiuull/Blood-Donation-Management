@@ -4,6 +4,7 @@ import br.ifsp.demo.application.service.donation.DonationRegisterService;
 import br.ifsp.demo.application.service.donation.UpdateDonationService;
 import br.ifsp.demo.application.service.donation.ViewDonationDetailsService;
 import br.ifsp.demo.application.service.dto.donation.DonationDetailsDTO;
+import br.ifsp.demo.application.service.dto.donation.DonationWithRelations;
 import br.ifsp.demo.domain.model.donation.Donation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -89,6 +91,26 @@ public class DonationController {
     public ResponseEntity<DonationDetailsDTO> view(@PathVariable UUID id) {
         DonationDetailsDTO donationDetails = viewDonationDetailsService.getDonationDetails(id);
         return ResponseEntity.ok(donationDetails);
+    }
+
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200", description = "Successful operation.",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = DonationDetailsDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Authentication fails.",
+                    content = @Content(schema = @Schema(hidden = true))
+            )
+    })
+    @GetMapping
+    public ResponseEntity<List<DonationWithRelations>> viewAll() {
+        List<DonationWithRelations> donations = viewDonationDetailsService.getAllDonationsWithRelations();
+        return ResponseEntity.ok(donations);
     }
 
     @ApiResponses({
