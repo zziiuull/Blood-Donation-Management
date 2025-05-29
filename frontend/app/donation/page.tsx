@@ -1,122 +1,18 @@
 "use client";
 
-import type { Appointment, Donation, Donor } from "@/types";
-
-import { Icon } from "@iconify/react";
 import React, { useState } from "react";
-import { Tabs, Tab, Button } from "@heroui/react";
+import { Tabs, Tab } from "@heroui/react";
 
-import { AppointmentAutocomplete } from "./components/appointmentAutocomplete";
-import { DonorAutocomplete } from "./components/donorAutocomplete";
-import { DonationAutocomplete } from "./components/donationAutocomplete";
-import DonorDetailsTable from "./components/donorDetailsTable";
-import ImmunohematologyDetailsTable from "./components/immunohematologyDetailsTable";
-import { immunohemalogyExam, serologicalExam } from "./components/exams";
-import SerologicalDetailsTable from "./components/serologicalExamDetailsTable";
-import { ExamCheckbox } from "./components/examCheckbox";
-
-import axios from "@/services/axios";
-import { donationStatusMap } from "@/utils/utils";
-import showFailToast from "@/services/toast/showFailToast";
-import showSuccessToast from "@/services/toast/showSuccessToast";
+import RegisterDonationTab from "./components/registerDonationTab";
+import UpdateDonationTab from "./components/updateDonationTab";
+import ViewDonationTab from "./components/viewDonationTab";
 
 export default function Donation() {
-  const [selectedDonation, setSelectedDonation] = useState<Donation | null>(
-    null,
-  );
-  const [selectedDonor, setSelectedDonor] = useState<Donor | null>(null);
-  const [selectedAppointment, setSelectedAppointment] =
-    useState<Appointment | null>(null);
   const [activeTab, setActiveTab] = useState("register");
-  const [isSelectedImmunoExam, setIsSelectedImmunoExam] =
-    useState<boolean>(false);
-  const [isSelectedSeroExam, setIsSelectedSeroExam] = useState<boolean>(false);
 
-  const handleDonationSelect = (donation: Donation | null) => {
-    setSelectedDonation(donation);
+  const handleTabChange = (key: React.Key) => {
+    setActiveTab(key as string);
   };
-
-  const handleDonorSelect = (donor: Donor | null) => {
-    setSelectedDonor(donor);
-  };
-
-  const handleAppointmentSelect = (appointment: Appointment | null) => {
-    setSelectedAppointment(appointment);
-  };
-
-  const handleRequestDonation = async () => {
-    try {
-      const result = await axios.post(
-        "/api/v1/donation",
-        {
-          donorId: selectedDonor?.id,
-          appointmentId: selectedAppointment?.id,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        },
-      );
-
-      console.log(result);
-      if (result.status === 200) {
-        const donationId = result.data.id;
-
-        showSuccessToast("Donation requested");
-
-        if (isSelectedImmunoExam) {
-          await handleImmunoExamRequest(donationId);
-        }
-        if (isSelectedSeroExam) {
-          await handleSeroExamRequest(donationId);
-        }
-      }
-    } catch (error) {
-      console.log(error);
-      showFailToast(error.response.data.message);
-    }
-  };
-
-  const handleImmunoExamRequest = async (donationId: string) => {
-    try {
-      const result = await axios.post(
-        `/api/v1/exam/request/immunohematology/${donationId}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        },
-      );
-
-      console.log(result);
-      if (result.status === 200) {
-        showSuccessToast("Immunohematology exam requested");
-      }
-    } catch (error) {}
-  };
-
-  const handleSeroExamRequest = async (donationId: string) => {
-    try {
-      const result = await axios.post(
-        `/api/v1/exam/request/serologicalscreening/${donationId}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        },
-      );
-
-      console.log(result);
-      if (result.status === 200) {
-        showSuccessToast("Serological screening exam requested");
-      }
-    } catch (error) {}
-  };
-
-  const shouldShowSearch = activeTab === "update" || activeTab === "view";
 
   return (
     <div>
@@ -124,167 +20,17 @@ export default function Donation() {
       <div className="border border-gray-300 rounded-2xl w-full h-[500px] overflow-hidden p-4 mb-4 flex flex-col gap-4">
         <div className="flex-1 flex gap-2 min-h-0 rounded-2xl p-2">
           <div className="flex-1 flex flex-col p-4 overflow-auto">
-            <Tabs
-              onSelectionChange={(key: React.Key) => {
-                setActiveTab(key as string);
-                setSelectedDonor(null);
-                setSelectedAppointment(null);
-                setSelectedDonation(null);
-                setIsSelectedImmunoExam(false);
-                setIsSelectedSeroExam(false);
-              }}
-            >
+            <Tabs onSelectionChange={handleTabChange}>
               <Tab key="register" title="Register donation">
-                <div className="flex flex-col gap-4 mt-4">
-                  <div className="flex flex-col gap-10 justify-evenly">
-                    <div>
-                      <h3 className="text-lg font-bold text-default-600">
-                        Step 1: Select a donor
-                      </h3>
-                      <DonorAutocomplete
-                        handleDonorSelect={handleDonorSelect}
-                      />
-                    </div>
-                    {selectedDonor != null && (
-                      <div>
-                        <h3 className="text-lg font-bold text-default-600">
-                          Step 2: Select an appointment
-                        </h3>
-                        <AppointmentAutocomplete
-                          handleAppointmentSelect={handleAppointmentSelect}
-                        />
-                      </div>
-                    )}
-                    {selectedAppointment != null && (
-                      <div className="flex flex-col gap-2">
-                        <h3 className="text-lg font-bold text-default-600">
-                          Step 3: Select required exams
-                        </h3>
-                        <div className="flex gap-8">
-                          <ExamCheckbox
-                            description="Blood typing and compatibility testing"
-                            isSelected={isSelectedImmunoExam}
-                            name="Immunohematology exam"
-                            onChange={setIsSelectedImmunoExam}
-                          />
-                          <ExamCheckbox
-                            description="Infectious disease screening"
-                            isSelected={isSelectedSeroExam}
-                            name="Serological Screening exam"
-                            onChange={setIsSelectedSeroExam}
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  {selectedAppointment != null && selectedDonor != null && (
-                    <Button
-                      className="mt-4"
-                      variant="faded"
-                      onPress={handleRequestDonation}
-                    >
-                      Register donation
-                    </Button>
-                  )}
-                </div>
+                <RegisterDonationTab />
               </Tab>
 
-              <Tab
-                key="update"
-                className="flex flex-col gap-4"
-                title="Update donation"
-              >
-                {shouldShowSearch && (
-                  <div className="flex-shrink-0">
-                    <DonationAutocomplete
-                      handleDonationSelect={handleDonationSelect}
-                    />
-                  </div>
-                )}
-                {selectedDonation && (
-                  <>
-                    <div className="flex flex-col gap-4">
-                      <h3 className="text-xl font-bold text-default-600">
-                        Donation status:{" "}
-                        {donationStatusMap.get(
-                          selectedDonation?.donationStatus,
-                        )}
-                      </h3>
-                      <h3 className="text-lg font-bold text-default-600">
-                        Donor
-                      </h3>
-                      <DonorDetailsTable donor={selectedDonation.donor} />
-                    </div>
-                    <div className="flex flex-col gap-4">
-                      <h3 className="text-lg font-bold text-default-600">
-                        Immunohematology exam
-                      </h3>
-                      <ImmunohematologyDetailsTable exam={immunohemalogyExam} />
-                      <h3 className="text-lg font-bold text-default-600">
-                        Serological screening exam
-                      </h3>
-                      <SerologicalDetailsTable exam={serologicalExam} />
-                    </div>
-                    <div className="flex items-center justify-center gap-2">
-                      <Button
-                        color="primary"
-                        startContent={
-                          <Icon className="text-xl" icon="lucide:check" />
-                        }
-                      >
-                        Approve
-                      </Button>
-                      <Button
-                        color="danger"
-                        startContent={
-                          <Icon className="text-xl" icon="lucide:x" />
-                        }
-                      >
-                        Reject
-                      </Button>
-                    </div>
-                  </>
-                )}
+              <Tab key="update" title="Update donation">
+                <UpdateDonationTab />
               </Tab>
 
-              <Tab
-                key="view"
-                className="flex flex-col gap-4"
-                title="View donation"
-              >
-                {shouldShowSearch && (
-                  <div className="flex-shrink-0">
-                    <DonationAutocomplete
-                      handleDonationSelect={handleDonationSelect}
-                    />
-                  </div>
-                )}
-                {selectedDonation && (
-                  <>
-                    <div className="flex flex-col gap-4">
-                      <h3 className="text-xl font-bold text-default-600">
-                        Donation status:{" "}
-                        {donationStatusMap.get(
-                          selectedDonation?.donationStatus,
-                        )}
-                      </h3>
-                      <h3 className="text-lg font-bold text-default-600">
-                        Donor
-                      </h3>
-                      <DonorDetailsTable donor={selectedDonation?.donor} />
-                    </div>
-                    <div className="flex flex-col gap-4">
-                      <h3 className="text-lg font-bold text-default-600">
-                        Immunohematology exam
-                      </h3>
-                      <ImmunohematologyDetailsTable exam={immunohemalogyExam} />
-                      <h3 className="text-lg font-bold text-default-600">
-                        Serological screening exam
-                      </h3>
-                      <SerologicalDetailsTable exam={serologicalExam} />
-                    </div>
-                  </>
-                )}
+              <Tab key="view" title="View donation">
+                <ViewDonationTab />
               </Tab>
             </Tabs>
           </div>
