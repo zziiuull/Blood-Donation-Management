@@ -7,6 +7,9 @@ import {
   Divider,
 } from '@heroui/react';
 import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+
+import { getSerologicalExamByDonationId } from '@/services/api';
 
 type DiseaseDetection = 'POSITIVE' | 'NEGATIVE';
 type ExamStatus = 'UNDER_ANALYSIS' | 'APPROVED' | 'REJECTED';
@@ -30,31 +33,27 @@ interface SerologicalScreeningExam {
 }
 
 export default function ViewSerologicalExam() {
-  const [exam, setExam] = useState<SerologicalScreeningExam | null>(null);
+    const [exam, setExam] = useState<SerologicalScreeningExam | null>(null);
+    const [error, setError] = useState('');
+    const uParams = useParams();
+    const donationId = uParams.donationId as string;
 
   useEffect(() => {
-    const mockExam: SerologicalScreeningExam = {
-      id: 'mock-serological-id',
-      status: 'REJECTED',
-      hepatitisB: 'POSITIVE',
-      hepatitisC: 'NEGATIVE',
-      chagasDisease: 'POSITIVE',
-      syphilis: 'NEGATIVE',
-      aids: 'POSITIVE',
-      htlv1_2: 'POSITIVE',
-      observations: 'Paciente com múltiplas infecções detectadas.',
-      createdAt: '2025-05-27T10:00:00',
-      updatedAt: '2025-05-28T12:15:00',
-      donation: {
-        id: 'mock-donation-id',
-        status: 'UNDER_ANALYSIS',
-      },
-    };
+    if (!donationId) {
+      setError('Parâmetro donationId não fornecido.');
+      return;
+    }
 
-    setExam(mockExam);
-  }, []);
+    getSerologicalExamByDonationId(donationId)
+    .then((exam) => setExam(exam))
+    .catch((err) => {
+      console.error(err);
+      setError('Erro ao buscar o exame.');
+    });
+  }, [donationId]);
 
-  if (!exam) return <p className="text-center mt-10">Carregando exame...</p>;
+    if (error) return <p className="text-center text-red-500 mt-10">{error}</p>;
+    if (!exam) return <p className="text-center mt-10">Carregando exame...</p>;
 
   return (
     <div className="flex justify-center items-center min-h-screen">
