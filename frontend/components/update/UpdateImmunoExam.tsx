@@ -46,8 +46,8 @@ export default function UpdateImmunoExam() {
         showSuccessToast("Exame aprovado!");
       } else {
         showSuccessToast("Exame rejeitado!");
-        router.push("/donation");
       }
+      router.push(`/donation?tab=update&donationId=${donationId}`);
     } catch (error) {
       showFailToast("Erro ao atualizar exame");
       console.error(error);
