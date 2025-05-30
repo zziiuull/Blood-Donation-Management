@@ -56,7 +56,7 @@ export default function UpdateSerologicalExam() {
       } else {
         showSuccessToast("Exame rejeitado!");
       }
-      router.push("/donation");
+      router.push(`/donation?tab=update&donationId=${donationId}`);
     } catch (error) {
       console.error(error);
       showFailToast("Erro ao atualizar exame");

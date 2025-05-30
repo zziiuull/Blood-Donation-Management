@@ -1,13 +1,14 @@
 import { Icon } from "@iconify/react";
 import React, { useEffect, useState } from "react";
 import { Button } from "@heroui/react";
+import { useSearchParams } from "next/navigation";
 
 import { DonationAutocomplete } from "./donationAutocomplete";
 import DonorDetailsTable from "./donorDetailsTable";
 import ImmunohematologyDetailsTable from "./immunohematologyDetailsTable";
 import SerologicalDetailsTable from "./serologicalExamDetailsTable";
 
-import { ExamStatus, type Donation } from "@/types";
+import { DonationStatus, ExamStatus, type Donation } from "@/types";
 import axios from "@/services/axios";
 import { donationStatusMap } from "@/utils/utils";
 import showFailToast from "@/services/toast/showFailToast";
@@ -20,6 +21,7 @@ export default function UpdateDonationTab() {
   const [isLoadingImmunoExam, setIsLoadingImmunoExam] =
     useState<boolean>(false);
   const [isLoadingSeroExam, setIsLoadingSeroExam] = useState<boolean>(false);
+  const searchParams = useSearchParams();
 
   const loadDonations = async () => {
     try {
@@ -36,13 +38,24 @@ export default function UpdateDonationTab() {
   };
 
   useEffect(() => {
-    console.log(selectedDonation);
-  }, [selectedDonation]);
+    const fetchDonations = async () => {
+      const donations = await loadDonations();
+      const donationId = searchParams.get("donationId");
+
+      if (donationId) {
+        const foundDonation = donations?.find((d) => d.id === donationId);
+
+        setSelectedDonation(foundDonation ?? null);
+      }
+    };
+
+    fetchDonations();
+  }, [searchParams]);
 
   const fetchUpdatedDonation = async (donationId: string) => {
     try {
       const donations = await loadDonations();
-      const updatedDonation = donations.find(
+      const updatedDonation = donations?.find(
         (donation) => donation.id === donationId,
       );
 
@@ -50,7 +63,11 @@ export default function UpdateDonationTab() {
         setSelectedDonation(updatedDonation);
       }
     } catch (error) {
-      showFailToast("Error fetching updated donation:" + error.message);
+      if (error.response.data.message) {
+        showFailToast(error.response.data.message);
+      } else {
+        showFailToast(error.message);
+      }
     }
   };
 
@@ -239,28 +256,32 @@ export default function UpdateDonationTab() {
             selectedDonation.serologicalScreeningExam.status !=
               ExamStatus.UNDER_ANALYSIS &&
             selectedDonation.immunohematologyExam.status !=
-              ExamStatus.UNDER_ANALYSIS && (
-              <>
-                <div className="flex items-center justify-center gap-2">
-                  <Button
-                    color="primary"
-                    startContent={
-                      <Icon className="text-xl" icon="lucide:check" />
-                    }
-                    onPress={() => handleApproveDonation(selectedDonation.id)}
-                  >
-                    Approve
-                  </Button>
-                  <Button
-                    color="danger"
-                    startContent={<Icon className="text-xl" icon="lucide:x" />}
-                    onPress={() => handleRejectDonation(selectedDonation.id)}
-                  >
-                    Reject
-                  </Button>
-                </div>
-              </>
-            )}
+              ExamStatus.UNDER_ANALYSIS &&
+            selectedDonation.status ==
+              DonationStatus.UNDER_ANALYSIS && (
+                <>
+                  <div className="flex items-center justify-center gap-2">
+                    <Button
+                      color="primary"
+                      startContent={
+                        <Icon className="text-xl" icon="lucide:check" />
+                      }
+                      onPress={() => handleApproveDonation(selectedDonation.id)}
+                    >
+                      Approve
+                    </Button>
+                    <Button
+                      color="danger"
+                      startContent={
+                        <Icon className="text-xl" icon="lucide:x" />
+                      }
+                      onPress={() => handleRejectDonation(selectedDonation.id)}
+                    >
+                      Reject
+                    </Button>
+                  </div>
+                </>,
+              )}
         </>
       )}
     </div>

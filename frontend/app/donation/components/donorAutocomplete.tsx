@@ -2,7 +2,7 @@ import { Autocomplete, AutocompleteItem, Divider } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { useState, useEffect } from "react";
 
-import { bloodTypeMap } from "@/utils/utils";
+import { bloodTypeMap, calculateAge } from "@/utils/utils";
 import { Donor } from "@/types";
 import axios from "@/services/axios";
 
@@ -104,6 +104,10 @@ export const DonorAutocomplete = ({
                   <Divider orientation="vertical" />
                   <span className="text-tiny text-default-500">
                     {bloodTypeMap.get(item.bloodType)}
+                  </span>
+                  <Divider orientation="vertical" />
+                  <span className="text-tiny text-default-500">
+                    {`${calculateAge(item.birthDate)} years`}
                   </span>
                 </div>
               </div>
