@@ -213,9 +213,9 @@ class UpdateDonationServiceTest {
         @DisplayName("should throw when analysis is contradictory for rejection")
         void shouldThrowWhenAnalysisIsContradictoryForRejection() {
             when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.of(donation));
-            when(examRepository.findAllByDonationId(any(UUID.class))).thenReturn(List.of(immunohematologyApproved, serologicalScreeningRejected));
+            when(examRepository.findAllByDonationId(any(UUID.class))).thenReturn(List.of(immunohematologyApproved, serologicalScreeningApproved));
 
-            assertThatThrownBy(() -> sut.approve(UUID.randomUUID(), updatedAt)).isInstanceOf(InvalidDonationAnalysisException.class);
+            assertThatThrownBy(() -> sut.reject(UUID.randomUUID(), updatedAt)).isInstanceOf(InvalidDonationAnalysisException.class);
         }
 
         @Test
@@ -249,6 +249,8 @@ class UpdateDonationServiceTest {
         }
 
         @Test
+        @Tag("UnitTest")
+        @Tag("Structural")
         @DisplayName("should throw if donation is not under analysis for rejection")
         void shouldThrowIfDonationIsNotUnderAnalysisForRejection() {
             when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.of(approvedDonation));
