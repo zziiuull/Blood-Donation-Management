@@ -32,6 +32,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -50,6 +51,7 @@ class UpdateDonationServiceTest {
     private UpdateDonationService sut;
 
     private Donation donation;
+    private Donation approvedDonation;
     private ImmunohematologyExam immunohematologyApproved;
     private ImmunohematologyExam immunohematologyRejected;
     private SerologicalScreeningExam serologicalScreeningApproved;
@@ -64,6 +66,11 @@ class UpdateDonationServiceTest {
                 eligibleDonor,
                 appointment,
                 DonationStatus.UNDER_ANALYSIS
+        );
+        approvedDonation = new Donation(
+                eligibleDonor,
+                appointment,
+                DonationStatus.APPROVED
         );
         immunohematologyApproved = new ImmunohematologyExam(donation);
         immunohematologyApproved.setStatus(ExamStatus.APPROVED);
@@ -217,6 +224,24 @@ class UpdateDonationServiceTest {
             when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> sut.reject(UUID.randomUUID(), updatedAt)).isInstanceOf(DonationNotFoundException.class);
+        }
+
+        @Test
+        @Tag("UnitTest")
+        @Tag("Structural")
+        @DisplayName("should throw if donation is not under analysis for approval")
+        void shouldThrowIfDonationIsNotUnderAnalysisForApproval() {
+            when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.of(approvedDonation));
+
+            assertThatThrownBy(() -> sut.approve(UUID.randomUUID(), updatedAt)).isInstanceOf(InvalidDonationAnalysisException.class);
+        }
+
+        @Test
+        @DisplayName("should throw if donation is not under analysis for rejection")
+        void shouldThrowIfDonationIsNotUnderAnalysisForRejection() {
+            when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.of(approvedDonation));
+
+            assertThatThrownBy(() -> sut.reject(UUID.randomUUID(), updatedAt)).isInstanceOf(InvalidDonationAnalysisException.class);
         }
     }
 }
