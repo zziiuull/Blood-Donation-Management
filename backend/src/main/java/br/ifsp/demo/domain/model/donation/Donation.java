@@ -1,6 +1,11 @@
 package br.ifsp.demo.domain.model.donation;
 
 import br.ifsp.demo.domain.model.donor.Donor;
+import br.ifsp.demo.domain.model.exam.ExamStatus;
+import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
+import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
+import br.ifsp.demo.presentation.exception.CannotFinishDonationWithExamUnderAnalysisException;
+import br.ifsp.demo.presentation.exception.InvalidDonationAnalysisException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -51,6 +56,28 @@ public class Donation {
     public void reject(LocalDateTime updatedAt){
         status = DonationStatus.REJECTED;
         this.updatedAt = updatedAt;
+    }
+
+    public void verifyExamsToApprove(ImmunohematologyExam immunohematologyExam, SerologicalScreeningExam serologicalScreeningExam){
+        if (immunohematologyExam.getStatus() == ExamStatus.UNDER_ANALYSIS)
+            throw new CannotFinishDonationWithExamUnderAnalysisException("Cannot finish donation with immunohematology exam under analysis");
+        if (serologicalScreeningExam.getStatus() == ExamStatus.UNDER_ANALYSIS)
+            throw new CannotFinishDonationWithExamUnderAnalysisException("Cannot finish donation with serological screening exam under analysis");
+        if (immunohematologyExam.getStatus() == ExamStatus.REJECTED)
+            throw new InvalidDonationAnalysisException("Immunohematology exam doesn't have correct status for this donation analysis");
+        if (serologicalScreeningExam.getStatus() == ExamStatus.REJECTED)
+            throw new InvalidDonationAnalysisException("Serological screening exam doesn't have correct status for this donation analysis");
+    }
+
+    public void verifyExamsToReject(ImmunohematologyExam immunohematologyExam, SerologicalScreeningExam serologicalScreeningExam){
+        if (immunohematologyExam.getStatus() == ExamStatus.UNDER_ANALYSIS)
+            throw new CannotFinishDonationWithExamUnderAnalysisException("Cannot finish donation with immunohematology exam under analysis");
+        if (serologicalScreeningExam.getStatus() == ExamStatus.UNDER_ANALYSIS)
+            throw new CannotFinishDonationWithExamUnderAnalysisException("Cannot finish donation with serological screening exam under analysis");
+
+        if (immunohematologyExam.getStatus() == ExamStatus.REJECTED) return;
+        if (serologicalScreeningExam.getStatus() == ExamStatus.REJECTED) return;
+        throw new InvalidDonationAnalysisException("Exams don't have correct status for this donation analysis");
     }
 
     @PreUpdate
