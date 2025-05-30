@@ -37,8 +37,10 @@ public class UpdateDonationService {
         if (optionalDonation.isEmpty()) throw new DonationNotFoundException("Donation not found");
         Donation donation = optionalDonation.get();
 
-        isExamsAnalyzed(donationId, ExamStatus.APPROVED);
+        ImmunohematologyExam immunohematologyExam = retrieveImmunohematologyExam(donationId);
+        SerologicalScreeningExam serologicalScreeningExam = retrieveSerologicalScreeningExam(donationId);
 
+        donation.verifyExamsToApprove(immunohematologyExam, serologicalScreeningExam);
         donation.approve(updatedAt);
 
         Donation saved = donationRepository.save(donation);
@@ -48,28 +50,21 @@ public class UpdateDonationService {
         return saved;
     }
 
-    private void isExamsAnalyzed(UUID donationId, ExamStatus expectedExamStatus) {
-        List<Exam> exams = examRepository.findAllByDonationId(donationId);
-        ImmunohematologyExam immunohematologyExam = exams.stream()
+    private ImmunohematologyExam retrieveImmunohematologyExam(UUID donationId) {
+        return examRepository.findAllByDonationId(donationId).stream()
                 .filter(ImmunohematologyExam.class::isInstance)
                 .map(ImmunohematologyExam.class::cast)
                 .findFirst()
                 .orElseThrow(() -> new ExamNotFoundException("Immunohematology exam not found"));
-        if (immunohematologyExam.getStatus() == ExamStatus.UNDER_ANALYSIS)
-            throw new CannotFinishDonationWithExamUnderAnalysisException("Cannot finish donation with immunohematology exam under analysis");
-        if (immunohematologyExam.getStatus() != expectedExamStatus)
-            throw new InvalidDonationAnalysisException("Immunohematology exam doesn't have correct status for this donation analysis");
+    }
 
-        SerologicalScreeningExam serologicalScreeningExam = examRepository.findAllByDonationId(donationId)
+    private SerologicalScreeningExam retrieveSerologicalScreeningExam(UUID donationId) {
+        return examRepository.findAllByDonationId(donationId)
                 .stream()
                 .filter(SerologicalScreeningExam.class::isInstance)
                 .map(SerologicalScreeningExam.class::cast)
                 .findFirst()
                 .orElseThrow(() -> new ExamNotFoundException("Serological screening exam not found"));
-        if (serologicalScreeningExam.getStatus() == ExamStatus.UNDER_ANALYSIS)
-            throw new CannotFinishDonationWithExamUnderAnalysisException("Cannot finish donation with serological screening exam under analysis");
-        if (serologicalScreeningExam.getStatus() != expectedExamStatus)
-            throw new InvalidDonationAnalysisException("Serological screening exam doesn't have correct status for this donation analysis");
     }
 
     public Donation reject(UUID donationId, LocalDateTime updatedAt){
@@ -77,8 +72,10 @@ public class UpdateDonationService {
         if (optionalDonation.isEmpty()) throw new DonationNotFoundException("Donation not found");
         Donation donation = optionalDonation.get();
 
-        isExamsAnalyzed(donationId, ExamStatus.REJECTED);
+        ImmunohematologyExam immunohematologyExam = retrieveImmunohematologyExam(donationId);
+        SerologicalScreeningExam serologicalScreeningExam = retrieveSerologicalScreeningExam(donationId);
 
+        donation.verifyExamsToReject(immunohematologyExam, serologicalScreeningExam);
         donation.reject(updatedAt);
 
         Donation saved = donationRepository.save(donation);
