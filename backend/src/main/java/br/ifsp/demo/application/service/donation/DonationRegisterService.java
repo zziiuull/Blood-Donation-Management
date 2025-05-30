@@ -1,6 +1,7 @@
 package br.ifsp.demo.application.service.donation;
 
 import br.ifsp.demo.domain.model.donation.Appointment;
+import br.ifsp.demo.domain.model.donation.AppointmentStatus;
 import br.ifsp.demo.domain.model.donation.Donation;
 import br.ifsp.demo.domain.model.donation.DonationStatus;
 import br.ifsp.demo.domain.model.donor.Donor;
@@ -37,6 +38,8 @@ public class DonationRegisterService {
         if (donationRepository.existsByDonorAndAppointment(donor, appointment)) {
             throw new IllegalArgumentException("Donation already exists for this appointment");
         }
+
+        appointment.setStatus(AppointmentStatus.COMPLETED);
 
         Donation donation = new Donation(donor, appointment, DonationStatus.UNDER_ANALYSIS);
         return donationRepository.save(donation);
