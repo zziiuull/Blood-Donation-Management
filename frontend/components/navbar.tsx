@@ -6,6 +6,7 @@ import {
   NavbarBrand,
   NavbarItem,
 } from "@heroui/navbar";
+import { Button } from "@heroui/react";
 import { link as linkStyles } from "@heroui/theme";
 import NextLink from "next/link";
 import clsx from "clsx";
@@ -40,14 +41,15 @@ export const Navbar = () => {
             </NavbarItem>
           ))}
         </ul>
-        <button
-          onClick={() => {
+        <Button
+          color="danger"
+          onPress={() => {
             localStorage.removeItem("token");
             router.push("/login");
           }}
         >
           Logout
-        </button>
+        </Button>
       </NavbarContent>
     </HeroUINavbar>
   );
