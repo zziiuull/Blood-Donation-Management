@@ -18,6 +18,7 @@ public class Appointment {
     private LocalDateTime appointmentDate;
 
     @Enumerated(EnumType.STRING)
+    @Setter
     private AppointmentStatus status;
 
     @ManyToOne(optional = false)
