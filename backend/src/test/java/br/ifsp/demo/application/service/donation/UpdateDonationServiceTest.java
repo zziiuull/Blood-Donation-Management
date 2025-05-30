@@ -130,8 +130,8 @@ class UpdateDonationServiceTest {
         @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
-        @DisplayName("Should throw when at least one exam is under analysis")
-        void shouldThrowWhenAtLeastOneExamIsUnderAnalysis(ImmunohematologyExam immunohematologyExam, SerologicalScreeningExam serologicalScreeningExam) {
+        @DisplayName("Should throw when at least one exam is under analysis for approval")
+        void shouldThrowWhenAtLeastOneExamIsUnderAnalysisForApproval(ImmunohematologyExam immunohematologyExam, SerologicalScreeningExam serologicalScreeningExam) {
             when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.of(donation));
             when(examRepository.findAllByDonationId(any(UUID.class))).thenReturn(List.of(immunohematologyExam, serologicalScreeningExam));
 
@@ -157,6 +157,18 @@ class UpdateDonationServiceTest {
                     Arguments.of(immunohematologyUnderAnalysis, serologicalScreeningRejected),
                     Arguments.of(immunohematologyApproved, serologicalScreeningUnderAnalysis)
             );
+        }
+
+        @ParameterizedTest
+        @MethodSource("examsUnderAnalysis")
+        @Tag("Structural")
+        @Tag("UnitTest")
+        @DisplayName("Should throw when at least one exam is under analysis for rejection")
+        void shouldThrowWhenAtLeastOneExamIsUnderAnalysisForRejection(ImmunohematologyExam immunohematologyExam, SerologicalScreeningExam serologicalScreeningExam) {
+            when(donationRepository.findById(any(UUID.class))).thenReturn(Optional.of(donation));
+            when(examRepository.findAllByDonationId(any(UUID.class))).thenReturn(List.of(immunohematologyExam, serologicalScreeningExam));
+
+            assertThatThrownBy(() -> sut.reject(UUID.randomUUID(), updatedAt)).isInstanceOf(CannotFinishDonationWithExamUnderAnalysisException.class);
         }
 
         @ParameterizedTest
