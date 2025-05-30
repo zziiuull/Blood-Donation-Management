@@ -236,9 +236,9 @@ export default function UpdateDonationTab() {
 
           {selectedDonation.immunohematologyExam &&
             selectedDonation.serologicalScreeningExam &&
-            selectedDonation.serologicalScreeningExam.status ==
+            selectedDonation.serologicalScreeningExam.status !=
               ExamStatus.UNDER_ANALYSIS &&
-            selectedDonation.immunohematologyExam.status ==
+            selectedDonation.immunohematologyExam.status !=
               ExamStatus.UNDER_ANALYSIS && (
               <>
                 <div className="flex items-center justify-center gap-2">
