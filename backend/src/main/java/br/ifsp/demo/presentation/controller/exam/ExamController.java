@@ -1,5 +1,6 @@
 package br.ifsp.demo.presentation.controller.exam;
 
+import br.ifsp.demo.application.service.donation.ViewDonationDetailsService;
 import br.ifsp.demo.application.service.exam.ExamRegistrationService;
 import br.ifsp.demo.application.service.exam.ExamRequestService;
 import br.ifsp.demo.application.service.exam.ViewExamDetailsService;
@@ -12,8 +13,6 @@ import br.ifsp.demo.presentation.controller.exam.response.SerologicalScreeningEx
 import br.ifsp.demo.domain.model.donation.Donation;
 import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
-import br.ifsp.demo.infrastructure.repository.donation.DonationRepository;
-import br.ifsp.demo.presentation.exception.DonationNotFoundException;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -35,7 +34,7 @@ public class ExamController {
     private final ExamRequestService examRequestService;
     private final ExamRegistrationService examRegistrationService;
     private final ViewExamDetailsService viewExamDetailsService;
-    private final DonationRepository donationRepository;
+    private final ViewDonationDetailsService viewDonationDetailsService;
 
     @ApiResponses({
             @ApiResponse(
@@ -64,8 +63,7 @@ public class ExamController {
     @PostMapping("/request/immunohematology/{donationId}")
     public ResponseEntity<ImmunohematologyExamResponse> requestImmunohematologyExam(
             @PathVariable UUID donationId){
-        Donation donation = donationRepository.findById(donationId)
-                .orElseThrow(() -> new DonationNotFoundException("Donation not found"));
+        Donation donation = viewDonationDetailsService.getDonation(donationId);
 
         ImmunohematologyExam immunohematologyExam = examRequestService.requestImmunohematologyExam(donation);
 
@@ -99,8 +97,7 @@ public class ExamController {
     @PostMapping("/request/serologicalscreening/{donationId}")
     public ResponseEntity<SerologicalScreeningExamResponse> requestSerologicalScreeningExam(
             @PathVariable UUID donationId){
-        Donation donation = donationRepository.findById(donationId)
-                .orElseThrow(() -> new DonationNotFoundException("Donation not found"));
+        Donation donation = viewDonationDetailsService.getDonation(donationId);
 
         SerologicalScreeningExam serologicalScreeningExam = examRequestService.requestSerologicalScreeningExam(donation);
 
@@ -358,8 +355,6 @@ public class ExamController {
     }
 
     private void validateDonationExists(UUID donationId) {
-        if (!donationRepository.existsById(donationId)) {
-            throw new DonationNotFoundException("Donation not found");
-        }
+        viewDonationDetailsService.getDonation(donationId);
     }
 }
