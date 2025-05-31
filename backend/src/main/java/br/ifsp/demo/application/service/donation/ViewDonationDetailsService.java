@@ -66,4 +66,9 @@ public class ViewDonationDetailsService {
             return new DonationWithRelations(donation, immunoExam, serologicalExam);
         }).collect(Collectors.toList());
     }
+
+    public Donation getDonation(UUID donationId) {
+        return donationRepository.findById(donationId)
+                .orElseThrow(() -> new DonationNotFoundException("Donation does not exist"));
+    }
 }
