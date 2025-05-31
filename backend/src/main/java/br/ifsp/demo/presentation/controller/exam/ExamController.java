@@ -139,16 +139,17 @@ public class ExamController {
             )
     })
     @PostMapping("/register/donation/{donationId}/immunohematology/approve/{examId}")
-    public ResponseEntity<ImmunohematologyExam> approveImmunohematologyExam(
+    public ResponseEntity<ImmunohematologyExamResponse> approveImmunohematologyExam(
             @PathVariable UUID donationId,
             @PathVariable UUID examId,
             @RequestBody @Valid ImmunohematologyExamRequest exam) {
 
         validateDonationExists(donationId);
-        return ResponseEntity.ok(examRegistrationService.registerApprovedExam(
+        ImmunohematologyExam immunohematologyExam = examRegistrationService.registerApprovedExam(
                 examId,
                 ImmunohematologyExamDTO.fromRequest(exam),
-                LocalDateTime.now()));
+                LocalDateTime.now());
+        return ResponseEntity.ok(new ImmunohematologyExamResponse(immunohematologyExam));
     }
 
     @ApiResponses({
@@ -186,16 +187,17 @@ public class ExamController {
             )
     })
     @PostMapping("/register/donation/{donationId}/serologicalscreening/approve/{examId}")
-    public ResponseEntity<SerologicalScreeningExam> approveSerologicalScreeningExam(
+    public ResponseEntity<SerologicalScreeningExamResponse> approveSerologicalScreeningExam(
             @PathVariable UUID donationId,
             @PathVariable UUID examId,
             @RequestBody @Valid SerologicalScreeningExamRequest exam) {
 
         validateDonationExists(donationId);
-        return ResponseEntity.ok(examRegistrationService.registerApprovedExam(
+        SerologicalScreeningExam serologicalScreeningExam = examRegistrationService.registerApprovedExam(
                 examId,
                 SerologicalScreeningExamDTO.fromRequest(exam),
-                LocalDateTime.now()));
+                LocalDateTime.now());
+        return ResponseEntity.ok(new SerologicalScreeningExamResponse(serologicalScreeningExam));
     }
 
     @ApiResponses({
@@ -233,16 +235,17 @@ public class ExamController {
             )
     })
     @PostMapping("/register/donation/{donationId}/immunohematology/reject/{examId}")
-    public ResponseEntity<ImmunohematologyExam> rejectImmunohematologyExam(
+    public ResponseEntity<ImmunohematologyExamResponse> rejectImmunohematologyExam(
             @PathVariable UUID donationId,
             @PathVariable UUID examId,
             @RequestBody @Valid ImmunohematologyExamRequest exam) {
 
         validateDonationExists(donationId);
-        return ResponseEntity.ok(examRegistrationService.registerRejectedExam(
+        ImmunohematologyExam immunohematologyExam = examRegistrationService.registerRejectedExam(
                 examId,
                 ImmunohematologyExamDTO.fromRequest(exam),
-                LocalDateTime.now()));
+                LocalDateTime.now());
+        return ResponseEntity.ok(new ImmunohematologyExamResponse(immunohematologyExam));
     }
 
     @ApiResponses({
@@ -280,16 +283,17 @@ public class ExamController {
             )
     })
     @PostMapping("/register/donation/{donationId}/serologicalscreening/reject/{examId}")
-    public ResponseEntity<SerologicalScreeningExam> rejectSerologicalScreeningExam(
+    public ResponseEntity<SerologicalScreeningExamResponse> rejectSerologicalScreeningExam(
             @PathVariable UUID donationId,
             @PathVariable UUID examId,
             @RequestBody @Valid SerologicalScreeningExamRequest exam) {
 
         validateDonationExists(donationId);
-        return ResponseEntity.ok(examRegistrationService.registerRejectedExam(
+        SerologicalScreeningExam serologicalScreeningExam = examRegistrationService.registerRejectedExam(
                 examId,
                 SerologicalScreeningExamDTO.fromRequest(exam),
-                LocalDateTime.now()));
+                LocalDateTime.now());
+        return ResponseEntity.ok(new SerologicalScreeningExamResponse(serologicalScreeningExam));
     }
 
     @ApiResponses({
