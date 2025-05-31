@@ -157,4 +157,28 @@ public class ApiExceptionHandler {
                 .build();
         return new ResponseEntity<>(apiException, conflict);
     }
+
+    @ExceptionHandler(value = AppointmentNotFoundException.class)
+    public ResponseEntity<?> handleAppointmentNotFoundException(AppointmentNotFoundException e){
+        final HttpStatus conflict = BAD_REQUEST;
+        final ApiException apiException = ApiException.builder()
+                .status(conflict)
+                .message(e.getMessage())
+                .developerMessage(e.getClass().getName())
+                .timestamp(ZonedDateTime.now(ZoneId.of("Z")))
+                .build();
+        return new ResponseEntity<>(apiException, conflict);
+    }
+
+    @ExceptionHandler(value = DonorNotFoundException.class)
+    public ResponseEntity<?> handleDonorNotFoundException(DonorNotFoundException e){
+        final HttpStatus conflict = NOT_FOUND;
+        final ApiException apiException = ApiException.builder()
+                .status(conflict)
+                .message(e.getMessage())
+                .developerMessage(e.getClass().getName())
+                .timestamp(ZonedDateTime.now(ZoneId.of("Z")))
+                .build();
+        return new ResponseEntity<>(apiException, conflict);
+    }
 }
