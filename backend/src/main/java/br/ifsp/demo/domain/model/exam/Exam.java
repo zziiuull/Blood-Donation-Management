@@ -1,6 +1,5 @@
 package br.ifsp.demo.domain.model.exam;
 
-import br.ifsp.demo.application.service.dto.exam.ImmunohematologyExamDTO;
 import br.ifsp.demo.domain.model.donation.Donation;
 import br.ifsp.demo.presentation.exception.InvalidExamAnalysisException;
 import jakarta.persistence.*;

@@ -5,15 +5,11 @@ import br.ifsp.demo.application.service.dto.donation.DonationWithRelations;
 import br.ifsp.demo.application.service.dto.exam.ExamDTO;
 import br.ifsp.demo.domain.model.donation.Donation;
 import br.ifsp.demo.domain.model.exam.Exam;
-import br.ifsp.demo.domain.model.exam.ExamStatus;
 import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.infrastructure.repository.donation.DonationRepository;
 import br.ifsp.demo.infrastructure.repository.exam.ExamRepository;
-import br.ifsp.demo.presentation.exception.CannotFinishDonationWithExamUnderAnalysisException;
 import br.ifsp.demo.presentation.exception.DonationNotFoundException;
-import br.ifsp.demo.presentation.exception.ExamNotFoundException;
-import br.ifsp.demo.presentation.exception.InvalidDonationAnalysisException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

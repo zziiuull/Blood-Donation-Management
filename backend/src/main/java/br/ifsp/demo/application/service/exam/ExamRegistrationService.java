@@ -6,7 +6,6 @@ import br.ifsp.demo.domain.model.exam.*;
 import br.ifsp.demo.infrastructure.repository.exam.ExamRepository;
 import br.ifsp.demo.presentation.exception.ExamAlreadyAnalyzedException;
 import br.ifsp.demo.presentation.exception.ExamNotFoundException;
-import br.ifsp.demo.presentation.exception.InvalidExamAnalysisException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
