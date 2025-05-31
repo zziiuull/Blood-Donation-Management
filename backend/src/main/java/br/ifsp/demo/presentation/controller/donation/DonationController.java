@@ -33,7 +33,7 @@ public class DonationController {
                     responseCode = "200", description = "Successful operation.",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = DonationRegisterService.class)
+                            schema = @Schema(implementation = RegisterResponse.class)
                     )
             ),
             @ApiResponse(
@@ -73,7 +73,7 @@ public class DonationController {
                     responseCode = "200", description = "Successful operation.",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = DonationRegisterService.class)
+                            schema = @Schema(implementation = DonationDetailsDTO.class)
                     )
             ),
             @ApiResponse(
@@ -118,8 +118,13 @@ public class DonationController {
                     responseCode = "200", description = "Successful operation.",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = DonationRegisterService.class)
+                            schema = @Schema(implementation = DonationResponse.class)
                     )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Donation already analyzed",
+                    content = @Content(schema = @Schema(hidden = true))
             ),
             @ApiResponse(
                     responseCode = "400",
@@ -128,7 +133,7 @@ public class DonationController {
             ),
             @ApiResponse(
                     responseCode = "400",
-                    description = "Exam doesn't have correct status for this donation analysis.",
+                    description = "Exam(s) doesn't have correct status for this donation analysis.",
                     content = @Content(schema = @Schema(hidden = true))
             ),
             @ApiResponse(
@@ -158,8 +163,13 @@ public class DonationController {
                     responseCode = "200", description = "Successful operation.",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = DonationRegisterService.class)
+                            schema = @Schema(implementation = DonationResponse.class)
                     )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Donation already analyzed",
+                    content = @Content(schema = @Schema(hidden = true))
             ),
             @ApiResponse(
                     responseCode = "400",
@@ -168,7 +178,7 @@ public class DonationController {
             ),
             @ApiResponse(
                     responseCode = "400",
-                    description = "Exam doesn't have correct status for this donation analysis.",
+                    description = "Exam(s) doesn't have correct status for this donation analysis.",
                     content = @Content(schema = @Schema(hidden = true))
             ),
             @ApiResponse(
