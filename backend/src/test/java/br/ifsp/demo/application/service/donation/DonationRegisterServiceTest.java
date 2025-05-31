@@ -124,6 +124,7 @@ class DonationRegisterServiceTest {
             assertThat(result.getStatus()).isEqualTo(DonationStatus.UNDER_ANALYSIS);
             assertThat(result.getDonor()).isEqualTo(eligibleDonor);
             assertThat(result.getAppointment()).isEqualTo(appointment);
+            assertThat(result.getAppointment().getStatus()).isEqualTo(AppointmentStatus.COMPLETED);
 
             verify(donationRepository, times(1)).save(any(Donation.class));
         }

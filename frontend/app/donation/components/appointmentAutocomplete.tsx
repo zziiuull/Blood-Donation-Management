@@ -3,7 +3,7 @@ import { Icon } from "@iconify/react";
 import { useEffect, useState } from "react";
 
 import { formatDateTime } from "@/utils/utils";
-import { Appointment } from "@/types";
+import { Appointment, AppointmentStatus } from "@/types";
 import axios from "@/services/axios";
 
 interface AppointmentAutocompleteProps {
@@ -47,6 +47,13 @@ export const AppointmentAutocomplete = ({
         selectorButton: "text-default-500",
       }}
       defaultItems={appointments}
+      disabledKeys={appointments
+        .filter(
+          (a) =>
+            a.status === AppointmentStatus.COMPLETE ||
+            a.status === AppointmentStatus.CANCELED,
+        )
+        .map((a) => a.id)}
       inputProps={{
         classNames: {
           input: "ml-1",
