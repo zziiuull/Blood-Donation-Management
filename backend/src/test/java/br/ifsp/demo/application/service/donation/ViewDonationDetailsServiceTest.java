@@ -122,6 +122,28 @@ class ViewDonationDetailsServiceTest {
             verify(donationRepository, times(1)).findAll();
             verify(examRepository, times(1)).findAllByDonationId(donationId);
         }
+
+        @Test
+        @Tag("Functional")
+        @Tag("TDD")
+        @Tag("UnitTest")
+        @DisplayName("Should return a donation")
+        void shouldReturnADonation(){
+            UUID donationId = UUID.randomUUID();
+
+            Donation donation = mock(Donation.class);
+
+            when(donation.getId()).thenReturn(donationId);
+            when(donationRepository.findById(donationId)).thenReturn(Optional.of(donation));
+
+            Donation result = sut.getDonation(donationId);
+
+            assertThat(result).isNotNull();
+            assertThat(result).isEqualTo(donation);
+            assertThat(result.getId()).isEqualTo(donation.getId());
+
+            verify(donationRepository, times(1)).findById(donationId);
+        }
     }
 
     @Nested
@@ -130,12 +152,29 @@ class ViewDonationDetailsServiceTest {
         @Tag("Functional")
         @Tag("TDD")
         @Tag("UnitTest")
-        @DisplayName("Should throw exception when donation does not exist")
-        void shouldThrowExceptionWhenDonationDoesNotExist() {
+        @DisplayName("Should throw exception when donation details does not exist")
+        void shouldThrowExceptionWhenDonationDetailsDoesNotExist() {
             UUID donationId = UUID.randomUUID();
             when(donationRepository.findById(donationId)).thenReturn(Optional.empty());
 
             assertThatThrownBy(() -> sut.getDonationDetails(donationId))
+                    .isInstanceOf(DonationNotFoundException.class)
+                    .hasMessage("Donation does not exist");
+
+            verify(donationRepository, times(1)).findById(donationId);
+        }
+
+        @Test
+        @Tag("Functional")
+        @Tag("TDD")
+        @Tag("UnitTest")
+        @DisplayName("Should return a donation")
+        void shouldThrowDonationNotFoundExceptionWhenDonationDoesNotExist(){
+            UUID donationId = UUID.randomUUID();
+
+            when(donationRepository.findById(donationId)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> sut.getDonation(donationId))
                     .isInstanceOf(DonationNotFoundException.class)
                     .hasMessage("Donation does not exist");
 
