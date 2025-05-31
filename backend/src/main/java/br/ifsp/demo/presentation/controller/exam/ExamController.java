@@ -30,7 +30,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping(path = "/api/v1/exam")
 @AllArgsConstructor
-@Tag(name = "Exam controller")
+@Tag(name = "Exam API")
 public class ExamController {
     private final ExamRequestService examRequestService;
     private final ExamRegistrationService examRegistrationService;
