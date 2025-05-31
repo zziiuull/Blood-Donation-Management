@@ -42,7 +42,7 @@ public class ExamController {
                     responseCode = "200", description = "Successful operation.",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = ExamRequestService.class)
+                            schema = @Schema(implementation = ImmunohematologyExamResponse.class)
                     )
             ),
             @ApiResponse(
@@ -77,7 +77,7 @@ public class ExamController {
                     responseCode = "200", description = "Successful operation.",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = ExamRequestService.class)
+                            schema = @Schema(implementation = SerologicalScreeningExamResponse.class)
                     )
             ),
             @ApiResponse(
@@ -112,7 +112,7 @@ public class ExamController {
                     responseCode = "200", description = "Successful operation.",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = ExamRegistrationService.class)
+                            schema = @Schema(implementation = ImmunohematologyExam.class)
                     )
             ),
             @ApiResponse(
@@ -127,12 +127,12 @@ public class ExamController {
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Exam does not exist.",
+                    description = "Donation does not exist.",
                     content = @Content(schema = @Schema(hidden = true))
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Donation does not exist.",
+                    description = "Exam does not exist.",
                     content = @Content(schema = @Schema(hidden = true))
             ),
             @ApiResponse(
@@ -159,7 +159,7 @@ public class ExamController {
                     responseCode = "200", description = "Successful operation.",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = ExamRegistrationService.class)
+                            schema = @Schema(implementation = SerologicalScreeningExam.class)
                     )
             ),
             @ApiResponse(
@@ -174,12 +174,12 @@ public class ExamController {
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Exam does not exist.",
+                    description = "Donation does not exist.",
                     content = @Content(schema = @Schema(hidden = true))
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Donation does not exist.",
+                    description = "Exam does not exist.",
                     content = @Content(schema = @Schema(hidden = true))
             ),
             @ApiResponse(
@@ -206,7 +206,7 @@ public class ExamController {
                     responseCode = "200", description = "Successful operation.",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = ExamRegistrationService.class)
+                            schema = @Schema(implementation = ImmunohematologyExam.class)
                     )
             ),
             @ApiResponse(
@@ -221,12 +221,12 @@ public class ExamController {
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Exam does not exist.",
+                    description = "Donation does not exist.",
                     content = @Content(schema = @Schema(hidden = true))
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Donation does not exist.",
+                    description = "Exam does not exist.",
                     content = @Content(schema = @Schema(hidden = true))
             ),
             @ApiResponse(
@@ -253,7 +253,7 @@ public class ExamController {
                     responseCode = "200", description = "Successful operation.",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = ExamRegistrationService.class)
+                            schema = @Schema(implementation = SerologicalScreeningExam.class)
                     )
             ),
             @ApiResponse(
@@ -268,12 +268,12 @@ public class ExamController {
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Exam does not exist.",
+                    description = "Donation does not exist.",
                     content = @Content(schema = @Schema(hidden = true))
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Donation does not exist.",
+                    description = "Exam does not exist.",
                     content = @Content(schema = @Schema(hidden = true))
             ),
             @ApiResponse(
@@ -300,7 +300,7 @@ public class ExamController {
                     responseCode = "200", description = "Successful operation.",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = ViewExamDetailsService.class)
+                            schema = @Schema(implementation = ImmunohematologyExamResponse.class)
                     )
             ),
             @ApiResponse(
@@ -310,12 +310,12 @@ public class ExamController {
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Exam does not exist.",
+                    description = "Donation does not exist.",
                     content = @Content(schema = @Schema(hidden = true))
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Donation does not exist.",
+                    description = "Exam does not exist.",
                     content = @Content(schema = @Schema(hidden = true))
             )
     })
@@ -331,7 +331,7 @@ public class ExamController {
                     responseCode = "200", description = "Successful operation.",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = ViewExamDetailsService.class)
+                            schema = @Schema(implementation = SerologicalScreeningExamResponse.class)
                     )
             ),
             @ApiResponse(
@@ -341,12 +341,12 @@ public class ExamController {
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Exam does not exist.",
+                    description = "Donation does not exist.",
                     content = @Content(schema = @Schema(hidden = true))
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Donation does not exist.",
+                    description = "Exam does not exist.",
                     content = @Content(schema = @Schema(hidden = true))
             )
     })
