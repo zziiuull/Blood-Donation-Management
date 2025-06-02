@@ -79,6 +79,7 @@ class AppointmentServiceTest {
 
         @Test
         @Tag("Functional")
+        @Tag("UnitTest")
         @DisplayName("Should throw exception when repository fails")
         void shouldThrowExceptionWhenRepositoryFails() {
             when(appointmentRepository.findAll()).thenThrow(new RuntimeException("DB is down"));
