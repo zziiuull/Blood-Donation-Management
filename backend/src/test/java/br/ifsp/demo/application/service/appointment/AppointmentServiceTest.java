@@ -95,6 +95,8 @@ class AppointmentServiceTest {
         }
 
         @Test
+        @Tag("Structural")
+        @Tag("UnitTest")
         @DisplayName("Should throw exception when reference date is null")
         void shouldThrowExceptionWhenReferenceDateIsNull() {
             assertThatThrownBy(() -> appointmentService.getUpcomingAppointments(null))
