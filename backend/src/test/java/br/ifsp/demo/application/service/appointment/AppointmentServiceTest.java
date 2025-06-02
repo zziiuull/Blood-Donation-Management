@@ -103,7 +103,8 @@ class AppointmentServiceTest {
         }
 
         @Test
-
+        @Tag("Structural")
+        @Tag("UnitTest")
         @DisplayName("Should throw exception when appointment is null")
         void shouldThrowExceptionWhenAppointmentIsNull() {
             assertThatThrownBy(() -> appointmentService.canReschedule(null, LocalDateTime.now()))
