@@ -78,6 +78,8 @@ class AppointmentServiceTest {
         }
 
         @Test
+        @Tag("Structural")
+        @Tag("UnitTest")
         @DisplayName("Should return only upcoming appointments")
         void shouldReturnOnlyUpcomingAppointments() {
             LocalDateTime now = LocalDateTime.now();
