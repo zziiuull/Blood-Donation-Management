@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -76,6 +77,16 @@ class AppointmentServiceTest {
             verify(appointmentRepository, times(1)).findAll();
         }
 
+        @Test
+        @DisplayName("Should throw exception when repository fails")
+        void shouldThrowExceptionWhenRepositoryFails() {
+            when(appointmentRepository.findAll()).thenThrow(new RuntimeException("DB is down"));
 
+            assertThatThrownBy(() -> appointmentService.getAll())
+                    .isInstanceOf(RuntimeException.class)
+                    .hasMessageContaining("DB is down");
+
+            verify(appointmentRepository).findAll();
+        }
     }
 }
