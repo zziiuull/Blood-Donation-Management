@@ -148,6 +148,8 @@ class AppointmentServiceTest {
         }
 
         @Test
+        @Tag("Structural")
+        @Tag("UnitTest")
         @DisplayName("Should return false when appointment is before current time")
         void shouldReturnFalseWhenAppointmentIsBeforeCurrentTime() {
             LocalDateTime now = LocalDateTime.now();
