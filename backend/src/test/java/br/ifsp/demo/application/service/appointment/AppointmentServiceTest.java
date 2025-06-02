@@ -76,7 +76,10 @@ class AppointmentServiceTest {
 
             verify(appointmentRepository, times(1)).findAll();
         }
-
+    }
+    @Nested
+    @DisplayName("For invalid tests")
+    class InvalidTests {
         @Test
         @Tag("Functional")
         @Tag("UnitTest")
