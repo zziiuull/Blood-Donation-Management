@@ -118,6 +118,8 @@ class AppointmentServiceTest {
         }
 
         @Test
+        @Tag("Structural")
+        @Tag("UnitTest")
         @DisplayName("Should return false when status is not scheduled")
         void shouldReturnFalseWhenStatusIsNotScheduled() {
             LocalDateTime now = LocalDateTime.now();
