@@ -117,6 +117,19 @@ class AppointmentServiceTest {
             assertThat(result).isTrue();
         }
 
+        @Test
+        @DisplayName("Should return false when status is not scheduled")
+        void shouldReturnFalseWhenStatusIsNotScheduled() {
+            LocalDateTime now = LocalDateTime.now();
+            Appointment mockAppointment = mock(Appointment.class);
+
+            when(mockAppointment.getStatus()).thenReturn(AppointmentStatus.CANCELED);
+            when(mockAppointment.getAppointmentDate()).thenReturn(now.plusHours(30));
+
+            boolean result = appointmentService.canReschedule(mockAppointment, now);
+            assertThat(result).isFalse();
+        }
+
     }
     @Nested
     @DisplayName("For invalid tests")
