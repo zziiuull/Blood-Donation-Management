@@ -30,11 +30,11 @@ export default function Donation() {
   }, []);
 
   return (
-    <div>
+    <div className="p-2">
       <h1 className="text-3xl font-bold mb-5" id="donation-title">
         Donations
       </h1>
-      <div className="border border-gray-300 rounded-2xl w-full h-[500px] overflow-hidden p-4 mb-4 flex flex-col gap-4">
+      <div className="w-full overflow-hidden p-4 mb-4 flex flex-col gap-4">
         <div className="flex-1 flex gap-2 min-h-0 rounded-2xl p-2">
           <div className="flex-1 flex flex-col p-4 overflow-auto">
             <Tabs
