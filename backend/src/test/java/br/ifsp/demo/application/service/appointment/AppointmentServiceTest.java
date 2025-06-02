@@ -93,5 +93,14 @@ class AppointmentServiceTest {
 
             verify(appointmentRepository).findAll();
         }
+
+        @Test
+        @DisplayName("Should throw exception when reference date is null")
+        void shouldThrowExceptionWhenReferenceDateIsNull() {
+            assertThatThrownBy(() -> appointmentService.getUpcomingAppointments(null))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("Reference datetime must not be null");
+
+        }
     }
 }
