@@ -1,9 +1,11 @@
 package br.ifsp.demo.application.service.appointment;
 
 import br.ifsp.demo.domain.model.donation.Appointment;
+import br.ifsp.demo.domain.model.donation.AppointmentStatus;
 import br.ifsp.demo.infrastructure.repository.appointment.AppointmentRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -27,5 +29,18 @@ public class AppointmentService {
                 .stream()
                 .filter(a -> a.getAppointmentDate().isAfter(now))
                 .toList();
+    }
+
+    public boolean canReschedule(Appointment appointment, LocalDateTime now) {
+        if (appointment == null || now == null) {
+            throw new IllegalArgumentException("Arguments must not be null");
+        }
+
+        LocalDateTime scheduledDate = appointment.getAppointmentDate();
+        AppointmentStatus status = appointment.getStatus();
+
+        return status == AppointmentStatus.SCHEDULED
+                && scheduledDate.isAfter(now)
+                && Duration.between(now, scheduledDate).toHours() >= 24;
     }
 }
