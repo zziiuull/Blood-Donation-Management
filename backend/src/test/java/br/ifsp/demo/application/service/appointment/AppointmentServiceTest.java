@@ -142,6 +142,8 @@ class AppointmentServiceTest {
         }
 
         @Test
+        @Tag("Structural")
+        @Tag("UnitTest")
         @DisplayName("Should throw exception when now is null")
         void shouldThrowExceptionWhenNowIsNull() {
             Appointment mockAppointment = mock(Appointment.class);
