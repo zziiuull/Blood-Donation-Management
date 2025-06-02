@@ -24,6 +24,7 @@ export const ExamCheckbox = ({
         ),
         label: "w-full",
       }}
+      id={`${name.replaceAll(" ", "").toLowerCase()}-checkbox-`}
       isSelected={isSelected}
       onValueChange={onChange}
     >

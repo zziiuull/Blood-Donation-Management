@@ -54,6 +54,7 @@ export const AppointmentAutocomplete = ({
             a.status === AppointmentStatus.CANCELED,
         )
         .map((a) => a.id)}
+      id="appointment-autocomplete"
       inputProps={{
         classNames: {
           input: "ml-1",
@@ -103,6 +104,7 @@ export const AppointmentAutocomplete = ({
       {(item) => (
         <AutocompleteItem
           key={item.id}
+          id={`appointment-autocomplete-${item.id}`}
           textValue={`${formatDateTime(item.appointmentDate)} - ${item.collectionSite.name}`}
         >
           <div className="flex justify-between items-center">

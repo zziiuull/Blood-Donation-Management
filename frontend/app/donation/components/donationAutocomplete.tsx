@@ -1,6 +1,5 @@
 import { Autocomplete, AutocompleteItem, Chip } from "@heroui/react";
 import { Icon } from "@iconify/react";
-
 import { useState, useEffect } from "react";
 
 import { formatDateTime } from "@/utils/utils";
@@ -29,7 +28,6 @@ const loadDonations = async () => {
 export const DonationAutocomplete = ({
   handleDonationSelect,
 }: DonationAutocompleteProps) => {
-
   const [donations, setDonations] = useState<Donation[]>([]);
 
   useEffect(() => {
@@ -50,6 +48,7 @@ export const DonationAutocomplete = ({
         selectorButton: "text-default-500",
       }}
       defaultItems={donations}
+      id="donation-autocomplete"
       inputProps={{
         classNames: {
           input: "ml-1",
@@ -91,7 +90,11 @@ export const DonationAutocomplete = ({
       }}
     >
       {(item) => (
-        <AutocompleteItem key={item.id} textValue={item.donor?.name}>
+        <AutocompleteItem
+          key={item.id}
+          id={`donation-autocomplete-item-${item.id}`}
+          textValue={item.donor?.name}
+        >
           <div className="flex justify-between items-center">
             <div className="flex gap-2 items-center">
               <div className="flex flex-col">
