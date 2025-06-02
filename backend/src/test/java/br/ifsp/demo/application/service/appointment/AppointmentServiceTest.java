@@ -103,6 +103,8 @@ class AppointmentServiceTest {
         }
 
         @Test
+        @Tag("Structural")
+        @Tag("UnitTest")
         @DisplayName("Should return true for valid rescheduling")
         void shouldReturnTrueForValidRescheduling() {
             LocalDateTime now = LocalDateTime.now();
