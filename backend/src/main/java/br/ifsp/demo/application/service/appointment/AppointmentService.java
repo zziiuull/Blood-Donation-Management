@@ -4,6 +4,7 @@ import br.ifsp.demo.domain.model.donation.Appointment;
 import br.ifsp.demo.infrastructure.repository.appointment.AppointmentRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -16,5 +17,15 @@ public class AppointmentService {
 
     public List<Appointment> getAll(){
         return appointmentRepository.findAll();
+    }
+
+    public List<Appointment> getUpcomingAppointments(LocalDateTime now) {
+        if (now == null)
+            throw new IllegalArgumentException("Reference datetime must not be null");
+
+        return appointmentRepository.findAll()
+                .stream()
+                .filter(a -> a.getAppointmentDate().isAfter(now))
+                .toList();
     }
 }
