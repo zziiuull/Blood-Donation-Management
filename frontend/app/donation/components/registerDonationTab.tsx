@@ -140,7 +140,7 @@ export default function RegisterDonationTab() {
             <h3 className="text-lg font-bold text-default-600">
               Step 3: Select required exams
             </h3>
-            <div className="flex gap-8">
+            <div className="flex flex-col md:flex-row gap-8">
               <ExamCheckbox
                 description="Blood typing and compatibility testing"
                 isSelected={isSelectedImmunoExam}
@@ -160,6 +160,7 @@ export default function RegisterDonationTab() {
       {selectedAppointment != null && selectedDonor != null && (
         <Button
           className="mt-4"
+          id="register-donation-button"
           variant="faded"
           onPress={handleRequestDonation}
         >

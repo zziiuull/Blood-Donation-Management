@@ -47,6 +47,7 @@ export const DonorAutocomplete = ({
         selectorButton: "text-default-500",
       }}
       defaultItems={donors}
+      id="donor-autocomplete"
       inputProps={{
         classNames: {
           input: "ml-1",
@@ -87,7 +88,11 @@ export const DonorAutocomplete = ({
       }}
     >
       {(item) => (
-        <AutocompleteItem key={item.id} textValue={`${item.name}`}>
+        <AutocompleteItem
+          key={item.id}
+          id={`donor-autocomplete-item-${item.id}`}
+          textValue={`${item.name}`}
+        >
           <div className="flex justify-between items-center">
             <div className="flex gap-2 items-center">
               <div className="flex flex-col">

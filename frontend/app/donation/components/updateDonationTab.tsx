@@ -220,6 +220,7 @@ export default function UpdateDonationTab() {
                 color="primary"
                 isLoading={isLoadingImmunoExam}
                 variant="faded"
+                id="request-immunohematology-exam-button"
                 onPress={() => handleImmunoExamRequest(selectedDonation.id)}
               >
                 {isLoadingImmunoExam
@@ -238,6 +239,7 @@ export default function UpdateDonationTab() {
               />
             ) : (
               <Button
+              id="request-serologicalscreening-exam-button"
                 className="lg:w-1/4 break-all"
                 color="primary"
                 isLoading={isLoadingSeroExam}
@@ -262,6 +264,7 @@ export default function UpdateDonationTab() {
                 <>
                   <div className="flex items-center justify-center gap-2">
                     <Button
+                    id="approve-exam-button"
                       color="primary"
                       startContent={
                         <Icon className="text-xl" icon="lucide:check" />
@@ -271,6 +274,7 @@ export default function UpdateDonationTab() {
                       Approve
                     </Button>
                     <Button
+                    id="reject-exam-button"
                       color="danger"
                       startContent={
                         <Icon className="text-xl" icon="lucide:x" />
