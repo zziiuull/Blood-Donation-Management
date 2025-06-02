@@ -76,6 +76,29 @@ class AppointmentServiceTest {
 
             verify(appointmentRepository, times(1)).findAll();
         }
+
+        @Test
+        @DisplayName("Should return only upcoming appointments")
+        void shouldReturnOnlyUpcomingAppointments() {
+            LocalDateTime now = LocalDateTime.now();
+
+            Appointment pastAppointment = mock(Appointment.class);
+            when(pastAppointment.getAppointmentDate()).thenReturn(now.minusDays(1));
+
+            Appointment futureAppointment = mock(Appointment.class);
+            when(futureAppointment.getAppointmentDate()).thenReturn(now.plusDays(1));
+
+            when(appointmentRepository.findAll())
+                    .thenReturn(List.of(pastAppointment, futureAppointment));
+
+            List<Appointment> result = appointmentService.getUpcomingAppointments(now);
+
+            assertThat(result)
+                    .hasSize(1)
+                    .containsExactly(futureAppointment);
+
+            verify(appointmentRepository).findAll();
+        }
     }
     @Nested
     @DisplayName("For invalid tests")
@@ -104,5 +127,7 @@ class AppointmentServiceTest {
                     .hasMessageContaining("Reference datetime must not be null");
 
         }
+
+
     }
 }
