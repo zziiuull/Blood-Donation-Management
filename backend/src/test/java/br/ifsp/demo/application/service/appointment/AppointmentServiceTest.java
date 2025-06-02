@@ -140,5 +140,15 @@ class AppointmentServiceTest {
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("Arguments must not be null");
         }
+
+        @Test
+        @DisplayName("Should throw exception when now is null")
+        void shouldThrowExceptionWhenNowIsNull() {
+            Appointment mockAppointment = mock(Appointment.class);
+
+            assertThatThrownBy(() -> appointmentService.canReschedule(mockAppointment, null))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("Arguments must not be null");
+        }
     }
 }
