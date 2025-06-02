@@ -103,7 +103,7 @@ export default function UpdateImmunoExam() {
         onChange={(e) => setObservations(e.target.value)}
       />
 
-      <div className="flex justify-between gap-4">
+      <div className="flex justify-center gap-4">
         <Button
           color="danger"
           id="reject-button"
