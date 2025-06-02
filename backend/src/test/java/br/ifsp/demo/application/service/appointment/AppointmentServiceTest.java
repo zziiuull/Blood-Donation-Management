@@ -163,6 +163,8 @@ class AppointmentServiceTest {
         }
 
         @Test
+        @Tag("Mutation")
+        @Tag("UnitTest")
         @DisplayName("Should return true when appointment is exactly 24 hours ahead")
         void shouldReturnTrueWhenAppointmentIsExactly24HoursAhead() {
             LocalDateTime now = LocalDateTime.now();
