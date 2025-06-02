@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -59,5 +60,20 @@ class AppointmentServiceTest {
 
             verify(appointmentRepository, times(1)).findAll();
         }
+
+        @Test
+        @DisplayName("Should return empty list when there are no appointments")
+        void shouldReturnEmptyListIfNoAppointmentsExist() {
+            when(appointmentRepository.findAll()).thenReturn(Collections.emptyList());
+
+            List<Appointment> result = appointmentService.getAll();
+
+            assertThat(result).isNotNull();
+            assertThat(result).isEmpty();
+
+            verify(appointmentRepository, times(1)).findAll();
+        }
+
+
     }
 }
