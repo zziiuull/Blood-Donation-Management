@@ -62,6 +62,7 @@ class AppointmentServiceTest {
         }
 
         @Test
+        @Tag("Functional")
         @DisplayName("Should return empty list when there are no appointments")
         void shouldReturnEmptyListIfNoAppointmentsExist() {
             when(appointmentRepository.findAll()).thenReturn(Collections.emptyList());
