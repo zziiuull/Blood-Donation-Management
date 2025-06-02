@@ -18,7 +18,11 @@ export default function LoginPage() {
   return (
     <div className="flex flex-col items-center justify-center p-4 h-full">
       <LoginForm />
-      <Link className="mt-5 underline text-slate-500" href="/register">
+      <Link
+        className="mt-5 underline text-slate-500"
+        href="/register"
+        id="register-link"
+      >
         Register account
       </Link>
     </div>

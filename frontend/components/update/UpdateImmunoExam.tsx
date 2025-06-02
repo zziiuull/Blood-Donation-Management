@@ -29,8 +29,6 @@ export default function UpdateImmunoExam() {
     }
   }, [donationId]);
 
-  if (!exam) return <p className="mt-10 text-center">Carregando exame...</p>;
-
   const handleSubmit = async (approve: boolean) => {
     try {
       await updateImmunoExam(
@@ -43,26 +41,28 @@ export default function UpdateImmunoExam() {
       );
 
       if (approve) {
-        showSuccessToast("Exame aprovado!");
+        showSuccessToast("Exam approved!");
       } else {
-        showSuccessToast("Exame rejeitado!");
+        showSuccessToast("Exam rejected!");
       }
       router.push(`/donation?tab=update&donationId=${donationId}`);
     } catch (error) {
-      showFailToast("Erro ao atualizar exame");
-      console.error(error);
+      showFailToast("Error upadating exam");
     }
   };
+
+  if (!exam) return <p className="mt-10 text-center">Loading exam...</p>;
 
   return (
     <div className="max-w-lg mx-auto mt-10 space-y-6">
       <h1 className="text-2xl font-semibold">
-        Atualizar Exame Imunohematológico
+        Update Immunohematological Exam
       </h1>
 
       <Select
         isRequired
-        label="Tipo sanguíneo"
+        id="blood-type-select"
+        label="Blood type"
         selectedKeys={[bloodType]}
         onSelectionChange={(keys) =>
           setBloodType(Array.from(keys)[0] as string)
@@ -84,29 +84,39 @@ export default function UpdateImmunoExam() {
 
       <Select
         isRequired
-        label="Anticorpos Irregulares"
+        id="irregular-antibodies-select"
+        label="Irregular antibodies"
         selectedKeys={[irregularAntibodies]}
         onSelectionChange={(keys) =>
           setIrregularAntibodies(Array.from(keys)[0] as string)
         }
       >
-        <SelectItem key="NEGATIVE">Negativo</SelectItem>
-        <SelectItem key="POSITIVE">Positivo</SelectItem>
+        <SelectItem key="NEGATIVE">Negative</SelectItem>
+        <SelectItem key="POSITIVE">Positive</SelectItem>
       </Select>
 
       <Textarea
-        label="Observações"
-        placeholder="Observações clínicas relevantes..."
+        id="observations-textarea"
+        label="Observations"
+        placeholder="Relevant clinical observations..."
         value={observations}
         onChange={(e) => setObservations(e.target.value)}
       />
 
       <div className="flex justify-between gap-4">
-        <Button color="danger" onPress={() => handleSubmit(false)}>
-          Reprovar
+        <Button
+          color="danger"
+          id="reject-button"
+          onPress={() => handleSubmit(false)}
+        >
+          Reject
         </Button>
-        <Button color="primary" onPress={() => handleSubmit(true)}>
-          Aprovar
+        <Button
+          color="primary"
+          id="approve-button"
+          onPress={() => handleSubmit(true)}
+        >
+          Approve
         </Button>
       </div>
     </div>

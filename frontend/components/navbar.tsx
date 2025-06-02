@@ -43,6 +43,7 @@ export const Navbar = () => {
         </ul>
         <Button
           color="danger"
+          id="logout-button"
           onPress={() => {
             localStorage.removeItem("token");
             router.push("/login");

@@ -51,11 +51,18 @@ export default function RegisterForm() {
 
   return (
     <FormContainer>
-      <h1 className="text-3xl text-center">Register</h1>
-      <Form className="flex flex-col gap-5" onSubmit={handleSubmit}>
+      <h1 className="text-3xl text-center" id="register-title">
+        Register
+      </h1>
+      <Form
+        className="flex flex-col gap-5"
+        id="register-form"
+        onSubmit={handleSubmit}
+      >
         <InputContainer>
           <Input
             isRequired
+            id="name-input"
             label="Name"
             placeholder="Enter your name"
             size="lg"
@@ -65,6 +72,7 @@ export default function RegisterForm() {
           />
           <Input
             isRequired
+            id="lastname-input"
             label="Lastname"
             placeholder="Enter your lastname"
             size="lg"
@@ -76,6 +84,7 @@ export default function RegisterForm() {
         <InputContainer>
           <Input
             isRequired
+            id="cpf-input"
             label="Cpf"
             placeholder="Enter your cpf"
             size="lg"
@@ -85,6 +94,7 @@ export default function RegisterForm() {
           />
           <Input
             isRequired
+            id="phone-input"
             label="Phone"
             placeholder="Enter your phone"
             size="lg"
@@ -94,6 +104,7 @@ export default function RegisterForm() {
           />
           <Input
             isRequired
+            id="address-input"
             label="Address"
             placeholder="Enter your address"
             size="lg"
@@ -105,6 +116,7 @@ export default function RegisterForm() {
         <InputContainer>
           <Input
             isRequired
+            id="crm-input"
             label="Crm"
             placeholder="Enter your crm"
             size="lg"
@@ -115,6 +127,7 @@ export default function RegisterForm() {
           <Select
             isRequired
             className="max-w-xs"
+            id="state-select"
             label="State"
             placeholder="Select a state"
             selectedKeys={state}
@@ -129,6 +142,7 @@ export default function RegisterForm() {
         <InputContainer>
           <Input
             isRequired
+            id="email-input"
             label="Email"
             placeholder="Enter your email"
             size="lg"
@@ -158,6 +172,7 @@ export default function RegisterForm() {
                 )}
               </button>
             }
+            id="password-input"
             label="Password"
             placeholder="Enter your password"
             size="lg"
@@ -169,6 +184,7 @@ export default function RegisterForm() {
         <Button
           className="text-xl py-6 rounded-full"
           color="primary"
+          id="register-button"
           type="submit"
         >
           Register

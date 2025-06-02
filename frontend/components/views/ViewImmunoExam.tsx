@@ -42,7 +42,7 @@ export default function ViewImmunoExam() {
 
   useEffect(() => {
     if (!donationId) {
-      setError("Parâmetro donationId não fornecido.");
+      setError("Donation id not provided.");
 
       return;
     }
@@ -50,50 +50,47 @@ export default function ViewImmunoExam() {
     getImmunoExamByDonationId(donationId)
       .then((exam) => setExam(exam))
       .catch((err) => {
-        console.error(err);
-        setError("Erro ao buscar o exame.");
+        setError("Error searching for exam.");
       });
   }, [donationId]);
 
   if (error) return <p className="text-center text-red-500 mt-10">{error}</p>;
-  if (!exam) return <p className="text-center mt-10">Carregando exame...</p>;
-  console.log(exam);
+  if (!exam) return <p className="text-center mt-10">Loading exam...</p>;
 
   return (
     <div className="flex justify-center items-center min-h-screen">
       <Card className="max-w-xl w-full">
         <CardHeader className="text-xl font-bold">
-          Visualizar Exame Imuno-Hematológico
+          Visualize Immunohematological Exam
         </CardHeader>
         <Divider />
         <CardBody className="flex flex-col gap-4 text-base">
-          <div>
-            <strong>ID do Exame:</strong> {exam.id}
+          <div id="exam-id">
+            <strong>Exam ID:</strong> {exam.id}
           </div>
-          <div>
+          <div id="exam-status">
             <strong>Status:</strong> {exam.examStatus}
           </div>
-          <div>
-            <strong>Tipo Sanguíneo:</strong>{" "}
+          <div id="blood-type">
+            <strong>Blood type:</strong>{" "}
             {exam.bloodType
               ?.replace("_", " ")
               .replace("POS", "+")
-              .replace("NEG", "-") || "Não informado"}
+              .replace("NEG", "-") || "Not informed"}
           </div>
-          <div>
-            <strong>Anticorpos Irregulares:</strong>{" "}
-            {exam.irregularAntibodies === "NEGATIVE" ? "Negativo" : "Positivo"}
+          <div id="irregular-antibodies">
+            <strong>Irregular Antibodies:</strong>{" "}
+            {exam.irregularAntibodies === "NEGATIVE" ? "Negative" : "Positive"}
           </div>
-          <div>
-            <strong>Observações:</strong>{" "}
-            {exam.observations ?? "Sem observações"}
+          <div id="observations">
+            <strong>Observations:</strong>{" "}
+            {exam.observations ?? "No observations"}
           </div>
-          <div>
-            <strong>Data de criação:</strong> {formatDateTime(exam.createdAt)}
+          <div id="created-at">
+            <strong>Created at:</strong> {formatDateTime(exam.createdAt)}
           </div>
-          <div>
-            <strong>Última atualização:</strong>{" "}
-            {formatDateTime(exam.updatedAt)}
+          <div id="updated-at">
+            <strong>Updated at:</strong> {formatDateTime(exam.updatedAt)}
           </div>
         </CardBody>
       </Card>

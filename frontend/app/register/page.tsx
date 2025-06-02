@@ -18,7 +18,11 @@ export default function RegisterPage() {
   return (
     <div className="flex flex-col items-center justify-center p-4 h-full">
       <RegisterForm />
-      <Link className="mt-5 underline text-slate-500" href="/login">
+      <Link
+        className="mt-5 underline text-slate-500"
+        href="/login"
+        id="login-link"
+      >
         Login
       </Link>
     </div>

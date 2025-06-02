@@ -52,53 +52,61 @@ export default function UpdateSerologicalExam() {
     try {
       await updateSerologicalExam(exam, { ...fields }, approve);
       if (approve) {
-        showSuccessToast("Exame aprovado!");
+        showSuccessToast("Exam approved!");
       } else {
-        showSuccessToast("Exame rejeitado!");
+        showSuccessToast("Exam rejected!");
       }
       router.push(`/donation?tab=update&donationId=${donationId}`);
     } catch (error) {
-      console.error(error);
-      showFailToast("Erro ao atualizar exame");
+      showFailToast("Error upadating exam");
     }
   };
 
-  if (!exam) return <p className="mt-10 text-center">Carregando exame...</p>;
+  if (!exam) return <p className="mt-10 text-center">Loading exam...</p>;
 
   return (
     <div className="max-w-lg mx-auto mt-10 space-y-6">
       <h1 className="text-2xl font-semibold">
-        Atualizar Exame de Triagem Sorológica
+        Update Serological Screening Exam
       </h1>
 
       {Object.entries(fields).map(([key, value]) => (
         <Select
           key={key}
           isRequired
+          id={`${key}-select`}
           label={key.replace(/([A-Z])/g, " $1").toUpperCase()}
           selectedKeys={[value]}
           onSelectionChange={(keys) =>
             handleChange(key, Array.from(keys)[0] as string)
           }
         >
-          <SelectItem key="NEGATIVE">Negativo</SelectItem>
-          <SelectItem key="POSITIVE">Positivo</SelectItem>
+          <SelectItem key="NEGATIVE">Negative</SelectItem>
+          <SelectItem key="POSITIVE">Positive</SelectItem>
         </Select>
       ))}
 
       <Textarea
-        label="Observações"
-        placeholder="Observações clínicas relevantes..."
+        label="Observations"
+        placeholder="Relevant clinical observations..."
         value={observations}
         onChange={(e) => setObservations(e.target.value)}
       />
 
       <div className="flex justify-between gap-4">
-        <Button color="danger" onPress={() => handleSubmit(false)}>
-          Reprovar
+        <Button
+          color="danger"
+          id="reject-button"
+          onPress={() => handleSubmit(false)}
+        >
+          Reject
         </Button>
-        <Button color="primary" onPress={() => handleSubmit(true)}>
-          Aprovar
+        <Button
+          color="primary"
+          id="approve-button"
+          onPress={() => handleSubmit(true)}
+        >
+          Approve
         </Button>
       </div>
     </div>

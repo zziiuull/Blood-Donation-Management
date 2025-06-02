@@ -35,10 +35,17 @@ export default function LoginForm() {
 
   return (
     <FormContainer>
-      <h1 className="text-3xl text-center">Login</h1>
-      <Form className="flex flex-col gap-3" onSubmit={handleSubmit}>
+      <h1 className="text-3xl text-center" id="login-title">
+        Login
+      </h1>
+      <Form
+        className="flex flex-col gap-3"
+        id="login-form"
+        onSubmit={handleSubmit}
+      >
         <Input
           isRequired
+          id="email-input"
           label="Email"
           placeholder="Enter your email"
           size="lg"
@@ -69,6 +76,7 @@ export default function LoginForm() {
               )}
             </button>
           }
+          id="password-input"
           label="Password"
           placeholder="Enter your password"
           size="lg"
@@ -80,6 +88,7 @@ export default function LoginForm() {
         <Button
           className="w-full text-xl py-6 rounded-full"
           color="primary"
+          id="login-button"
           type="submit"
         >
           Login
