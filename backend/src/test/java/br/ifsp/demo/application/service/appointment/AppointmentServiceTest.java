@@ -102,6 +102,19 @@ class AppointmentServiceTest {
             verify(appointmentRepository).findAll();
         }
 
+        @Test
+        @DisplayName("Should return true for valid rescheduling")
+        void shouldReturnTrueForValidRescheduling() {
+            LocalDateTime now = LocalDateTime.now();
+            Appointment mockAppointment = mock(Appointment.class);
+
+            when(mockAppointment.getStatus()).thenReturn(AppointmentStatus.SCHEDULED);
+            when(mockAppointment.getAppointmentDate()).thenReturn(now.plusHours(25));
+
+            boolean result = appointmentService.canReschedule(mockAppointment, now);
+            assertThat(result).isTrue();
+        }
+
     }
     @Nested
     @DisplayName("For invalid tests")
