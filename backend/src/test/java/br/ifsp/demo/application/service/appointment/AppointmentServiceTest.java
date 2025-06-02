@@ -132,6 +132,19 @@ class AppointmentServiceTest {
             assertThat(result).isFalse();
         }
 
+        @Test
+        @DisplayName("Should return false when appointment is less than 24 hours ahead")
+        void shouldReturnFalseWhenAppointmentIsLessThan24HoursAhead() {
+            LocalDateTime now = LocalDateTime.now();
+            Appointment mockAppointment = mock(Appointment.class);
+
+            when(mockAppointment.getStatus()).thenReturn(AppointmentStatus.SCHEDULED);
+            when(mockAppointment.getAppointmentDate()).thenReturn(now.plusHours(12));
+
+            boolean result = appointmentService.canReschedule(mockAppointment, now);
+            assertThat(result).isFalse();
+        }
+
     }
     @Nested
     @DisplayName("For invalid tests")
