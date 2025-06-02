@@ -101,6 +101,15 @@ class AppointmentServiceTest {
 
             verify(appointmentRepository).findAll();
         }
+
+        @Test
+
+        @DisplayName("Should throw exception when appointment is null")
+        void shouldThrowExceptionWhenAppointmentIsNull() {
+            assertThatThrownBy(() -> appointmentService.canReschedule(null, LocalDateTime.now()))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("Arguments must not be null");
+        }
     }
     @Nested
     @DisplayName("For invalid tests")
