@@ -72,6 +72,8 @@ class DonorServiceTest {
         }
 
         @Test
+        @Tag("Structural")
+        @Tag("UnitTest")
         @DisplayName("Should return true if donor never donated")
         void shouldReturnTrueIfDonorNeverDonated() {
             Donor donor = mock(Donor.class);
