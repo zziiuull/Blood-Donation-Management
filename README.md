@@ -20,6 +20,24 @@ O projeto foi desenvolvido com foco em aplicar práticas teste de software. Fora
 
 Este projeto foi realizado como parte da disciplina **Verificação, Validação e Teste de Software**, do curso de **Bacharelado em Engenharia de Software**, ministrada pelo professor [Lucas Oliveira](https://github.com/lucas-ifsp).
 
+### Funcionalidades
+
+- Página de login e cadastro de novas contas para acesso ao sistema.
+
+- Gestão de doações
+
+    - Cadastro de doação: Permite selecionar um doador, agendamento e requisitar os exames médicos necessários.
+
+    - Atualização de doações: É possível atualizar as doações, aprovando ou rejeitando-os a doação como um todo com base nos resultados.
+
+    - Visualização de doações: Exibe a doação selecionada com os detalhes, incluindo status, exames realizados e informações do doador.
+
+- Gestão de exames
+
+    - Atualização de exame: Permite atualizar os campos específicos de cada exame, além da possibilidade de aprovar ou rejeitar o exame.
+
+    - Visaluzação de exame: Exibe o exame selecionado com os detalhes, incluindo status e campos específicos.
+
 ## Integrantes:
 
 - [Henrique Shoji Kato](https://github.com/henriquekato)
