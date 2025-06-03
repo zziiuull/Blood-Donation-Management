@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -56,6 +57,20 @@ class DonorServiceTest {
             assertThat(result).isEqualTo(donors);
 
             verify(donorRepository, times(1)).findAll();
+        }
+    }
+
+    @Nested
+    @DisplayName("For invalid tests")
+    class InvalidTests {
+
+        @Test
+        @Tag("Structural")
+        @Tag("UnitTest")
+        @DisplayName("Should throw exception when donor is null")
+        void shouldThrowExceptionWhenDonorIsNull() {
+            assertThatThrownBy(() -> donorService.canDonateToday(null, LocalDate.now(), null))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 }
