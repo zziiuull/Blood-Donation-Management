@@ -60,6 +60,8 @@ class DonorServiceTest {
         }
 
         @Test
+        @Tag("Structural")
+        @Tag("UnitTest")
         @DisplayName("Should return false if donor is not eligible")
         void shouldReturnFalseIfDonorNotEligible() {
             Donor donor = mock(Donor.class);
