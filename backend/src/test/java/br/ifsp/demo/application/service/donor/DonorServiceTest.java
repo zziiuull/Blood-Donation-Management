@@ -70,6 +70,16 @@ class DonorServiceTest {
             boolean result = donorService.canDonateToday(donor, LocalDate.now(), null);
             assertThat(result).isFalse();
         }
+
+        @Test
+        @DisplayName("Should return true if donor never donated")
+        void shouldReturnTrueIfDonorNeverDonated() {
+            Donor donor = mock(Donor.class);
+            when(donor.isEligibleForDonation()).thenReturn(true);
+
+            boolean result = donorService.canDonateToday(donor, LocalDate.now(), null);
+            assertThat(result).isTrue();
+        }
     }
 
     @Nested
