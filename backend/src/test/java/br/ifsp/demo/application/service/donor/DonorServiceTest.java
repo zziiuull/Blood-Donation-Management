@@ -95,6 +95,19 @@ class DonorServiceTest {
             boolean result = donorService.canDonateToday(donor, today, today);
             assertThat(result).isFalse();
         }
+
+        @Test
+        @Tag("Structural")
+        @Tag("UnitTest")
+        @DisplayName("Should return true if last donation was before today")
+        void shouldReturnTrueIfDonatedBeforeToday() {
+            LocalDate today = LocalDate.of(2024, 6, 2);
+            Donor donor = mock(Donor.class);
+            when(donor.isEligibleForDonation()).thenReturn(true);
+
+            boolean result = donorService.canDonateToday(donor, today, today.minusDays(1));
+            assertThat(result).isTrue();
+        }
     }
 
     @Nested
