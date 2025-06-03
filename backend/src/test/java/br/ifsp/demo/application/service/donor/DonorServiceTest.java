@@ -58,6 +58,16 @@ class DonorServiceTest {
 
             verify(donorRepository, times(1)).findAll();
         }
+
+        @Test
+        @DisplayName("Should return false if donor is not eligible")
+        void shouldReturnFalseIfDonorNotEligible() {
+            Donor donor = mock(Donor.class);
+            when(donor.isEligibleForDonation()).thenReturn(false);
+
+            boolean result = donorService.canDonateToday(donor, LocalDate.now(), null);
+            assertThat(result).isFalse();
+        }
     }
 
     @Nested
