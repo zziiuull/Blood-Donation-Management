@@ -100,7 +100,7 @@ class DonorServiceTest {
         @Tag("Structural")
         @Tag("UnitTest")
         @DisplayName("Should return true if last donation was before today")
-        void shouldReturnTrueIfDonatedBeforeToday() {
+        void shouldReturnTrueIfLastDonationWasBeforeToday() {
             LocalDate today = LocalDate.of(2024, 6, 2);
             Donor donor = mock(Donor.class);
             when(donor.isEligibleForDonation()).thenReturn(true);
