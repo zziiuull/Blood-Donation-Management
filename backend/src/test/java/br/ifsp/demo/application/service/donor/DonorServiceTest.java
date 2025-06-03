@@ -63,13 +63,22 @@ class DonorServiceTest {
     @Nested
     @DisplayName("For invalid tests")
     class InvalidTests {
-
         @Test
         @Tag("Structural")
         @Tag("UnitTest")
         @DisplayName("Should throw exception when donor is null")
         void shouldThrowExceptionWhenDonorIsNull() {
             assertThatThrownBy(() -> donorService.canDonateToday(null, LocalDate.now(), null))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        @Tag("Structural")
+        @Tag("UnitTest")
+        @DisplayName("Should throw exception when today is null")
+        void shouldThrowExceptionWhenTodayIsNull() {
+            Donor donor = mock(Donor.class);
+            assertThatThrownBy(() -> donorService.canDonateToday(donor, null, null))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
