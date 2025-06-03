@@ -63,7 +63,7 @@ class DonorServiceTest {
         @Tag("Structural")
         @Tag("UnitTest")
         @DisplayName("Should return false if donor is not eligible")
-        void shouldReturnFalseIfDonorNotEligible() {
+        void shouldReturnFalseIfDonorIsNotEligible() {
             Donor donor = mock(Donor.class);
             when(donor.isEligibleForDonation()).thenReturn(false);
 
@@ -81,6 +81,19 @@ class DonorServiceTest {
 
             boolean result = donorService.canDonateToday(donor, LocalDate.now(), null);
             assertThat(result).isTrue();
+        }
+
+        @Test
+        @Tag("Structural")
+        @Tag("UnitTest")
+        @DisplayName("Should return false if donor already donated today")
+        void shouldReturnFalseIfDonorAlreadyDonatedToday() {
+            LocalDate today = LocalDate.of(2025, 6, 2);
+            Donor donor = mock(Donor.class);
+            when(donor.isEligibleForDonation()).thenReturn(true);
+
+            boolean result = donorService.canDonateToday(donor, today, today);
+            assertThat(result).isFalse();
         }
     }
 
