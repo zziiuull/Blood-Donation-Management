@@ -36,8 +36,11 @@ class DonationRepositoryTest {
     private CollectionSiteRepository collectionSiteRepository;
 
     private Donor eligibleDonor;
+    private Donor ineligibleDonor;
     private Appointment appointment;
+    private Appointment appointment2;
     private Donation donation;
+    private CollectionSite site;
 
     @BeforeEach
     void setup() {
@@ -55,14 +58,24 @@ class DonationRepositoryTest {
                 Sex.MALE,
                 BloodType.O_POS
         );
+        ineligibleDonor = new Donor(
+                "Enzo",
+                new Cpf("12345678955"),
+                contactInfo,
+                LocalDate.of(2008, 5, 20),
+                50.0,
+                Sex.MALE,
+                BloodType.O_POS
+        );
         donorRepository.save(eligibleDonor);
+        donorRepository.save(ineligibleDonor);
 
         ContactInfo siteContactInfo = new ContactInfo(
                 "doesangue.sorocaba@email.com",
                 "1533761530",
                 "Av. Anhanguera, n. 715, Sorocaba/SP"
         );
-        CollectionSite site = new CollectionSite(
+        site = new CollectionSite(
                 "Banco de Doação de Sorocaba",
                 siteContactInfo
         );
@@ -74,7 +87,15 @@ class DonationRepositoryTest {
                 site,
                 "First donation"
         );
+        appointment2 = new Appointment(
+                LocalDateTime.now().plusDays(1),
+                AppointmentStatus.SCHEDULED,
+                site,
+                "Second donation"
+        );
+
         appointmentRepository.save(appointment);
+        appointmentRepository.save(appointment2);
 
         donation = new Donation(
                 eligibleDonor,
@@ -87,7 +108,10 @@ class DonationRepositoryTest {
     @AfterEach
     void tearDown() {
         donorRepository.delete(eligibleDonor);
+        donorRepository.delete(ineligibleDonor);
+        collectionSiteRepository.delete(site);
         appointmentRepository.delete(appointment);
+        appointmentRepository.delete(appointment2);
         sut.delete(donation);
     }
 
@@ -99,4 +123,14 @@ class DonationRepositoryTest {
         boolean result = sut.existsByDonorAndAppointment(eligibleDonor, appointment);
         assertThat(result).isTrue();
     }
+
+    @Test
+    @Tag("PersistenceTest")
+    @Tag("IntegrationTest")
+    @DisplayName("Should return false when donor has no donation but appointment has")
+    void shouldReturnFalseWhenDonorHasNoDonationButAppointmentHas(){
+        boolean result = sut.existsByDonorAndAppointment(ineligibleDonor, appointment);
+        assertThat(result).isFalse();
+    }
+    
 }
