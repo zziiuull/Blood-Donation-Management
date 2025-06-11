@@ -10,17 +10,23 @@ import br.ifsp.demo.domain.model.donor.Sex;
 import br.ifsp.demo.infrastructure.repository.appointment.AppointmentRepository;
 import br.ifsp.demo.infrastructure.repository.collectionSite.CollectionSiteRepository;
 import br.ifsp.demo.infrastructure.repository.donor.DonorRepository;
+import com.github.javafaker.Faker;
 import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.orm.jpa.JpaSystemException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -41,6 +47,8 @@ class DonationRepositoryTest {
     private Appointment appointment2;
     private Donation donation;
     private CollectionSite site;
+
+    private static final Faker faker = Faker.instance();
 
     @BeforeEach
     void setup() {
@@ -140,5 +148,26 @@ class DonationRepositoryTest {
     void shouldReturnFalseWhenDonorDonatedButNotInThisAppointment(){
         boolean result = sut.existsByDonorAndAppointment(eligibleDonor, appointment2);
         assertThat(result).isFalse();
+    }
+
+    @Test
+    @Tag("PersistenceTest")
+    @Tag("IntegrationTest")
+    @DisplayName("Should throw DataIntegrityViolationException when associating the same Appointment with a second Donation")
+    void shouldThrowExceptionWhenAssociatingSameAppointmentWithSecondDonation() {
+        Donor anotherDonor = new Donor(faker.name().toString(),
+                new Cpf("12345678910"),
+                new ContactInfo(faker.internet().emailAddress(), faker.phoneNumber().toString(), faker.address().toString()),
+                LocalDate.of(2000, 5, 20),
+                80.0,
+                Sex.MALE,
+                BloodType.A_POS);
+        donorRepository.save(anotherDonor);
+
+        Donation secondDonation = new Donation(anotherDonor, appointment, DonationStatus.UNDER_ANALYSIS);
+
+        assertThatThrownBy(() -> {
+            sut.saveAndFlush(secondDonation);
+        }).isInstanceOf(JpaSystemException.class);
     }
 }
