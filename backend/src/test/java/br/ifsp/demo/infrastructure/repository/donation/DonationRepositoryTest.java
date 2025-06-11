@@ -127,10 +127,18 @@ class DonationRepositoryTest {
     @Test
     @Tag("PersistenceTest")
     @Tag("IntegrationTest")
-    @DisplayName("Should return false when donor has no donation but appointment has")
-    void shouldReturnFalseWhenDonorHasNoDonationButAppointmentHas(){
+    @DisplayName("Should return false when someone donated in this appointment but not this donor")
+    void shouldReturnFalseWhenSomeoneDonatedInThisAppointmentButNotThisDonor(){
         boolean result = sut.existsByDonorAndAppointment(ineligibleDonor, appointment);
         assertThat(result).isFalse();
     }
-    
+
+    @Test
+    @Tag("PersistenceTest")
+    @Tag("IntegrationTest")
+    @DisplayName("Should return false when donor donated but not in this appointment")
+    void shouldReturnFalseWhenDonorDonatedButNotInThisAppointment(){
+        boolean result = sut.existsByDonorAndAppointment(eligibleDonor, appointment2);
+        assertThat(result).isFalse();
+    }
 }
