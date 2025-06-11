@@ -91,4 +91,12 @@ class DonationRepositoryTest {
         sut.delete(donation);
     }
 
+    @Test
+    @Tag("PersistenceTest")
+    @Tag("IntegrationTest")
+    @DisplayName("Should return true when exist by donor and appointment")
+    void shouldReturnTrueWhenExistByDonorAndAppointment(){
+        boolean result = sut.existsByDonorAndAppointment(eligibleDonor, appointment);
+        assertThat(result).isTrue();
+    }
 }
