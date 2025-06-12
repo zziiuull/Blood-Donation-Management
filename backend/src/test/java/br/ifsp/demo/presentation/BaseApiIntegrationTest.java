@@ -23,16 +23,11 @@ public class BaseApiIntegrationTest {
     protected int port = 8080;
 
     @Autowired
-    private JpaUserRepository repository;
+    protected JpaUserRepository repository;
 
     @BeforeEach
     public void generalSetup() {
         baseURI = "http://localhost:8080";
-    }
-
-    @AfterEach
-    public void tearDown() {
-        repository.deleteAll();
     }
 
     protected User registerPhysician(String password) {
