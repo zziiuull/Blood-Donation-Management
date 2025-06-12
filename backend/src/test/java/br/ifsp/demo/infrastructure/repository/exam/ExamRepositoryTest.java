@@ -41,7 +41,6 @@ public class ExamRepositoryTest {
     private CollectionSiteRepository collectionSiteRepository;
 
     private Donor eligibleDonor;
-    private Donor ineligibleDonor;
     private Appointment appointment;
     private Appointment appointment2;
     private Donation donation;
@@ -65,17 +64,7 @@ public class ExamRepositoryTest {
                 Sex.MALE,
                 BloodType.O_POS
         );
-        ineligibleDonor = new Donor(
-                "Enzo",
-                new Cpf("12345678955"),
-                contactInfo,
-                LocalDate.of(2008, 5, 20),
-                50.0,
-                Sex.MALE,
-                BloodType.O_POS
-        );
         donorRepository.save(eligibleDonor);
-        donorRepository.save(ineligibleDonor);
 
         ContactInfo siteContactInfo = new ContactInfo(
                 "doesangue.sorocaba@email.com",
@@ -127,7 +116,6 @@ public class ExamRepositoryTest {
         appointmentRepository.delete(appointment2);
         collectionSiteRepository.delete(site);
         donorRepository.delete(eligibleDonor);
-        donorRepository.delete(ineligibleDonor);
     }
 
     @Test
