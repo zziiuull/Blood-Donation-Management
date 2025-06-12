@@ -13,6 +13,7 @@ import br.ifsp.demo.infrastructure.repository.appointment.AppointmentRepository;
 import br.ifsp.demo.infrastructure.repository.collectionSite.CollectionSiteRepository;
 import br.ifsp.demo.infrastructure.repository.donation.DonationRepository;
 import br.ifsp.demo.infrastructure.repository.donor.DonorRepository;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -134,5 +135,15 @@ public class ExamRepositoryTest {
     void shouldFindNoExamsOfASpecificDonationId(){
         List<Exam> result = sut.findAllByDonationId(UUID.randomUUID());
         assertThat(result).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Should return all exams of a specific donation")
+    void shouldReturnAllExamsWithSpecificDonationId(){
+        List<Exam> result = sut.findAllByDonationId(donation.getId());
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(result.size()).isEqualTo(2);
+        softly.assertThat(List.of(result.get(0).getId(), result.get(1).getId())).contains(immunohematologyExam.getId(), serologicalScreeningExam.getId());
+        softly.assertAll();
     }
 }
