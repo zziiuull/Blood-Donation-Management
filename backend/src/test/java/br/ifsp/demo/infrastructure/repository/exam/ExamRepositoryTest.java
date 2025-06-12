@@ -6,20 +6,23 @@ import br.ifsp.demo.domain.model.common.Cpf;
 import br.ifsp.demo.domain.model.donation.*;
 import br.ifsp.demo.domain.model.donor.Donor;
 import br.ifsp.demo.domain.model.donor.Sex;
+import br.ifsp.demo.domain.model.exam.Exam;
 import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
 import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.infrastructure.repository.appointment.AppointmentRepository;
 import br.ifsp.demo.infrastructure.repository.collectionSite.CollectionSiteRepository;
 import br.ifsp.demo.infrastructure.repository.donation.DonationRepository;
 import br.ifsp.demo.infrastructure.repository.donor.DonorRepository;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -124,5 +127,12 @@ public class ExamRepositoryTest {
         collectionSiteRepository.delete(site);
         donorRepository.delete(eligibleDonor);
         donorRepository.delete(ineligibleDonor);
+    }
+
+    @Test
+    @DisplayName("Should find no exams when the specific donation does not have exams")
+    void shouldFindNoExamsOfASpecificDonationId(){
+        List<Exam> result = sut.findAllByDonationId(UUID.randomUUID());
+        assertThat(result).isEmpty();
     }
 }
