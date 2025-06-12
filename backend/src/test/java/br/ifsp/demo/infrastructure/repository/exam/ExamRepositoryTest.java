@@ -131,6 +131,8 @@ public class ExamRepositoryTest {
     }
 
     @Test
+    @Tag("PersistenceTest")
+    @Tag("IntegrationTest")
     @DisplayName("Should find no exams when the specific donation does not have exams")
     void shouldFindNoExamsOfASpecificDonationId(){
         List<Exam> result = sut.findAllByDonationId(UUID.randomUUID());
@@ -138,6 +140,8 @@ public class ExamRepositoryTest {
     }
 
     @Test
+    @Tag("PersistenceTest")
+    @Tag("IntegrationTest")
     @DisplayName("Should return all exams of a specific donation")
     void shouldReturnAllExamsWithSpecificDonationId(){
         List<Exam> result = sut.findAllByDonationId(donation.getId());
