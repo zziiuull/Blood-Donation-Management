@@ -4,6 +4,7 @@ import br.ifsp.demo.domain.model.common.Cpf;
 import br.ifsp.demo.domain.model.physician.Crm;
 import br.ifsp.demo.domain.model.physician.Physician;
 import br.ifsp.demo.domain.model.physician.State;
+import br.ifsp.demo.presentation.security.auth.RegisterPhysicianRequest;
 import br.ifsp.demo.presentation.security.user.Role;
 import com.github.javafaker.Faker;
 
@@ -26,6 +27,24 @@ public class EntityBuilder {
                 Role.PHYSICIAN,
                 new Cpf(cpf),
                 new Crm(crmValue, state)
+        );
+    }
+
+    public static RegisterPhysicianRequest createRandomRegisterPhysicianRequest(String password) {
+        String cpf = faker.number().digits(11);
+        String crmValue = faker.number().digits(7);
+        State state = State.values()[faker.random().nextInt(State.values().length)];
+
+        return new RegisterPhysicianRequest(
+                faker.name().firstName(),
+                faker.name().lastName(),
+                faker.internet().emailAddress(),
+                password,
+                cpf,
+                faker.phoneNumber().cellPhone(),
+                faker.address().fullAddress(),
+                crmValue,
+                state.name()
         );
     }
 }

@@ -4,8 +4,6 @@ import br.ifsp.demo.domain.model.physician.Physician;
 import br.ifsp.demo.presentation.security.auth.AuthRequest;
 import br.ifsp.demo.presentation.security.auth.AuthResponse;
 import br.ifsp.demo.presentation.security.user.JpaUserRepository;
-import br.ifsp.demo.presentation.security.user.User;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +28,7 @@ public class BaseApiIntegrationTest {
         baseURI = "http://localhost:8080";
     }
 
-    protected User registerPhysician(String password) {
+    protected Physician registerPhysician(String password) {
         final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         Physician physician = EntityBuilder.createRandomPhysician(encoder.encode(password));
         repository.save(physician);
