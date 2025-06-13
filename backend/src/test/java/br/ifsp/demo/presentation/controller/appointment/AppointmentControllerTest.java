@@ -89,6 +89,8 @@ class AppointmentControllerTest extends BaseApiIntegrationTest {
     }
 
     @Test
+    @Tag("ApiTest")
+    @Tag("IntegrationTest")
     @DisplayName("Should return 401 when authentication fails")
     void shouldReturn401WhenAuthenticationFails(){
         given()
