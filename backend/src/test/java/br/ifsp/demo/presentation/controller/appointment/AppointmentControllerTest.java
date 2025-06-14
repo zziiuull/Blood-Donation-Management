@@ -14,17 +14,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import static io.restassured.RestAssured.given;
-import static io.restassured.RestAssured.when;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.fail;
 
 
 class AppointmentControllerTest extends BaseApiIntegrationTest {
@@ -40,7 +37,7 @@ class AppointmentControllerTest extends BaseApiIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        this.user = (Physician) registerPhysician("Teste123");
+        this.user = registerPhysician("Teste123");
         this.token = authenticate(user.getEmail(), "Teste123");
     }
 
