@@ -91,6 +91,28 @@ class AppointmentControllerTest extends BaseApiIntegrationTest {
     @Test
     @Tag("ApiTest")
     @Tag("IntegrationTest")
+    @DisplayName("Should return 404 when appointments do not exist")
+    void shouldReturn404WhenAppointmentsDoNotExist(){
+        List<Appointment> appointments = appointmentRepository.findAll();
+        appointmentRepository.deleteAll();
+
+        List<AppointmentDTO> responseList = given().header("Authorization", "Bearer " + token)
+                .when()
+                .get("/api/v1/appointment")
+                .then()
+                .statusCode(404)
+                .body("description", is("Appointments do not exist."))
+                .extract().jsonPath().getList("", AppointmentDTO.class);
+
+
+        assertThat(responseList.size()).isEqualTo(0);
+
+        appointments.forEach(appointment -> {appointmentRepository.save(appointment);});
+    }
+
+    @Test
+    @Tag("ApiTest")
+    @Tag("IntegrationTest")
     @DisplayName("Should return 401 when authentication fails")
     void shouldReturn401WhenAuthenticationFails(){
         given()
