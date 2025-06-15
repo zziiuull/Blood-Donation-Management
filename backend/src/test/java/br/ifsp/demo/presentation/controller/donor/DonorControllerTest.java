@@ -105,4 +105,14 @@ class DonorControllerTest extends BaseApiIntegrationTest {
 
         donors.forEach(donor -> {donorRepository.save(donor);});
     }
+
+    @Test
+    @Tag("ApiTest")
+    @Tag("IntegrationTest")
+    @DisplayName("Should return 401 when authentication fails")
+    void shouldReturn401WhenAuthenticationFails(){
+        given()
+                .when().get("/api/v1/donor")
+                .then().statusCode(401);
+    }
 }
