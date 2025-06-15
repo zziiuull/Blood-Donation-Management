@@ -83,4 +83,26 @@ class DonorControllerTest extends BaseApiIntegrationTest {
         donorRepository.delete(donor);
         repository.delete(user);
     }
+
+    @Test
+    @Tag("ApiTest")
+    @Tag("IntegrationTest")
+    @DisplayName("Should return 404 when donors do not exist")
+    void shouldReturn404WhenDonorsDoNotExist(){
+        List<Donor> donors = donorRepository.findAll();
+        donorRepository.deleteAll();
+
+        List<DonorDTO> responseList = given().header("Authorization", "Bearer " + token)
+                .when()
+                .get("/api/v1/donor")
+                .then()
+                .statusCode(404)
+                .body("description", is("Donors do not exist."))
+                .extract().jsonPath().getList("", DonorDTO.class);
+
+
+        assertThat(responseList.size()).isEqualTo(0);
+
+        donors.forEach(donor -> {donorRepository.save(donor);});
+    }
 }
