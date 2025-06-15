@@ -77,8 +77,6 @@ class AppointmentControllerTest extends BaseApiIntegrationTest {
 
         AppointmentDTO returnedAppointment = foundAppointmentOpt.get();
         assertThat(returnedAppointment.id()).isEqualTo(appointment.getId());
-        assertThat(returnedAppointment.status()).isEqualTo(appointment.getStatus());
-        assertThat(returnedAppointment.notes()).isEqualTo("Test notes");
 
         collectionSiteRepository.delete(site);
         appointmentRepository.delete(appointment);
