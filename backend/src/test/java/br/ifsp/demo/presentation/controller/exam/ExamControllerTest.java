@@ -228,6 +228,8 @@ class ExamControllerTest extends BaseApiIntegrationTest {
     @Nested
     class RejectImmunohematologyExamTests {
         @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
         @DisplayName("should reject ImmunohematologyExam and return 200")
         void shouldRejectImmunohematologyExamAndReturn200(){
             ExamRequestService examRequestService = new ExamRequestService(examRepository);
