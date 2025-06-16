@@ -148,7 +148,7 @@ class ExamControllerTest extends BaseApiIntegrationTest {
     }
 
     @Nested
-    class approveImmunohematologyExamTests {
+    class ApproveImmunohematologyExamTests {
         @Test
         @Tag("ApiTest")
         @Tag("IntegrationTest")
@@ -185,7 +185,7 @@ class ExamControllerTest extends BaseApiIntegrationTest {
     }
 
     @Nested
-    class approveSerologicalExamTests {
+    class ApproveSerologicalExamTests {
         @Test
         @Tag("ApiTest")
         @Tag("IntegrationTest")
@@ -221,6 +221,41 @@ class ExamControllerTest extends BaseApiIntegrationTest {
                 .body("syphilis", equalTo("NEGATIVE"))
                 .body("aids", equalTo("NEGATIVE"))
                 .body("htlv1_2", equalTo("NEGATIVE"))
+                .body("observations", notNullValue());
+        }
+    }
+
+    @Nested
+    class RejectImmunohematologyExamTests {
+        @Test
+        @DisplayName("should reject ImmunohematologyExam and return 200")
+        void shouldRejectImmunohematologyExamAndReturn200(){
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestImmunohematologyExam(donation));
+            createdExamIds.add(exam.getId());
+
+            ImmunohematologyExamRequest examRequest = new ImmunohematologyExamRequest(BloodType.O_NEG, IrregularAntibodies.POSITIVE);
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/immunohematology/reject/" + exam.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.OK.value())
+                .body("id", notNullValue())
+                .body("bloodType", equalTo("O_NEG"))
+                .body("donationId", equalTo(donation.getId().toString()))
+                .body("examStatus", equalTo("REJECTED"))
+                .body("irregularAntibodies", equalTo("POSITIVE"))
+                .body("createdAt", notNullValue())
+                .body("updatedAt", notNullValue())
                 .body("observations", notNullValue());
         }
     }
