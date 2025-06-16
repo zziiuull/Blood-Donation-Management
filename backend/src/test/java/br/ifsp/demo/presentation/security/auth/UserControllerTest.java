@@ -25,7 +25,7 @@ class UserControllerTest extends BaseApiIntegrationTest {
 
     @AfterEach
     void tearDown() {
-        createdPhysicianIds.forEach(id -> repository.deleteById(id));
+        createdPhysicianIds.forEach(id -> userRepository.deleteById(id));
         createdPhysicianIds.clear();
     }
 

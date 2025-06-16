@@ -79,7 +79,7 @@ class DonorControllerTest extends BaseApiIntegrationTest {
 
 
         donorRepository.delete(donor);
-        repository.delete(user);
+        userRepository.delete(user);
     }
 
     @Test

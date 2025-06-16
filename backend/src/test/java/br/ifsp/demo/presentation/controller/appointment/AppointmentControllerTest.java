@@ -80,7 +80,7 @@ class AppointmentControllerTest extends BaseApiIntegrationTest {
 
         collectionSiteRepository.delete(site);
         appointmentRepository.delete(appointment);
-        repository.delete(user);
+        userRepository.delete(user);
     }
 
     @Test
