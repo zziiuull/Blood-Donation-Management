@@ -34,8 +34,6 @@ class DonorControllerTest extends BaseApiIntegrationTest {
 
     @Autowired
     private DonorRepository donorRepository;
-    @Autowired
-    private JpaUserRepository jpaUserRepository;
 
     @BeforeEach
     void setUp() {
