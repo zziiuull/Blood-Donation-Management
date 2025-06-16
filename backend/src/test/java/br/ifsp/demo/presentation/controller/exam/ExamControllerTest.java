@@ -6,8 +6,10 @@ import br.ifsp.demo.domain.model.donation.Appointment;
 import br.ifsp.demo.domain.model.donation.CollectionSite;
 import br.ifsp.demo.domain.model.donation.Donation;
 import br.ifsp.demo.domain.model.donor.Donor;
+import br.ifsp.demo.domain.model.exam.DiseaseDetection;
 import br.ifsp.demo.domain.model.exam.Exam;
 import br.ifsp.demo.domain.model.exam.IrregularAntibodies;
+import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.domain.model.physician.Physician;
 import br.ifsp.demo.infrastructure.repository.appointment.AppointmentRepository;
 import br.ifsp.demo.infrastructure.repository.collectionSite.CollectionSiteRepository;
@@ -17,6 +19,7 @@ import br.ifsp.demo.infrastructure.repository.exam.ExamRepository;
 import br.ifsp.demo.presentation.BaseApiIntegrationTest;
 import br.ifsp.demo.presentation.EntityBuilder;
 import br.ifsp.demo.presentation.controller.exam.request.ImmunohematologyExamRequest;
+import br.ifsp.demo.presentation.controller.exam.request.SerologicalScreeningExamRequest;
 import io.restassured.filter.log.LogDetail;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -177,6 +180,47 @@ class ExamControllerTest extends BaseApiIntegrationTest {
                 .body("irregularAntibodies", equalTo("NEGATIVE"))
                 .body("createdAt", notNullValue())
                 .body("updatedAt", notNullValue())
+                .body("observations", notNullValue());
+        }
+    }
+
+    @Nested
+    class approveSerologicalExamTests {
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("should approve serological exam and return 200")
+        void shouldApproveSerologicalExamAndReturn200(){
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestSerologicalScreeningExam(donation));
+            createdExamIds.add(exam.getId());
+
+            SerologicalScreeningExamRequest examRequest = new SerologicalScreeningExamRequest(DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE);
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/serologicalscreening/approve/" + exam.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.OK.value())
+                .body("id", notNullValue())
+                .body("donationId", equalTo(donation.getId().toString()))
+                .body("examStatus", equalTo("APPROVED"))
+                .body("createdAt", notNullValue())
+                .body("updatedAt", notNullValue())
+                .body("hepatitisB", equalTo("NEGATIVE"))
+                .body("hepatitisC", equalTo("NEGATIVE"))
+                .body("chagasDisease", equalTo("NEGATIVE"))
+                .body("syphilis", equalTo("NEGATIVE"))
+                .body("aids", equalTo("NEGATIVE"))
+                .body("htlv1_2", equalTo("NEGATIVE"))
                 .body("observations", notNullValue());
         }
     }
