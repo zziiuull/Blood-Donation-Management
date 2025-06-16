@@ -1,16 +1,22 @@
 package br.ifsp.demo.presentation.controller.exam;
 
+import br.ifsp.demo.application.service.exam.ExamRequestService;
+import br.ifsp.demo.domain.model.common.BloodType;
 import br.ifsp.demo.domain.model.donation.Appointment;
 import br.ifsp.demo.domain.model.donation.CollectionSite;
 import br.ifsp.demo.domain.model.donation.Donation;
 import br.ifsp.demo.domain.model.donor.Donor;
+import br.ifsp.demo.domain.model.exam.Exam;
+import br.ifsp.demo.domain.model.exam.IrregularAntibodies;
 import br.ifsp.demo.domain.model.physician.Physician;
 import br.ifsp.demo.infrastructure.repository.appointment.AppointmentRepository;
 import br.ifsp.demo.infrastructure.repository.collectionSite.CollectionSiteRepository;
 import br.ifsp.demo.infrastructure.repository.donation.DonationRepository;
 import br.ifsp.demo.infrastructure.repository.donor.DonorRepository;
+import br.ifsp.demo.infrastructure.repository.exam.ExamRepository;
 import br.ifsp.demo.presentation.BaseApiIntegrationTest;
 import br.ifsp.demo.presentation.EntityBuilder;
+import br.ifsp.demo.presentation.controller.exam.request.ImmunohematologyExamRequest;
 import io.restassured.filter.log.LogDetail;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +35,7 @@ class ExamControllerTest extends BaseApiIntegrationTest {
     private final List<UUID> createdDonorIds = new ArrayList<>();
     private final List<UUID> createdAppointmentIds = new ArrayList<>();
     private final List<UUID> createdCollectionSiteIds = new ArrayList<>();
+    private final List<UUID> createdExamIds = new ArrayList<>();
 
     @Autowired
     private DonationRepository donationRepository;
@@ -38,6 +45,8 @@ class ExamControllerTest extends BaseApiIntegrationTest {
     private AppointmentRepository appointmentRepository;
     @Autowired
     private CollectionSiteRepository collectionSiteRepository;
+    @Autowired
+    private ExamRepository examRepository;
 
     private Donor donor;
     private Appointment appointment;
@@ -70,6 +79,7 @@ class ExamControllerTest extends BaseApiIntegrationTest {
         createdAppointmentIds.clear();
         createdCollectionSiteIds.forEach(id -> collectionSiteRepository.deleteById(id));
         createdCollectionSiteIds.clear();
+        createdExamIds.forEach(id -> examRepository.deleteById(id));
     }
 
     @Nested
@@ -87,6 +97,7 @@ class ExamControllerTest extends BaseApiIntegrationTest {
                 .contentType("application/json")
                 .header("Authorization", "Bearer " + token)
                 .port(port)
+                .body(donation)
             .when()
                 .post("/api/v1/exam/request/immunohematology/" + donation.getId())
             .then()
@@ -130,6 +141,43 @@ class ExamControllerTest extends BaseApiIntegrationTest {
                 .body("observations", nullValue())
                 .body("createdAt", notNullValue())
                 .body("updatedAt", notNullValue());
+        }
+    }
+
+    @Nested
+    class approveImmunohematologyExamTests {
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("should approve immunohematology exam and return 200")
+        void shouldApproveImmunohematologyExamAndReturn200(){
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestImmunohematologyExam(donation));
+            createdExamIds.add(exam.getId());
+
+            ImmunohematologyExamRequest examRequest = new ImmunohematologyExamRequest(BloodType.O_NEG, IrregularAntibodies.NEGATIVE);
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/immunohematology/approve/" + exam.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.OK.value())
+                .body("id", notNullValue())
+                .body("bloodType", equalTo("O_NEG"))
+                .body("donationId", equalTo(donation.getId().toString()))
+                .body("examStatus", equalTo("APPROVED"))
+                .body("irregularAntibodies", equalTo("NEGATIVE"))
+                .body("createdAt", notNullValue())
+                .body("updatedAt", notNullValue())
+                .body("observations", notNullValue());
         }
     }
 }
