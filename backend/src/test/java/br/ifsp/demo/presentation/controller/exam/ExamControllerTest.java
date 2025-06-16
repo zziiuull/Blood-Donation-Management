@@ -22,6 +22,7 @@ import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class ExamControllerTest extends BaseApiIntegrationTest {
     private final List<UUID> createdDonationIds = new ArrayList<>();
@@ -103,5 +104,32 @@ class ExamControllerTest extends BaseApiIntegrationTest {
     }
 
     @Nested
-    class RequestSerologicalExamTests {}
+    class RequestSerologicalExamTests {
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should request serological exam and return 200 with exam id")
+        void shouldRequestSerologicalExamAndReturn200WithExamId(){
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+            .when()
+                .post("/api/v1/exam/request/serologicalscreening/" + donation.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.OK.value())
+                .body("id", notNullValue())
+                .body("bloodType", nullValue())
+                .body("donationId", equalTo(donation.getId().toString()))
+                .body("examStatus", equalTo("UNDER_ANALYSIS"))
+                .body("irregularAntibodies", nullValue())
+                .body("observations", nullValue())
+                .body("createdAt", notNullValue())
+                .body("updatedAt", notNullValue());
+        }
+    }
 }
