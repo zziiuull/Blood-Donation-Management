@@ -6,7 +6,7 @@ import org.junit.platform.suite.api.Suite;
 import org.junit.platform.suite.api.SuiteDisplayName;
 
 @Suite
-@SelectPackages({"br.ifsp.demo.infrastructure.repository"})
+@SelectPackages({"br.ifsp.demo"})
 @SuiteDisplayName("All integration tests")
 @IncludeTags({"IntegrationTest"})
 public class SuiteIntegrationTest {
