@@ -261,4 +261,45 @@ class ExamControllerTest extends BaseApiIntegrationTest {
                 .body("observations", notNullValue());
         }
     }
+
+    @Nested
+    class RejectSerologicalScreeningExam {
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("should reject serological exam and return 200")
+        void shouldRejectSerologicalExamAndReturn200(){
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestSerologicalScreeningExam(donation));
+            createdExamIds.add(exam.getId());
+
+            SerologicalScreeningExamRequest examRequest = new SerologicalScreeningExamRequest(DiseaseDetection.POSITIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE);
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/serologicalscreening/reject/" + exam.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.OK.value())
+                .body("id", notNullValue())
+                .body("donationId", equalTo(donation.getId().toString()))
+                .body("examStatus", equalTo("REJECTED"))
+                .body("createdAt", notNullValue())
+                .body("updatedAt", notNullValue())
+                .body("hepatitisB", equalTo("POSITIVE"))
+                .body("hepatitisC", equalTo("NEGATIVE"))
+                .body("chagasDisease", equalTo("NEGATIVE"))
+                .body("syphilis", equalTo("NEGATIVE"))
+                .body("aids", equalTo("NEGATIVE"))
+                .body("htlv1_2", equalTo("NEGATIVE"))
+                .body("observations", notNullValue());
+        }
+    }
 }
