@@ -190,8 +190,8 @@ class ExamControllerTest extends BaseApiIntegrationTest {
         @Test
         @Tag("ApiTest")
         @Tag("IntegrationTest")
-        @DisplayName("Should return 400 if donation should not be approved")
-        void shouldReturn400IfDonationShouldNotBeApproved(){
+        @DisplayName("Should return 400 if immunohematology exam should not be approved")
+        void shouldReturn400IfImmunohematologyExamShouldNotBeApproved(){
             ExamRequestService examRequestService = new ExamRequestService(examRepository);
             Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
             createdDonationIds.add(donation.getId());
@@ -258,8 +258,8 @@ class ExamControllerTest extends BaseApiIntegrationTest {
         @MethodSource("provideDataToInvalidExamRequests")
         @Tag("ApiTest")
         @Tag("IntegrationTest")
-        @DisplayName("Should return 400 if donation should not be approved")
-        void shouldReturn400IfDonationShouldNotBeApproved(SerologicalScreeningExamRequest examRequest) {
+        @DisplayName("Should return 400 if sorological exam should not be approved")
+        void shouldReturn400IfSorologicalExamShouldNotBeApproved(SerologicalScreeningExamRequest examRequest) {
             ExamRequestService examRequestService = new ExamRequestService(examRepository);
             Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
             createdDonationIds.add(donation.getId());
@@ -330,8 +330,8 @@ class ExamControllerTest extends BaseApiIntegrationTest {
         @Test
         @Tag("ApiTest")
         @Tag("IntegrationTest")
-        @DisplayName("Should return 400 if donation should not be rejected")
-        void shouldReturn400IfDonationShouldNotBeRejected(){
+        @DisplayName("Should return 400 if immunohematology exam should not be rejected")
+        void shouldReturn400IfImmunohematologyExamShouldNotBeRejected(){
             ExamRequestService examRequestService = new ExamRequestService(examRepository);
             Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
             createdDonationIds.add(donation.getId());
