@@ -235,15 +235,15 @@ class ExamControllerTest extends BaseApiIntegrationTest {
             );
 
             given()
-                    .contentType("application/json")
-                    .header("Authorization", "Bearer " + token)
-                    .port(port)
-                    .body(examRequest)
-                    .when()
-                    .post("/api/v1/exam/register/donation/" + donation.getId() + "/immunohematology/approve/" + exam.getId())
-                    .then()
-                    .log().ifValidationFails(LogDetail.BODY)
-                    .statusCode(HttpStatus.CONFLICT.value());
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/immunohematology/approve/" + exam.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.CONFLICT.value());
         }
     }
 
