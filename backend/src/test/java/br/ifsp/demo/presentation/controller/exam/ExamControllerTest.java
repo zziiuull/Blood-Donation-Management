@@ -326,6 +326,32 @@ class ExamControllerTest extends BaseApiIntegrationTest {
                 .body("updatedAt", notNullValue())
                 .body("observations", notNullValue());
         }
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 400 if donation should not be rejected")
+        void shouldReturn400IfDonationShouldNotBeRejected(){
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestImmunohematologyExam(donation));
+            createdExamIds.add(exam.getId());
+
+            ImmunohematologyExamRequest examRequest = new ImmunohematologyExamRequest(BloodType.O_NEG, IrregularAntibodies.NEGATIVE);
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/immunohematology/reject/" + exam.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.BAD_REQUEST.value());
+        }
     }
 
     @Nested
