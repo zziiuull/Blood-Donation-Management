@@ -945,6 +945,25 @@ class ExamControllerTest extends BaseApiIntegrationTest {
                 .body("bloodType", nullValue())
                 .body("observations", nullValue());
         }
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("should return 404 if donation not found when viewing immunohematology exam")
+        void shouldReturn404IfDonationNotFoundWhenViewingImmunohematologyExam() {
+            UUID nonExistentDonationId = UUID.randomUUID();
+
+            given()
+                    .contentType("application/json")
+                    .header("Authorization", "Bearer " + token)
+                    .port(port)
+                    .when()
+                    .get("/api/v1/exam/view/immunohematology/" + nonExistentDonationId)
+                    .then()
+                    .log().ifValidationFails(LogDetail.BODY)
+                    .statusCode(HttpStatus.NOT_FOUND.value())
+                    .body("message", containsString("Donation does not exist"));
+        }
     }
 
     @Nested
@@ -983,5 +1002,24 @@ class ExamControllerTest extends BaseApiIntegrationTest {
                 .body("htlv1_2", nullValue())
                 .body("observations", nullValue());
         }
+    }
+
+    @Test
+    @Tag("ApiTest")
+    @Tag("IntegrationTest")
+    @DisplayName("should return 404 if donation not found when viewing serological screening exam")
+    void shouldReturn404IfDonationNotFoundWhenViewingSerologicalScreeningExam() {
+        UUID nonExistentDonationId = UUID.randomUUID();
+
+        given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .when()
+                .get("/api/v1/exam/view/serologicalscreening/" + nonExistentDonationId)
+                .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.NOT_FOUND.value())
+                .body("message", containsString("Donation does not exist"));
     }
 }
