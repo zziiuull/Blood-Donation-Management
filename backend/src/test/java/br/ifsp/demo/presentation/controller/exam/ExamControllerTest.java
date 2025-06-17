@@ -302,4 +302,38 @@ class ExamControllerTest extends BaseApiIntegrationTest {
                 .body("observations", notNullValue());
         }
     }
+
+    @Nested
+    class ViewImmunohematologyExam {
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("should return exam and status 200")
+        void shouldReturnExamAndStatus200(){
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestImmunohematologyExam(donation));
+            createdExamIds.add(exam.getId());
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+            .when()
+                .get("/api/v1/exam/view/immunohematology/" + donation.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.OK.value())
+                .body("id", notNullValue())
+                .body("donationId", equalTo(donation.getId().toString()))
+                .body("examStatus", equalTo("UNDER_ANALYSIS"))
+                .body("createdAt", notNullValue())
+                .body("updatedAt", notNullValue())
+                .body("irregularAntibodies", nullValue())
+                .body("bloodType", nullValue())
+                .body("observations", nullValue());
+        }
+    }
 }
