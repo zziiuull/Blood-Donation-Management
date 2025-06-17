@@ -120,6 +120,29 @@ class ExamControllerTest extends BaseApiIntegrationTest {
                 .body("bloodType", nullValue())
                 .body("irregularAntibodies", nullValue());
         }
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 409 if immunohematology exam was already requested")
+        void shouldReturn409IfImmunohematologyExamWasAlreadyRequested(){
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            examRequestService.requestImmunohematologyExam(donation);
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(donation)
+            .when()
+                .post("/api/v1/exam/request/immunohematology/" + donation.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.CONFLICT.value());
+        }
     }
 
     @Nested
