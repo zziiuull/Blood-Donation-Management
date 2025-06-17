@@ -417,6 +417,39 @@ class ExamControllerTest extends BaseApiIntegrationTest {
                 .log().ifValidationFails(LogDetail.BODY)
                 .statusCode(HttpStatus.BAD_REQUEST.value());
         }
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 409 if immunohematology exam was already analyzed when try to reject")
+        void shouldReturn409IfImmunohematologyExamWasAlreadyAnalyzedWhenTryToReject() {
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            ExamRegistrationService examRegistrationService = new ExamRegistrationService(examRepository);
+
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestImmunohematologyExam(donation));
+            createdExamIds.add(exam.getId());
+            ImmunohematologyExamRequest examRequest = new ImmunohematologyExamRequest(BloodType.O_NEG, IrregularAntibodies.POSITIVE);
+
+            examRegistrationService.registerRejectedExam(
+                    exam.getId(),
+                    ImmunohematologyExamDTO.fromRequest(examRequest),
+                    LocalDateTime.now()
+            );
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/immunohematology/reject/" + exam.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.CONFLICT.value());
+        }
     }
 
     @Nested
