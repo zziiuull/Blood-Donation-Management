@@ -390,7 +390,14 @@ class ExamControllerTest extends BaseApiIntegrationTest {
             Exam exam = examRepository.save(examRequestService.requestSerologicalScreeningExam(donation));
             createdExamIds.add(exam.getId());
 
-            SerologicalScreeningExamRequest examRequest = new SerologicalScreeningExamRequest(DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE);
+            SerologicalScreeningExamRequest examRequest = new SerologicalScreeningExamRequest(
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE
+            );
 
             given()
                 .contentType("application/json")
@@ -455,21 +462,31 @@ class ExamControllerTest extends BaseApiIntegrationTest {
         @Test
         @Tag("ApiTest")
         @Tag("IntegrationTest")
-        @DisplayName("Should return 409 if Sorological exam was alredy analyzed")
-        void shouldReturn409IfSorologicalExamWasAlredyAnalyzed(){
+        @DisplayName("Should return 409 if serological exam was already analyzed")
+        void shouldReturn409IfSerologicalExamWasAlreadyAnalyzed() {
             ExamRequestService examRequestService = new ExamRequestService(examRepository);
             ExamRegistrationService examRegistrationService = new ExamRegistrationService(examRepository);
+
             Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
             createdDonationIds.add(donation.getId());
 
             Exam exam = examRepository.save(examRequestService.requestSerologicalScreeningExam(donation));
             createdExamIds.add(exam.getId());
-            SerologicalScreeningExamRequest examRequest = new SerologicalScreeningExamRequest(DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE);
+
+            SerologicalScreeningExamRequest examRequest = new SerologicalScreeningExamRequest(
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE
+            );
 
             examRegistrationService.registerApprovedExam(
                     exam.getId(),
                     SerologicalScreeningExamDTO.fromRequest(examRequest),
-                    LocalDateTime.now());
+                    LocalDateTime.now()
+            );
 
             given()
                 .contentType("application/json")
@@ -481,6 +498,74 @@ class ExamControllerTest extends BaseApiIntegrationTest {
             .then()
                 .log().ifValidationFails(LogDetail.BODY)
                 .statusCode(HttpStatus.CONFLICT.value());
+        }
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 404 if donation not found during serological exam approval")
+        void shouldReturn404IfDonationNotFound() {
+            UUID nonExistentDonationId = UUID.randomUUID();
+
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            Exam exam = examRepository.save(examRequestService.requestSerologicalScreeningExam(donation));
+            createdExamIds.add(exam.getId());
+
+            SerologicalScreeningExamRequest examRequest = new SerologicalScreeningExamRequest(
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE
+            );
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + nonExistentDonationId + "/serologicalscreening/approve/" + exam.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.NOT_FOUND.value())
+                .body("message", containsString("Donation does not exist"));
+        }
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 404 if exam not found during serological exam approval")
+        void shouldReturn404IfExamNotFound() {
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            UUID nonExistentExamId = UUID.randomUUID();
+
+            SerologicalScreeningExamRequest examRequest = new SerologicalScreeningExamRequest(
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE
+            );
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/serologicalscreening/approve/" + nonExistentExamId)
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.NOT_FOUND.value())
+                .body("message", containsString("Exam not found"));
         }
     }
 
