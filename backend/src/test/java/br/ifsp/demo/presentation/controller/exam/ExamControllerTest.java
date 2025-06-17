@@ -173,6 +173,28 @@ class ExamControllerTest extends BaseApiIntegrationTest {
                 .body("createdAt", notNullValue())
                 .body("updatedAt", notNullValue());
         }
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 409 if serological exam was already requested")
+        void shouldReturn409IfSerologicalExamWasAlreadyRequested(){
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            examRequestService.requestSerologicalScreeningExam(donation);
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+            .when()
+                .post("/api/v1/exam/request/serologicalscreening/" + donation.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.CONFLICT.value());
+        }
     }
 
     @Nested
