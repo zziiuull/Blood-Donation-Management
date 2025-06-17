@@ -105,7 +105,6 @@ class ExamControllerTest extends BaseApiIntegrationTest {
                 .contentType("application/json")
                 .header("Authorization", "Bearer " + token)
                 .port(port)
-                .body(donation)
             .when()
                 .post("/api/v1/exam/request/immunohematology/" + donation.getId())
             .then()
@@ -125,7 +124,7 @@ class ExamControllerTest extends BaseApiIntegrationTest {
         @Tag("ApiTest")
         @Tag("IntegrationTest")
         @DisplayName("Should return 409 if immunohematology exam was already requested")
-        void shouldReturn409IfImmunohematologyExamWasAlreadyRequested(){
+        void shouldReturn409IfImmunohematologyExamWasAlreadyRequested() {
             ExamRequestService examRequestService = new ExamRequestService(examRepository);
             Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
             createdDonationIds.add(donation.getId());
@@ -142,6 +141,23 @@ class ExamControllerTest extends BaseApiIntegrationTest {
             .then()
                 .log().ifValidationFails(LogDetail.BODY)
                 .statusCode(HttpStatus.CONFLICT.value());
+        }
+
+        @Test
+        @DisplayName("Should return 404 if donation not found")
+        void shouldReturn404IfDonationNotFound() {
+            UUID nonExistentDonationId = UUID.randomUUID();
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+            .when()
+                .post("/api/v1/exam/request/immunohematology/" + nonExistentDonationId)
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.NOT_FOUND.value())
+                .body("message", containsString("Donation does not exist"));
         }
     }
 

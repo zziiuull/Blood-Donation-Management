@@ -41,13 +41,13 @@ class UserControllerTest extends BaseApiIntegrationTest {
                     EntityBuilder.createRandomRegisterPhysicianRequest(plainTextPassword);
 
             String id = given().contentType("application/json").port(port).body(registerPhysicianRequest)
-                    .when().post("/api/v1/register/physician")
-                    .then()
-                    .log()
-                    .ifValidationFails(LogDetail.BODY)
-                    .statusCode(201)
-                    .body("id", notNullValue())
-                    .extract().path("id");
+            .when().post("/api/v1/register/physician")
+            .then()
+                .log()
+                .ifValidationFails(LogDetail.BODY)
+                .statusCode(201)
+                .body("id", notNullValue())
+                .extract().path("id");
 
             createdPhysicianIds.add(UUID.fromString(id));
         }
@@ -73,11 +73,11 @@ class UserControllerTest extends BaseApiIntegrationTest {
             );
 
             given().contentType("application/json").port(port).body(request)
-                    .when().post("/api/v1/register/physician")
-                    .then()
-                    .log()
-                    .ifValidationFails(LogDetail.BODY)
-                    .statusCode(400);
+            .when().post("/api/v1/register/physician")
+            .then()
+                .log()
+                .ifValidationFails(LogDetail.BODY)
+                .statusCode(400);
         }
 
         public static Stream<Arguments> provideInvalidPhysiciansFieldsScenarios() {
@@ -332,27 +332,27 @@ class UserControllerTest extends BaseApiIntegrationTest {
 
             // First try
             String id = given()
-                    .contentType("application/json")
-                    .port(port)
-                    .body(request)
-                    .when()
-                    .post("/api/v1/register/physician")
-                    .then()
-                    .statusCode(201)
-                    .extract()
-                    .path("id");
+                .contentType("application/json")
+                .port(port)
+                .body(request)
+            .when()
+                .post("/api/v1/register/physician")
+            .then()
+                .statusCode(201)
+                .extract()
+                .path("id");
 
             createdPhysicianIds.add(UUID.fromString(id));
 
             // Second try, need return 409
             given()
-                    .contentType("application/json")
-                    .port(port)
-                    .body(request)
-                    .when()
-                    .post("/api/v1/register/physician")
-                    .then()
-                    .statusCode(409);
+                .contentType("application/json")
+                .port(port)
+                .body(request)
+            .when()
+                .post("/api/v1/register/physician")
+                .then()
+                .statusCode(409);
         }
     }
 
@@ -380,9 +380,9 @@ class UserControllerTest extends BaseApiIntegrationTest {
             given().contentType("application/json").port(port).body(authRequest)
             .when().post("/api/v1/authenticate")
             .then()
-                    .log().ifValidationFails(LogDetail.BODY)
-                    .statusCode(200)
-                    .body("token", notNullValue());
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(200)
+                .body("token", notNullValue());
         }
 
         @ParameterizedTest
@@ -396,17 +396,17 @@ class UserControllerTest extends BaseApiIntegrationTest {
         @DisplayName("Should fail login with invalid credentials")
         void shouldFailLoginWithInvalidCredentials(String textEmail, String textPassword) {
             String email =
-                    textEmail.equals(faker.internet().emailAddress()) ? physician.getEmail() : textEmail;
+                textEmail.equals(faker.internet().emailAddress()) ? physician.getEmail() : textEmail;
             String password =
-                    textPassword.equals("registered") ? plainTextPassword : textPassword;
+                textPassword.equals("registered") ? plainTextPassword : textPassword;
 
             AuthRequest authRequest = new AuthRequest(email, password);
             given().contentType("application/json").port(port).body(authRequest)
             .when().post("/api/v1/authenticate")
             .then()
-                    .log()
-                    .ifValidationFails(LogDetail.BODY)
-                    .statusCode(401);
+                .log()
+                .ifValidationFails(LogDetail.BODY)
+                .statusCode(401);
         }
     }
 }
