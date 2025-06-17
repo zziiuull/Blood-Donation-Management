@@ -336,4 +336,42 @@ class ExamControllerTest extends BaseApiIntegrationTest {
                 .body("observations", nullValue());
         }
     }
+
+    @Nested
+    class ViewSerologicalScreeningExam {
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("should return exam and status 200")
+        void shouldReturnExamAndStatus200(){
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestSerologicalScreeningExam(donation));
+            createdExamIds.add(exam.getId());
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+            .when()
+                .get("/api/v1/exam/view/serologicalscreening/" + donation.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.OK.value())
+                .body("id", notNullValue())
+                .body("donationId", equalTo(donation.getId().toString()))
+                .body("examStatus", equalTo("UNDER_ANALYSIS"))
+                .body("createdAt", notNullValue())
+                .body("updatedAt", notNullValue())
+                .body("hepatitisB", nullValue())
+                .body("hepatitisC", nullValue())
+                .body("chagasDisease", nullValue())
+                .body("syphilis", nullValue())
+                .body("aids", nullValue())
+                .body("htlv1_2", nullValue())
+                .body("observations", nullValue());
+        }
+    }
 }
