@@ -1,15 +1,14 @@
 package br.ifsp.demo.presentation.controller.exam;
 
+import br.ifsp.demo.application.service.dto.exam.ImmunohematologyExamDTO;
+import br.ifsp.demo.application.service.exam.ExamRegistrationService;
 import br.ifsp.demo.application.service.exam.ExamRequestService;
 import br.ifsp.demo.domain.model.common.BloodType;
 import br.ifsp.demo.domain.model.donation.Appointment;
 import br.ifsp.demo.domain.model.donation.CollectionSite;
 import br.ifsp.demo.domain.model.donation.Donation;
 import br.ifsp.demo.domain.model.donor.Donor;
-import br.ifsp.demo.domain.model.exam.DiseaseDetection;
-import br.ifsp.demo.domain.model.exam.Exam;
-import br.ifsp.demo.domain.model.exam.IrregularAntibodies;
-import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
+import br.ifsp.demo.domain.model.exam.*;
 import br.ifsp.demo.domain.model.physician.Physician;
 import br.ifsp.demo.infrastructure.repository.appointment.AppointmentRepository;
 import br.ifsp.demo.infrastructure.repository.collectionSite.CollectionSiteRepository;
@@ -28,6 +27,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -211,6 +211,39 @@ class ExamControllerTest extends BaseApiIntegrationTest {
             .then()
                 .log().ifValidationFails(LogDetail.BODY)
                 .statusCode(HttpStatus.BAD_REQUEST.value());
+        }
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 409 if immunohematology exam was already analyzed")
+        void shouldReturn409IfImmunohematologyExamWasAlreadyAnalyzed(){
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            ExamRegistrationService examRegistrationService = new ExamRegistrationService(examRepository);
+
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestImmunohematologyExam(donation));
+            createdExamIds.add(exam.getId());
+            ImmunohematologyExamRequest examRequest = new ImmunohematologyExamRequest(BloodType.O_NEG, IrregularAntibodies.NEGATIVE);
+
+            examRegistrationService.registerApprovedExam(
+                    exam.getId(),
+                    ImmunohematologyExamDTO.fromRequest(examRequest),
+                    LocalDateTime.now()
+            );
+
+            given()
+                    .contentType("application/json")
+                    .header("Authorization", "Bearer " + token)
+                    .port(port)
+                    .body(examRequest)
+                    .when()
+                    .post("/api/v1/exam/register/donation/" + donation.getId() + "/immunohematology/approve/" + exam.getId())
+                    .then()
+                    .log().ifValidationFails(LogDetail.BODY)
+                    .statusCode(HttpStatus.CONFLICT.value());
         }
     }
 
