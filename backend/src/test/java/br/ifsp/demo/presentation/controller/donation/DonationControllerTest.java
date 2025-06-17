@@ -14,10 +14,7 @@ import br.ifsp.demo.infrastructure.repository.collectionSite.CollectionSiteRepos
 import br.ifsp.demo.infrastructure.repository.donor.DonorRepository;
 import br.ifsp.demo.presentation.BaseApiIntegrationTest;
 import com.github.javafaker.Faker;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
@@ -40,6 +37,7 @@ class DonationControllerTest extends BaseApiIntegrationTest {
     private String token;
 
     private Donor elegibleDonor;
+    private Donor ineligibleDonor;
     private CollectionSite site;
     private Appointment appointment;
 
@@ -59,37 +57,76 @@ class DonationControllerTest extends BaseApiIntegrationTest {
                 BloodType.A_POS
         );
 
+        this.ineligibleDonor = new Donor(
+                faker.name().toString(),
+                new Cpf("11222233344"),
+                new ContactInfo(faker.internet().emailAddress(), faker.phoneNumber().toString(), faker.address().toString()),
+                LocalDate.now().minusYears(17),
+                40.0,
+                Sex.MALE,
+                BloodType.O_NEG
+        );
+
         this.site = new CollectionSite(faker.name().toString(),
                 new ContactInfo(faker.internet().emailAddress(), faker.phoneNumber().toString(), faker.address().toString()));
 
         this.appointment = new Appointment(LocalDateTime.now().plusDays(5), AppointmentStatus.SCHEDULED, site, "Notes test");
     }
 
+    @Nested
+    @DisplayName("Register method")
+    class register {
 
-    @Test
-    @Tag("ApiTest")
-    @Tag("IntegrationTest")
-    @DisplayName("Should return 200 when registering a donation successfully")
-    void shouldReturn200WhenRegisteringADonationSuccessfully(){
-        donorRepository.save(elegibleDonor);
-        collectionSiteRepository.save(site);
-        appointmentRepository.save(appointment);
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 200 when registering a donation successfully")
+        void shouldReturn200WhenRegisteringADonationSuccessfully() {
+            donorRepository.save(elegibleDonor);
+            collectionSiteRepository.save(site);
+            appointmentRepository.save(appointment);
 
-        RegisterRequest request = new RegisterRequest(elegibleDonor.getId(), appointment.getId());
+            RegisterRequest request = new RegisterRequest(elegibleDonor.getId(), appointment.getId());
 
-        given()
-                .header("Authorization", "Bearer " + token)
-                .contentType("application/json")
-                .body(request)
-        .when()
-                .post("/api/v1/donation")
-        .then()
-                .statusCode(200)
-                .body("id", notNullValue());
+            given()
+                    .header("Authorization", "Bearer " + token)
+                    .contentType("application/json")
+                    .body(request)
+                    .when()
+                    .post("/api/v1/donation")
+                    .then()
+                    .statusCode(200)
+                    .body("id", notNullValue());
 
 
-        donorRepository.deleteById(elegibleDonor.getId());
-        appointmentRepository.deleteById(appointment.getId());
+            donorRepository.deleteById(elegibleDonor.getId());
+            appointmentRepository.deleteById(appointment.getId());
+        }
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 400 when donor is not elegible to donate")
+        void shouldReturn400WhenDonorIsNotElegibleToDonate() {
+            donorRepository.save(ineligibleDonor);
+            collectionSiteRepository.save(site);
+            appointmentRepository.save(appointment);
+
+            RegisterRequest request = new RegisterRequest(ineligibleDonor.getId(), appointment.getId());
+
+            given()
+                    .header("Authorization", "Bearer " + token)
+                    .contentType("application/json")
+                    .body(request)
+                    .when()
+                    .post("/api/v1/donation")
+                    .then()
+                    .statusCode(400);
+
+
+            donorRepository.deleteById(ineligibleDonor.getId());
+            appointmentRepository.deleteById(appointment.getId());
+        }
     }
 
 }
