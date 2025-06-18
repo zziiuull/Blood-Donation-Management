@@ -9,7 +9,9 @@ import br.ifsp.demo.domain.model.donation.Appointment;
 import br.ifsp.demo.domain.model.donation.CollectionSite;
 import br.ifsp.demo.domain.model.donation.Donation;
 import br.ifsp.demo.domain.model.donor.Donor;
-import br.ifsp.demo.domain.model.exam.*;
+import br.ifsp.demo.domain.model.exam.DiseaseDetection;
+import br.ifsp.demo.domain.model.exam.Exam;
+import br.ifsp.demo.domain.model.exam.IrregularAntibodies;
 import br.ifsp.demo.domain.model.physician.Physician;
 import br.ifsp.demo.infrastructure.repository.appointment.AppointmentRepository;
 import br.ifsp.demo.infrastructure.repository.collectionSite.CollectionSiteRepository;
@@ -21,7 +23,6 @@ import br.ifsp.demo.presentation.EntityBuilder;
 import br.ifsp.demo.presentation.controller.exam.request.ImmunohematologyExamRequest;
 import br.ifsp.demo.presentation.controller.exam.request.SerologicalScreeningExamRequest;
 import io.restassured.filter.log.LogDetail;
-import jakarta.validation.constraints.NotNull;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -37,7 +38,6 @@ import java.util.stream.Stream;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.fail;
 
 class ExamControllerTest extends BaseApiIntegrationTest {
     private final List<UUID> createdDonationIds = new ArrayList<>();
@@ -458,7 +458,7 @@ class ExamControllerTest extends BaseApiIntegrationTest {
 
         @Tag("ApiTest")
         @Tag("IntegrationTest")
-        @ParameterizedTest(name = "Should return 400 if field is null during serological exam approval")
+        @ParameterizedTest(name = "Should return 400 if field is null: {1}")
         @MethodSource("provideInvalidSerologicalScreeningExamRequests")
         void shouldReturn400WithValidationMessagesForNullFields(SerologicalScreeningExamRequest examRequest, String expectedMessage) {
             ExamRequestService examRequestService = new ExamRequestService(examRepository);
@@ -888,7 +888,7 @@ class ExamControllerTest extends BaseApiIntegrationTest {
                 .body("observations", notNullValue());
         }
 
-        @ParameterizedTest
+        @ParameterizedTest(name = "Should return 400 if field is null: {1}")
         @MethodSource("provideInvalidSerologicalScreeningExamRequests")
         @Tag("ApiTest")
         @Tag("IntegrationTest")
