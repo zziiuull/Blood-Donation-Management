@@ -24,6 +24,7 @@ import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class DonationControllerTest extends BaseApiIntegrationTest {
 
@@ -204,5 +205,26 @@ class DonationControllerTest extends BaseApiIntegrationTest {
                 .statusCode(404);
 
         appointmentRepository.deleteById(appointment.getId());
+    }
+
+    @Test
+    @Tag("ApiTest")
+    @Tag("IntegrationTest")
+    @DisplayName("Should return 404 when appointment does not exist")
+    void shouldReturn404WhenAppointmentDoesNotExist(){
+        donorRepository.save(elegibleDonor);
+
+        RegisterRequest request = new RegisterRequest(elegibleDonor.getId(), UUID.randomUUID());
+
+        given()
+                .header("Authorization", "Bearer " + token)
+                .contentType("application/json")
+                .body(request)
+                .when()
+                .post("/api/v1/donation")
+                .then()
+                .statusCode(404);
+
+        donorRepository.deleteById(elegibleDonor.getId());
     }
 }
