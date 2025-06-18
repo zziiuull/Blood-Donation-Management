@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.notNullValue;
@@ -181,5 +182,27 @@ class DonationControllerTest extends BaseApiIntegrationTest {
         given()
                 .when().post("/api/v1/donation")
                 .then().statusCode(401);
+    }
+
+    @Test
+    @Tag("ApiTest")
+    @Tag("IntegrationTest")
+    @DisplayName("Should return 404 when donor does not exist")
+    void shouldReturn404WhenDonorDoesNotExist(){
+        collectionSiteRepository.save(site);
+        appointmentRepository.save(appointment);
+
+        RegisterRequest request = new RegisterRequest(UUID.randomUUID(), appointment.getId());
+
+        given()
+                .header("Authorization", "Bearer " + token)
+                .contentType("application/json")
+                .body(request)
+                .when()
+                .post("/api/v1/donation")
+                .then()
+                .statusCode(404);
+
+        appointmentRepository.deleteById(appointment.getId());
     }
 }
