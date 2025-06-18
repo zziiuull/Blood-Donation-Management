@@ -172,4 +172,14 @@ class DonationControllerTest extends BaseApiIntegrationTest {
         donorRepository.deleteById(anotherElegibleDonor.getId());
         appointmentRepository.deleteById(appointment.getId());
     }
+
+    @Test
+    @Tag("ApiTest")
+    @Tag("IntegrationTest")
+    @DisplayName("Should return 401 when authentication fails")
+    void shouldReturn401WhenAuthenticationFails(){
+        given()
+                .when().post("/api/v1/donation")
+                .then().statusCode(401);
+    }
 }
