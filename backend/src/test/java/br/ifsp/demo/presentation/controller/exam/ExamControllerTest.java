@@ -21,6 +21,7 @@ import br.ifsp.demo.presentation.EntityBuilder;
 import br.ifsp.demo.presentation.controller.exam.request.ImmunohematologyExamRequest;
 import br.ifsp.demo.presentation.controller.exam.request.SerologicalScreeningExamRequest;
 import io.restassured.filter.log.LogDetail;
+import jakarta.validation.constraints.NotNull;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -135,7 +136,6 @@ class ExamControllerTest extends BaseApiIntegrationTest {
                 .contentType("application/json")
                 .header("Authorization", "Bearer " + token)
                 .port(port)
-                .body(donation)
             .when()
                 .post("/api/v1/exam/request/immunohematology/" + donation.getId())
             .then()
@@ -202,14 +202,14 @@ class ExamControllerTest extends BaseApiIntegrationTest {
             examRequestService.requestSerologicalScreeningExam(donation);
 
             given()
-                    .contentType("application/json")
-                    .header("Authorization", "Bearer " + token)
-                    .port(port)
-                    .when()
-                    .post("/api/v1/exam/request/serologicalscreening/" + donation.getId())
-                    .then()
-                    .log().ifValidationFails(LogDetail.BODY)
-                    .statusCode(HttpStatus.CONFLICT.value());
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+            .when()
+                .post("/api/v1/exam/request/serologicalscreening/" + donation.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.CONFLICT.value());
         }
 
         @Test
@@ -266,6 +266,58 @@ class ExamControllerTest extends BaseApiIntegrationTest {
                 .body("createdAt", notNullValue())
                 .body("updatedAt", notNullValue())
                 .body("observations", notNullValue());
+        }
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 400 if bloodType is null during immunohematology exam approval")
+        void shouldReturn400IfBloodTypeIsNullDuringImmunohematologyExamApproval(){
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestImmunohematologyExam(donation));
+            createdExamIds.add(exam.getId());
+
+            ImmunohematologyExamRequest examRequest = new ImmunohematologyExamRequest(null,  IrregularAntibodies.NEGATIVE);
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/immunohematology/approve/" + exam.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .body("message", containsString("bloodType field is required"));
+        }
+
+        @Test
+        @DisplayName("Should return 400 if IrregularAntibodies is null during immunohematology exam approval")
+        void shouldReturn400IfIrregularAntibodiesIsNullDuringImmunohematologyExamApproval(){
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestImmunohematologyExam(donation));
+            createdExamIds.add(exam.getId());
+
+            ImmunohematologyExamRequest examRequest = new ImmunohematologyExamRequest(BloodType.O_NEG,  null);
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/immunohematology/approve/" + exam.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .body("message", containsString("irregularAntibodies field is required"));
         }
 
         @Test
