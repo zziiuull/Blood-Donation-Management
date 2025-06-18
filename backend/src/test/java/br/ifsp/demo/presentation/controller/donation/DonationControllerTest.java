@@ -22,9 +22,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.hamcrest.Matchers.*;
 
 class DonationControllerTest extends BaseApiIntegrationTest {
 
@@ -48,6 +46,7 @@ class DonationControllerTest extends BaseApiIntegrationTest {
     private Donor anotherElegibleDonor;
     private CollectionSite site;
     private Appointment appointment;
+    private Appointment secondAppointment;
 
 
     @BeforeEach
@@ -89,12 +88,14 @@ class DonationControllerTest extends BaseApiIntegrationTest {
                 new ContactInfo(faker.internet().emailAddress(), faker.phoneNumber().toString(), faker.address().toString()));
 
         appointment = new Appointment(LocalDateTime.now().plusDays(5), AppointmentStatus.SCHEDULED, site, "Notes test");
+        secondAppointment = new Appointment(LocalDateTime.now().plusDays(7), AppointmentStatus.SCHEDULED, site, "Notes test");
 
         donorRepository.save(ineligibleDonor);
         donorRepository.save(elegibleDonor);
         donorRepository.save(anotherElegibleDonor);
         collectionSiteRepository.save(site);
         appointmentRepository.save(appointment);
+        appointmentRepository.save(secondAppointment);
     }
 
     @AfterEach
@@ -276,6 +277,30 @@ class DonationControllerTest extends BaseApiIntegrationTest {
     @Nested
     @DisplayName("View all method")
     class viewAll {
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 200 when view all successfully")
+        void shouldReturn200WhenViewAllSuccessfully(){
+            Donation donation = new Donation(elegibleDonor, appointment, DonationStatus.UNDER_ANALYSIS);
+            Donation anotherDonation = new Donation(anotherElegibleDonor, secondAppointment, DonationStatus.UNDER_ANALYSIS);
+            donationRepository.save(donation);
+            donationRepository.save(anotherDonation);
+
+            given()
+                    .header("Authorization", "Bearer " + token)
+                    .contentType("application/json")
+            .when()
+                    .get("/api/v1/donation/")
+            .then()
+                    .statusCode(200)
+                    .body("size()", is(2))
+                    .body("id", hasItems(donation.getId().toString(), anotherDonation.getId().toString()));
+
+            donationRepository.deleteById(donation.getId());
+            donationRepository.deleteById(anotherDonation.getId());
+        }
 
         @Test
         @Tag("ApiTest")
