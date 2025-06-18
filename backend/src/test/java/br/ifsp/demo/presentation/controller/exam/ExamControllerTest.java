@@ -1129,15 +1129,15 @@ class ExamControllerTest extends BaseApiIntegrationTest {
             UUID nonExistentDonationId = UUID.randomUUID();
 
             given()
-                    .contentType("application/json")
-                    .header("Authorization", "Bearer " + token)
-                    .port(port)
-                    .when()
-                    .get("/api/v1/exam/view/immunohematology/" + nonExistentDonationId)
-                    .then()
-                    .log().ifValidationFails(LogDetail.BODY)
-                    .statusCode(HttpStatus.NOT_FOUND.value())
-                    .body("message", containsString("Donation does not exist"));
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+            .when()
+                .get("/api/v1/exam/view/immunohematology/" + nonExistentDonationId)
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.NOT_FOUND.value())
+                .body("message", containsString("Donation does not exist"));
         }
     }
 
@@ -1187,14 +1187,14 @@ class ExamControllerTest extends BaseApiIntegrationTest {
         UUID nonExistentDonationId = UUID.randomUUID();
 
         given()
-                .contentType("application/json")
-                .header("Authorization", "Bearer " + token)
-                .port(port)
-                .when()
-                .get("/api/v1/exam/view/serologicalscreening/" + nonExistentDonationId)
-                .then()
-                .log().ifValidationFails(LogDetail.BODY)
-                .statusCode(HttpStatus.NOT_FOUND.value())
-                .body("message", containsString("Donation does not exist"));
+            .contentType("application/json")
+            .header("Authorization", "Bearer " + token)
+            .port(port)
+        .when()
+            .get("/api/v1/exam/view/serologicalscreening/" + nonExistentDonationId)
+        .then()
+            .log().ifValidationFails(LogDetail.BODY)
+            .statusCode(HttpStatus.NOT_FOUND.value())
+            .body("message", containsString("Donation does not exist"));
     }
 }
