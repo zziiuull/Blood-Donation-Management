@@ -475,6 +475,67 @@ class ExamControllerTest extends BaseApiIntegrationTest {
                 .body("observations", notNullValue());
         }
 
+        static Stream<Arguments> provideInvalidFields() {
+            return Stream.of(
+                    Arguments.of("hepatitisB", "hepatitisB field is required"),
+                    Arguments.of("hepatitisC", "hepatitisC field is required"),
+                    Arguments.of("chagasDisease", "chagasDisease field is required"),
+                    Arguments.of("syphilis", "syphilis field is required"),
+                    Arguments.of("aids", "aids field is required"),
+                    Arguments.of("htlv1_2", "htlv1_2 field is required")
+            );
+        }
+
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @ParameterizedTest(name = "Should return 400 if {0} is null during serological exam approval")
+        @MethodSource("provideInvalidFields")
+        void shouldReturn400IfFieldIsNullDuringSerologicalExamApproval(String fieldName, String expectedMessage) {
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestSerologicalScreeningExam(donation));
+            createdExamIds.add(exam.getId());
+
+            DiseaseDetection hepatitisB = DiseaseDetection.NEGATIVE;
+            DiseaseDetection hepatitisC = DiseaseDetection.NEGATIVE;
+            DiseaseDetection chagasDisease = DiseaseDetection.NEGATIVE;
+            DiseaseDetection syphilis = DiseaseDetection.NEGATIVE;
+            DiseaseDetection aids = DiseaseDetection.NEGATIVE;
+            DiseaseDetection htlv1_2 = DiseaseDetection.NEGATIVE;
+
+            switch (fieldName) {
+                case "hepatitisB" -> hepatitisB = null;
+                case "hepatitisC" -> hepatitisC = null;
+                case "chagasDisease" -> chagasDisease = null;
+                case "syphilis" -> syphilis = null;
+                case "aids" -> aids = null;
+                case "htlv1_2" -> htlv1_2 = null;
+            }
+
+            SerologicalScreeningExamRequest examRequest = new SerologicalScreeningExamRequest(
+                    hepatitisB,
+                    hepatitisC,
+                    chagasDisease,
+                    syphilis,
+                    aids,
+                    htlv1_2
+            );
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/serologicalscreening/approve/" + exam.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .body("message", containsString(expectedMessage));
+        }
+
         @ParameterizedTest
         @MethodSource("provideDataToInvalidExamRequests")
         @Tag("ApiTest")
