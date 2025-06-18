@@ -1,5 +1,6 @@
 package br.ifsp.demo.presentation.controller.donation;
 
+import br.ifsp.demo.application.service.donation.DonationRegisterService;
 import br.ifsp.demo.domain.model.common.BloodType;
 import br.ifsp.demo.domain.model.common.ContactInfo;
 import br.ifsp.demo.domain.model.common.Cpf;
@@ -31,6 +32,8 @@ class DonationControllerTest extends BaseApiIntegrationTest {
     private AppointmentRepository appointmentRepository;
     @Autowired
     private CollectionSiteRepository collectionSiteRepository;
+    @Autowired
+    private DonationRegisterService donationRegisterService;
 
     private Faker faker = Faker.instance();
     private Physician user;
@@ -38,6 +41,7 @@ class DonationControllerTest extends BaseApiIntegrationTest {
 
     private Donor elegibleDonor;
     private Donor ineligibleDonor;
+    private Donor anotherElegibleDonor;
     private CollectionSite site;
     private Appointment appointment;
 
@@ -65,6 +69,16 @@ class DonationControllerTest extends BaseApiIntegrationTest {
                 40.0,
                 Sex.MALE,
                 BloodType.O_NEG
+        );
+
+        this.anotherElegibleDonor = new Donor(
+                faker.name().toString(),
+                new Cpf("11122333344"),
+                new ContactInfo(faker.internet().emailAddress(), faker.phoneNumber().toString(), faker.address().toString()),
+                LocalDate.now().minusYears(40),
+                75.0,
+                Sex.MALE,
+                BloodType.AB_POS
         );
 
         this.site = new CollectionSite(faker.name().toString(),
@@ -129,4 +143,33 @@ class DonationControllerTest extends BaseApiIntegrationTest {
         }
     }
 
+    @Test
+    @Tag("ApiTest")
+    @Tag("IntegrationTest")
+    @DisplayName("Should return 400 when donation already exists for this appointment")
+    void shouldReturn400WhenDonationAlreadyExistsForThisAppointment(){
+        donorRepository.save(elegibleDonor);
+        donorRepository.save(anotherElegibleDonor);
+        collectionSiteRepository.save(site);
+        appointmentRepository.save(appointment);
+
+        donationRegisterService.registerByDonorId(elegibleDonor.getId(), appointment.getId());
+
+        RegisterRequest secondRequest = new RegisterRequest(anotherElegibleDonor.getId(), appointment.getId());
+
+        given()
+                .header("Authorization", "Bearer " + token)
+                .contentType("application/json")
+                .body(secondRequest)
+                .when()
+                .post("/api/v1/donation")
+                .then()
+                .statusCode(400);
+
+
+
+        donorRepository.deleteById(elegibleDonor.getId());
+        donorRepository.deleteById(anotherElegibleDonor.getId());
+        appointmentRepository.deleteById(appointment.getId());
+    }
 }
