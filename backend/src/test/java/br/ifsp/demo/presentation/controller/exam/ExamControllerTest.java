@@ -9,7 +9,9 @@ import br.ifsp.demo.domain.model.donation.Appointment;
 import br.ifsp.demo.domain.model.donation.CollectionSite;
 import br.ifsp.demo.domain.model.donation.Donation;
 import br.ifsp.demo.domain.model.donor.Donor;
-import br.ifsp.demo.domain.model.exam.*;
+import br.ifsp.demo.domain.model.exam.DiseaseDetection;
+import br.ifsp.demo.domain.model.exam.Exam;
+import br.ifsp.demo.domain.model.exam.IrregularAntibodies;
 import br.ifsp.demo.domain.model.physician.Physician;
 import br.ifsp.demo.infrastructure.repository.appointment.AppointmentRepository;
 import br.ifsp.demo.infrastructure.repository.collectionSite.CollectionSiteRepository;
@@ -36,7 +38,6 @@ import java.util.stream.Stream;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.fail;
 
 class ExamControllerTest extends BaseApiIntegrationTest {
     private final List<UUID> createdDonationIds = new ArrayList<>();
@@ -135,7 +136,6 @@ class ExamControllerTest extends BaseApiIntegrationTest {
                 .contentType("application/json")
                 .header("Authorization", "Bearer " + token)
                 .port(port)
-                .body(donation)
             .when()
                 .post("/api/v1/exam/request/immunohematology/" + donation.getId())
             .then()
@@ -202,14 +202,14 @@ class ExamControllerTest extends BaseApiIntegrationTest {
             examRequestService.requestSerologicalScreeningExam(donation);
 
             given()
-                    .contentType("application/json")
-                    .header("Authorization", "Bearer " + token)
-                    .port(port)
-                    .when()
-                    .post("/api/v1/exam/request/serologicalscreening/" + donation.getId())
-                    .then()
-                    .log().ifValidationFails(LogDetail.BODY)
-                    .statusCode(HttpStatus.CONFLICT.value());
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+            .when()
+                .post("/api/v1/exam/request/serologicalscreening/" + donation.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.CONFLICT.value());
         }
 
         @Test
@@ -266,6 +266,39 @@ class ExamControllerTest extends BaseApiIntegrationTest {
                 .body("createdAt", notNullValue())
                 .body("updatedAt", notNullValue())
                 .body("observations", notNullValue());
+        }
+
+        @ParameterizedTest
+        @MethodSource("provideInvalidImmunohematologyExamRequests")
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 400 with correct validation message during immunohematology exam approval when request fields are null")
+        void shouldReturn400WithValidationMessageDuringImmunohematologyExamApprovalWhenRequestFieldsAreNull(ImmunohematologyExamRequest examRequest, String expectedMessage) {
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestImmunohematologyExam(donation));
+            createdExamIds.add(exam.getId());
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/immunohematology/approve/" + exam.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .body("message", containsString(expectedMessage));
+        }
+
+        private static Stream<Arguments> provideInvalidImmunohematologyExamRequests() {
+            return Stream.of(
+                    Arguments.of(new ImmunohematologyExamRequest(null, IrregularAntibodies.NEGATIVE), "bloodType field is required"),
+                    Arguments.of(new ImmunohematologyExamRequest(BloodType.O_NEG, null), "irregularAntibodies field is required")
+            );
         }
 
         @Test
@@ -421,6 +454,60 @@ class ExamControllerTest extends BaseApiIntegrationTest {
                 .body("aids", equalTo("NEGATIVE"))
                 .body("htlv1_2", equalTo("NEGATIVE"))
                 .body("observations", notNullValue());
+        }
+
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @ParameterizedTest(name = "Should return 400 if field is null: {1}")
+        @MethodSource("provideInvalidSerologicalScreeningExamRequests")
+        void shouldReturn400WithValidationMessagesForNullFields(SerologicalScreeningExamRequest examRequest, String expectedMessage) {
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestSerologicalScreeningExam(donation));
+            createdExamIds.add(exam.getId());
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/serologicalscreening/approve/" + exam.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .body("message", containsString(expectedMessage));
+        }
+
+        static Stream<Arguments> provideInvalidSerologicalScreeningExamRequests() {
+            return Stream.of(
+                    Arguments.of(
+                            new SerologicalScreeningExamRequest(null, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE),
+                            "hepatitisB field is required"
+                    ),
+                    Arguments.of(
+                            new SerologicalScreeningExamRequest(DiseaseDetection.NEGATIVE, null, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE),
+                            "hepatitisC field is required"
+                    ),
+                    Arguments.of(
+                            new SerologicalScreeningExamRequest(DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, null, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE),
+                            "chagasDisease field is required"
+                    ),
+                    Arguments.of(
+                            new SerologicalScreeningExamRequest(DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, null, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE),
+                            "syphilis field is required"
+                    ),
+                    Arguments.of(
+                            new SerologicalScreeningExamRequest(DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, null, DiseaseDetection.NEGATIVE),
+                            "aids field is required"
+                    ),
+                    Arguments.of(
+                            new SerologicalScreeningExamRequest(DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, null),
+                            "htlv1_2 field is required"
+                    )
+            );
         }
 
         @ParameterizedTest
@@ -605,6 +692,39 @@ class ExamControllerTest extends BaseApiIntegrationTest {
                 .body("observations", notNullValue());
         }
 
+        @ParameterizedTest
+        @MethodSource("provideInvalidImmunohematologyExamRequests")
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 400 with correct validation message when ImmunohematologyExamRequest fields are null during exam rejection")
+        void shouldReturn400WithValidationMessagesShenImmunohematologyExamRequestFieldsAreNullDuringExamRejection(ImmunohematologyExamRequest examRequest, String expectedMessage) {
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestImmunohematologyExam(donation));
+            createdExamIds.add(exam.getId());
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/immunohematology/reject/" + exam.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .body("message", containsString(expectedMessage));
+        }
+
+        private static Stream<Arguments> provideInvalidImmunohematologyExamRequests() {
+            return Stream.of(
+                    Arguments.of(new ImmunohematologyExamRequest(null, IrregularAntibodies.NEGATIVE), "bloodType field is required"),
+                    Arguments.of(new ImmunohematologyExamRequest(BloodType.O_NEG, null), "irregularAntibodies field is required")
+            );
+        }
+
         @Test
         @Tag("ApiTest")
         @Tag("IntegrationTest")
@@ -766,6 +886,61 @@ class ExamControllerTest extends BaseApiIntegrationTest {
                 .body("aids", equalTo("NEGATIVE"))
                 .body("htlv1_2", equalTo("NEGATIVE"))
                 .body("observations", notNullValue());
+        }
+
+        @ParameterizedTest(name = "Should return 400 if field is null: {1}")
+        @MethodSource("provideInvalidSerologicalScreeningExamRequests")
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 400 with correct validation message when SerologicalScreeningExamRequest fields are null during exam rejection")
+        void shouldReturn400WithValidationMessagesForNullFields(SerologicalScreeningExamRequest examRequest, String expectedMessage) {
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestSerologicalScreeningExam(donation));
+            createdExamIds.add(exam.getId());
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/serologicalscreening/reject/" + exam.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .body("message", containsString(expectedMessage));
+        }
+
+        private static Stream<Arguments> provideInvalidSerologicalScreeningExamRequests() {
+            return Stream.of(
+                    Arguments.of(
+                            new SerologicalScreeningExamRequest(null, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE),
+                            "hepatitisB field is required"
+                    ),
+                    Arguments.of(
+                            new SerologicalScreeningExamRequest(DiseaseDetection.POSITIVE, null, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE),
+                            "hepatitisC field is required"
+                    ),
+                    Arguments.of(
+                            new SerologicalScreeningExamRequest(DiseaseDetection.POSITIVE, DiseaseDetection.NEGATIVE, null, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE),
+                            "chagasDisease field is required"
+                    ),
+                    Arguments.of(
+                            new SerologicalScreeningExamRequest(DiseaseDetection.POSITIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, null, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE),
+                            "syphilis field is required"
+                    ),
+                    Arguments.of(
+                            new SerologicalScreeningExamRequest(DiseaseDetection.POSITIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, null, DiseaseDetection.NEGATIVE),
+                            "aids field is required"
+                    ),
+                    Arguments.of(
+                            new SerologicalScreeningExamRequest(DiseaseDetection.POSITIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, null),
+                            "htlv1_2 field is required"
+                    )
+            );
         }
 
         @Test
@@ -954,15 +1129,15 @@ class ExamControllerTest extends BaseApiIntegrationTest {
             UUID nonExistentDonationId = UUID.randomUUID();
 
             given()
-                    .contentType("application/json")
-                    .header("Authorization", "Bearer " + token)
-                    .port(port)
-                    .when()
-                    .get("/api/v1/exam/view/immunohematology/" + nonExistentDonationId)
-                    .then()
-                    .log().ifValidationFails(LogDetail.BODY)
-                    .statusCode(HttpStatus.NOT_FOUND.value())
-                    .body("message", containsString("Donation does not exist"));
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+            .when()
+                .get("/api/v1/exam/view/immunohematology/" + nonExistentDonationId)
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.NOT_FOUND.value())
+                .body("message", containsString("Donation does not exist"));
         }
     }
 
@@ -1012,14 +1187,14 @@ class ExamControllerTest extends BaseApiIntegrationTest {
         UUID nonExistentDonationId = UUID.randomUUID();
 
         given()
-                .contentType("application/json")
-                .header("Authorization", "Bearer " + token)
-                .port(port)
-                .when()
-                .get("/api/v1/exam/view/serologicalscreening/" + nonExistentDonationId)
-                .then()
-                .log().ifValidationFails(LogDetail.BODY)
-                .statusCode(HttpStatus.NOT_FOUND.value())
-                .body("message", containsString("Donation does not exist"));
+            .contentType("application/json")
+            .header("Authorization", "Bearer " + token)
+            .port(port)
+        .when()
+            .get("/api/v1/exam/view/serologicalscreening/" + nonExistentDonationId)
+        .then()
+            .log().ifValidationFails(LogDetail.BODY)
+            .statusCode(HttpStatus.NOT_FOUND.value())
+            .body("message", containsString("Donation does not exist"));
     }
 }
