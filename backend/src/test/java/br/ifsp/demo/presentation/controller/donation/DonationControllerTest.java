@@ -239,5 +239,22 @@ class DonationControllerTest extends BaseApiIntegrationTest {
                     .statusCode(200)
                     .body("id", equalTo(donationId.toString()));
         }
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 401 when authentication fails")
+        void shouldReturn401WhenAuthenticationFails(){
+            Donation donation = new Donation(elegibleDonor, appointment, DonationStatus.UNDER_ANALYSIS);
+            donationRepository.save(donation);
+            UUID donationId = donation.getId();
+
+            given()
+                    .pathParam("id", donationId)
+                    .when()
+                    .get("/api/v1/donation/{id}")
+                    .then()
+                    .statusCode(401);
+        }
     }
 }
