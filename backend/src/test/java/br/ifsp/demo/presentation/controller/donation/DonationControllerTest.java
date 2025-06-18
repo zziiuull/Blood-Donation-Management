@@ -272,4 +272,19 @@ class DonationControllerTest extends BaseApiIntegrationTest {
                     .statusCode(404);
         }
     }
+
+    @Nested
+    @DisplayName("View all method")
+    class viewAll {
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 401 when authentication fails")
+        void shouldReturn401WhenAuthenticationFails(){
+            given()
+                    .when().get("/api/v1/donation")
+                    .then().statusCode(401);
+        }
+    }
 }
