@@ -24,6 +24,7 @@ import java.util.UUID;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class DonationControllerTest extends BaseApiIntegrationTest {
 
@@ -255,6 +256,20 @@ class DonationControllerTest extends BaseApiIntegrationTest {
                     .get("/api/v1/donation/{id}")
                     .then()
                     .statusCode(401);
+        }
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 404 when donation does not exist")
+        void shouldReturn404WhenDonationDoesNotExist(){
+            given()
+                    .header("Authorization", "Bearer " + token)
+                    .pathParam("id", UUID.randomUUID())
+                    .when()
+                    .get("/api/v1/donation/{id}")
+                    .then()
+                    .statusCode(404);
         }
     }
 }
