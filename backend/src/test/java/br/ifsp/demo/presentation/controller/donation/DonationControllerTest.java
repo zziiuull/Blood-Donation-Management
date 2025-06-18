@@ -81,10 +81,25 @@ class DonationControllerTest extends BaseApiIntegrationTest {
                 BloodType.AB_POS
         );
 
-        this.site = new CollectionSite(faker.name().toString(),
+        site = new CollectionSite(faker.name().toString(),
                 new ContactInfo(faker.internet().emailAddress(), faker.phoneNumber().toString(), faker.address().toString()));
 
-        this.appointment = new Appointment(LocalDateTime.now().plusDays(5), AppointmentStatus.SCHEDULED, site, "Notes test");
+        appointment = new Appointment(LocalDateTime.now().plusDays(5), AppointmentStatus.SCHEDULED, site, "Notes test");
+
+        donorRepository.save(ineligibleDonor);
+        donorRepository.save(elegibleDonor);
+        donorRepository.save(anotherElegibleDonor);
+        collectionSiteRepository.save(site);
+        appointmentRepository.save(appointment);
+    }
+
+    @AfterEach
+    void tearDown() {
+        donorRepository.delete(ineligibleDonor);
+        donorRepository.delete(elegibleDonor);
+        donorRepository.delete(anotherElegibleDonor);
+        collectionSiteRepository.delete(site);
+        appointmentRepository.delete(appointment);
     }
 
     @Nested
@@ -96,10 +111,6 @@ class DonationControllerTest extends BaseApiIntegrationTest {
         @Tag("IntegrationTest")
         @DisplayName("Should return 200 when registering a donation successfully")
         void shouldReturn200WhenRegisteringADonationSuccessfully() {
-            donorRepository.save(elegibleDonor);
-            collectionSiteRepository.save(site);
-            appointmentRepository.save(appointment);
-
             RegisterRequest request = new RegisterRequest(elegibleDonor.getId(), appointment.getId());
 
             given()
@@ -111,10 +122,6 @@ class DonationControllerTest extends BaseApiIntegrationTest {
                     .then()
                     .statusCode(200)
                     .body("id", notNullValue());
-
-
-            donorRepository.deleteById(elegibleDonor.getId());
-            appointmentRepository.deleteById(appointment.getId());
         }
 
         @Test
@@ -122,10 +129,6 @@ class DonationControllerTest extends BaseApiIntegrationTest {
         @Tag("IntegrationTest")
         @DisplayName("Should return 400 when donor is not elegible to donate")
         void shouldReturn400WhenDonorIsNotElegibleToDonate() {
-            donorRepository.save(ineligibleDonor);
-            collectionSiteRepository.save(site);
-            appointmentRepository.save(appointment);
-
             RegisterRequest request = new RegisterRequest(ineligibleDonor.getId(), appointment.getId());
 
             given()
@@ -136,10 +139,6 @@ class DonationControllerTest extends BaseApiIntegrationTest {
                     .post("/api/v1/donation")
                     .then()
                     .statusCode(400);
-
-
-            donorRepository.deleteById(ineligibleDonor.getId());
-            appointmentRepository.deleteById(appointment.getId());
         }
     }
 
@@ -148,11 +147,6 @@ class DonationControllerTest extends BaseApiIntegrationTest {
     @Tag("IntegrationTest")
     @DisplayName("Should return 400 when donation already exists for this appointment")
     void shouldReturn400WhenDonationAlreadyExistsForThisAppointment(){
-        donorRepository.save(elegibleDonor);
-        donorRepository.save(anotherElegibleDonor);
-        collectionSiteRepository.save(site);
-        appointmentRepository.save(appointment);
-
         donationRegisterService.registerByDonorId(elegibleDonor.getId(), appointment.getId());
 
         RegisterRequest secondRequest = new RegisterRequest(anotherElegibleDonor.getId(), appointment.getId());
@@ -165,11 +159,5 @@ class DonationControllerTest extends BaseApiIntegrationTest {
                 .post("/api/v1/donation")
                 .then()
                 .statusCode(400);
-
-
-
-        donorRepository.deleteById(elegibleDonor.getId());
-        donorRepository.deleteById(anotherElegibleDonor.getId());
-        appointmentRepository.deleteById(appointment.getId());
     }
 }
