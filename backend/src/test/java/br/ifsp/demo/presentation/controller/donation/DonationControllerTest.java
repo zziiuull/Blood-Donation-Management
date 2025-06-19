@@ -476,4 +476,38 @@ class DonationControllerTest extends BaseApiIntegrationTest {
             examRepository.deleteById(seroExam.getId());
         }
     }
+
+    @Nested
+    @DisplayName("approve method")
+    class Reject {
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 200 when reject successfully")
+        void shouldReturn200WhenRejectSuccessfully(){
+            Donation donation = donationRegisterService.registerByDonorId(elegibleDonor.getId(), appointment.getId());
+
+            ImmunohematologyExam immunoExam = new ImmunohematologyExam(donation);
+            immunoExam.setStatus(ExamStatus.APPROVED);
+            examRepository.save(immunoExam);
+
+            SerologicalScreeningExam seroExam = new SerologicalScreeningExam(donation);
+            seroExam.setStatus(ExamStatus.REJECTED);
+            examRepository.save(seroExam);
+
+            given()
+                    .header("Authorization", "Bearer " + token)
+                    .pathParam("id", donation.getId())
+                    .when()
+                    .put("/api/v1/donation/reject/{id}")
+                    .then()
+                    .statusCode(200)
+                    .body("status", equalTo(DonationStatus.REJECTED.toString()));
+
+            donationRepository.deleteById(donation.getId());
+            examRepository.deleteById(immunoExam.getId());
+            examRepository.deleteById(seroExam.getId());
+        }
+    }
 }
