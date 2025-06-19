@@ -19,6 +19,7 @@ public class RegisterPageObject extends BasePageObject{
     private final WebElement registerButton = driver.findElement(By.id("register-button"));
     private final WebElement registerTitle = driver.findElement(By.id("register-title"));
     private final WebElement loginButton = driver.findElement(By.id("login-link"));
+    private final WebElement eyeButton = driver.findElement(By.cssSelector("button[aria-label='toggle password visibility']"));
 
     public RegisterPageObject(WebDriver driver) { super(driver); }
 
@@ -43,5 +44,9 @@ public class RegisterPageObject extends BasePageObject{
 
     public void backToLogin(){
         loginButton.click();
+    }
+
+    public void togglePasswordVisibility(){
+        eyeButton.click();
     }
 }
