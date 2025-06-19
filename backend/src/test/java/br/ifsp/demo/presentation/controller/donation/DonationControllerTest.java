@@ -585,5 +585,15 @@ class DonationControllerTest extends BaseApiIntegrationTest {
             examRepository.deleteById(seroExam.getId());
         }
 
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 401 when authentication fails")
+        void shouldReturn401WhenAuthenticationFails(){
+            given()
+                    .pathParam("id", UUID.randomUUID())
+                    .when().put("/api/v1/donation/reject/{id}")
+                    .then().statusCode(401);
+        }
     }
 }
