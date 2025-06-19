@@ -478,7 +478,7 @@ class DonationControllerTest extends BaseApiIntegrationTest {
     }
 
     @Nested
-    @DisplayName("approve method")
+    @DisplayName("reject method")
     class Reject {
 
         @Test
@@ -610,5 +610,27 @@ class DonationControllerTest extends BaseApiIntegrationTest {
                     .statusCode(404);
         }
 
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 404 when exam does not exist")
+        void shouldReturn404WhenExamDoesNotExist(){
+            Donation donation = donationRegisterService.registerByDonorId(elegibleDonor.getId(), appointment.getId());
+
+            SerologicalScreeningExam seroExam = new SerologicalScreeningExam(donation);
+            seroExam.setStatus(ExamStatus.APPROVED);
+            examRepository.save(seroExam);
+
+            given()
+                    .header("Authorization", "Bearer " + token)
+                    .pathParam("id", donation.getId())
+                    .when()
+                    .put("/api/v1/donation/reject/{id}")
+                    .then()
+                    .statusCode(404);
+
+            donationRepository.deleteById(donation.getId());
+            examRepository.deleteById(seroExam.getId());
+        }
     }
 }
