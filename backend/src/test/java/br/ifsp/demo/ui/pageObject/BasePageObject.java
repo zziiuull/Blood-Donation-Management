@@ -1,4 +1,4 @@
-package br.ifsp.demo.ui;
+package br.ifsp.demo.ui.pageObject;
 
 import org.openqa.selenium.WebDriver;
 
@@ -11,5 +11,9 @@ public class BasePageObject {
 
     public String pageTitle() {
         return driver.getTitle();
+    }
+
+    public String pageUrl() {
+        return driver.getCurrentUrl();
     }
 }

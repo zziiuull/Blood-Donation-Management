@@ -1,4 +1,4 @@
-package br.ifsp.demo.ui;
+package br.ifsp.demo.ui.pageTest;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -7,7 +7,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 
 
 public class BaseSeleniumTest {
-    private WebDriver driver;
+    protected WebDriver driver;
 
     @BeforeEach
     public void setUp() {
