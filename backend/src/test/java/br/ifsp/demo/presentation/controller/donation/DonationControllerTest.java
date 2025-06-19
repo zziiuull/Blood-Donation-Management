@@ -509,5 +509,25 @@ class DonationControllerTest extends BaseApiIntegrationTest {
             examRepository.deleteById(immunoExam.getId());
             examRepository.deleteById(seroExam.getId());
         }
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 400 when donation already analyzed")
+        void shouldReturn400WhenDonationAlreadyAnalyzed(){
+            Donation donation = new Donation(elegibleDonor, appointment, DonationStatus.REJECTED);
+            donationRepository.save(donation);
+
+            given()
+                    .header("Authorization", "Bearer " + token)
+                    .pathParam("id", donation.getId())
+                    .when()
+                    .put("/api/v1/donation/reject/{id}")
+                    .then()
+                    .statusCode(400);
+
+            donationRepository.deleteById(donation.getId());
+        }
+
     }
 }
