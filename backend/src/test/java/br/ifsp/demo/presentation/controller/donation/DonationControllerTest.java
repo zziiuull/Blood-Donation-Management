@@ -557,6 +557,33 @@ class DonationControllerTest extends BaseApiIntegrationTest {
             examRepository.deleteById(seroExam.getId());
         }
 
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 400 when exam does not have correct status for this donation analysis")
+        void shouldReturn400WhenExamDoesNotHaveCorrectStatusForThisDonationAnalysis(){
+            Donation donation = donationRegisterService.registerByDonorId(elegibleDonor.getId(), appointment.getId());
+
+            ImmunohematologyExam immunoExam = new ImmunohematologyExam(donation);
+            immunoExam.setStatus(ExamStatus.APPROVED);
+            examRepository.save(immunoExam);
+
+            SerologicalScreeningExam seroExam = new SerologicalScreeningExam(donation);
+            seroExam.setStatus(ExamStatus.APPROVED);
+            examRepository.save(seroExam);
+
+            given()
+                    .header("Authorization", "Bearer " + token)
+                    .pathParam("id", donation.getId())
+                    .when()
+                    .put("/api/v1/donation/reject/{id}")
+                    .then()
+                    .statusCode(400);
+
+            donationRepository.deleteById(donation.getId());
+            examRepository.deleteById(immunoExam.getId());
+            examRepository.deleteById(seroExam.getId());
+        }
 
     }
 }
