@@ -27,6 +27,7 @@ import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class DonationControllerTest extends BaseApiIntegrationTest {
 
@@ -369,6 +370,34 @@ class DonationControllerTest extends BaseApiIntegrationTest {
                     .statusCode(400);
 
             donationRepository.deleteById(donation.getId());
+        }
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 400 when cannot finish donation with exam under analysis")
+        void shouldReturn400WhenCannotFinishDonationWithExamUnderAnalysis(){
+            Donation donation = donationRegisterService.registerByDonorId(elegibleDonor.getId(), appointment.getId());
+
+            ImmunohematologyExam immunoExam = new ImmunohematologyExam(donation);
+            immunoExam.setStatus(ExamStatus.APPROVED);
+            examRepository.save(immunoExam);
+
+            SerologicalScreeningExam seroExam = new SerologicalScreeningExam(donation);
+            seroExam.setStatus(ExamStatus.UNDER_ANALYSIS);
+            examRepository.save(seroExam);
+
+            given()
+                    .header("Authorization", "Bearer " + token)
+                    .pathParam("id", donation.getId())
+                    .when()
+                    .put("/api/v1/donation/approve/{id}")
+                    .then()
+                    .statusCode(400);
+
+            donationRepository.deleteById(donation.getId());
+            examRepository.deleteById(immunoExam.getId());
+            examRepository.deleteById(seroExam.getId());
         }
     }
 }
