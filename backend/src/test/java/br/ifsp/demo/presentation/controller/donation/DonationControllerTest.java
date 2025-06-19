@@ -595,5 +595,20 @@ class DonationControllerTest extends BaseApiIntegrationTest {
                     .when().put("/api/v1/donation/reject/{id}")
                     .then().statusCode(401);
         }
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 404 when donation does not exist")
+        void shouldReturn404WhenDonationDoesNotExist(){
+            given()
+                    .header("Authorization", "Bearer " + token)
+                    .pathParam("id", UUID.randomUUID())
+                    .when()
+                    .put("/api/v1/donation/reject/{id}")
+                    .then()
+                    .statusCode(404);
+        }
+
     }
 }
