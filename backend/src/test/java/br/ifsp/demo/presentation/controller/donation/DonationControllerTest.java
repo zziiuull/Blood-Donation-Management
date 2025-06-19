@@ -7,11 +7,15 @@ import br.ifsp.demo.domain.model.common.Cpf;
 import br.ifsp.demo.domain.model.donation.*;
 import br.ifsp.demo.domain.model.donor.Donor;
 import br.ifsp.demo.domain.model.donor.Sex;
+import br.ifsp.demo.domain.model.exam.ExamStatus;
+import br.ifsp.demo.domain.model.exam.ImmunohematologyExam;
+import br.ifsp.demo.domain.model.exam.SerologicalScreeningExam;
 import br.ifsp.demo.domain.model.physician.Physician;
 import br.ifsp.demo.infrastructure.repository.appointment.AppointmentRepository;
 import br.ifsp.demo.infrastructure.repository.collectionSite.CollectionSiteRepository;
 import br.ifsp.demo.infrastructure.repository.donation.DonationRepository;
 import br.ifsp.demo.infrastructure.repository.donor.DonorRepository;
+import br.ifsp.demo.infrastructure.repository.exam.ExamRepository;
 import br.ifsp.demo.presentation.BaseApiIntegrationTest;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.*;
@@ -36,6 +40,8 @@ class DonationControllerTest extends BaseApiIntegrationTest {
     private DonationRegisterService donationRegisterService;
     @Autowired
     private DonationRepository donationRepository;
+    @Autowired
+    private ExamRepository examRepository;
 
     private Faker faker = Faker.instance();
     private Physician user;
@@ -109,7 +115,7 @@ class DonationControllerTest extends BaseApiIntegrationTest {
 
     @Nested
     @DisplayName("Register method")
-    class register {
+    class Register {
 
         @Test
         @Tag("ApiTest")
@@ -221,7 +227,7 @@ class DonationControllerTest extends BaseApiIntegrationTest {
 
     @Nested
     @DisplayName("View method")
-    class view {
+    class View {
 
         @Test
         @Tag("ApiTest")
@@ -276,7 +282,7 @@ class DonationControllerTest extends BaseApiIntegrationTest {
 
     @Nested
     @DisplayName("View all method")
-    class viewAll {
+    class ViewAll {
 
         @Test
         @Tag("ApiTest")
@@ -310,6 +316,36 @@ class DonationControllerTest extends BaseApiIntegrationTest {
             given()
                     .when().get("/api/v1/donation")
                     .then().statusCode(401);
+        }
+    }
+
+    @Nested
+    @DisplayName("approve method")
+    class Approve {
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 200 when approve successfully")
+        void shouldReturn200WhenApproveSuccessfully(){
+            Donation donation = donationRegisterService.registerByDonorId(elegibleDonor.getId(), appointment.getId());
+
+            ImmunohematologyExam immunoExam = new ImmunohematologyExam(donation);
+            immunoExam.setStatus(ExamStatus.APPROVED);
+            examRepository.save(immunoExam);
+
+            SerologicalScreeningExam seroExam = new SerologicalScreeningExam(donation);
+            seroExam.setStatus(ExamStatus.APPROVED);
+            examRepository.save(seroExam);
+
+            given()
+                    .header("Authorization", "Bearer " + token)
+                    .pathParam("id", donation.getId())
+            .when()
+                    .put("/api/v1/donation/approve/{id}")
+            .then()
+                    .statusCode(200)
+                    .body("status", equalTo(DonationStatus.APPROVED.toString()));
         }
     }
 }
