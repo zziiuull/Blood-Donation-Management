@@ -1,5 +1,7 @@
 package br.ifsp.demo.ui.pageTest;
 
+import br.ifsp.demo.presentation.security.user.JpaUserRepository;
+import br.ifsp.demo.presentation.security.user.User;
 import br.ifsp.demo.ui.pageObject.RegisterPageObject;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.*;
@@ -10,9 +12,11 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.Duration;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -22,6 +26,9 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class RegisterPageTest extends BaseSeleniumTest{
     private RegisterPageObject registerPageObject;
     private Faker faker = Faker.instance();
+
+    @Autowired
+    JpaUserRepository userRepository;
 
     @BeforeEach
     void setUpRegisterPage(){
@@ -38,6 +45,7 @@ public class RegisterPageTest extends BaseSeleniumTest{
     @Tag("UiTest")
     @DisplayName("Should register and back to login page")
     void shouldRegisterAndBackToLoginPage(){
+        String email = faker.internet().emailAddress();
         registerPageObject.register(
                 faker.name().firstName(),
                 faker.name().lastName(),
@@ -46,7 +54,7 @@ public class RegisterPageTest extends BaseSeleniumTest{
                 faker.address().fullAddress(),
                 "12345",
                 "São Paulo",
-                faker.internet().emailAddress(),
+                email,
                 faker.internet().password()
         );
 
@@ -54,6 +62,9 @@ public class RegisterPageTest extends BaseSeleniumTest{
         wait.until(ExpectedConditions.urlContains("/login"));
 
         assertThat(driver.getCurrentUrl()).contains("/login");
+
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        optionalUser.ifPresent(user -> userRepository.delete(user));
     }
 
     private static Stream<Arguments> provideRequiredFields() {
