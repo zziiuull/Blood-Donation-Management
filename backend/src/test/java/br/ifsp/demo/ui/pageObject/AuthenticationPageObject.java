@@ -43,4 +43,15 @@ public class AuthenticationPageObject extends BasePageObject {
             .until(ExpectedConditions.urlContains("/register"));
         return new RegisterPageObject(driver);
     }
+
+    public String pageErrorMessage() {
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+            WebElement errorContainer = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                    By.cssSelector(".text-sm.me-4.font-medium.text-danger-600")));
+            return errorContainer.getText();
+        } catch (TimeoutException e) {
+            return "";
+        }
+    }
 }
