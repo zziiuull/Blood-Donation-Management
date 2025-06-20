@@ -44,7 +44,7 @@ public class RegisterPageObject extends BasePageObject {
         driver.findElement(registerButton).click();
     }
 
-    private void selectState(String stateText) {
+    public void selectState(String stateText) {
         driver.findElement(stateSelectButton).click();
 
         By stateOption = By.xpath(String.format("//li[@role='option'][normalize-space()='%s']", stateText));
@@ -54,6 +54,62 @@ public class RegisterPageObject extends BasePageObject {
 
         Actions actions = new Actions(driver);
         actions.moveToElement(optionToClick).click().perform();
+    }
+
+    public void fillName(String name) {
+        driver.findElement(nameInput).sendKeys(name);
+    }
+
+    public void fillLastName(String lastName) {
+        driver.findElement(lastnameInput).sendKeys(lastName);
+    }
+
+    public void fillCpf(String cpf) {
+        driver.findElement(cpfInput).sendKeys(cpf);
+    }
+
+    public void fillPhone(String phone) {
+        driver.findElement(phoneInput).sendKeys(phone);
+    }
+
+    public void fillAddress(String address) {
+        driver.findElement(addressInput).sendKeys(address);
+    }
+
+    public void fillCrm(String crm) {
+        driver.findElement(crmInput).sendKeys(crm);
+    }
+
+    public void fillEmail(String email) {
+        driver.findElement(emailInput).sendKeys(email);
+    }
+
+    public void fillPassword(String password) {
+        driver.findElement(passwordInput).sendKeys(password);
+    }
+
+    public void clickRegisterButton(){
+        driver.findElement(registerButton).click();
+    }
+
+    public String getErrorMessageFor(String inputId) {
+        String errorMsgXpath = String.format(
+                "//input[@id='%s']/ancestor::div[contains(@class, 'relative')]/following-sibling::div//div[contains(@class, 'text-danger')]",
+                inputId
+        );
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(errorMsgXpath))).getText();
+    }
+
+    public String getStateSelectionErrorMessage() {
+        By stateErrorLocator = By.xpath("//*[contains(text(), 'Selecione um item da lista.')]");
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+
+        WebElement errorMessageElement = wait.until(ExpectedConditions.visibilityOfElementLocated(stateErrorLocator));
+
+        return errorMessageElement.getText();
     }
 
     public void backToLogin() {
