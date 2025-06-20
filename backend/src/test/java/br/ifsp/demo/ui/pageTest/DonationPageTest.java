@@ -17,6 +17,7 @@ import java.time.Duration;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -82,8 +83,19 @@ public class DonationPageTest extends BaseSeleniumTest {
         @DisplayName("Should navigate to donation page when user login")
         void shouldNavigateToDonationPageWhenUserLogin(){
             donationPage = authPage.authenticateWithCredentials(email, password);
-            new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.urlContains("/donation"));
             assertThat(donationPage.pageUrl()).contains("/donation");
+        }
+    }
+
+    @Nested
+    class MenuButtons {
+        @Test
+        @Tag("UiTest")
+        @DisplayName("Should logout when click on logout button")
+        void shouldLogoutWhenClickOnLogoutButton(){
+            donationPage = authPage.authenticateWithCredentials(email, password);
+            AuthenticationPageObject authenticationPageObject = donationPage.logout();
+            assertThat(authenticationPageObject.pageUrl()).contains("/login");
         }
     }
 }

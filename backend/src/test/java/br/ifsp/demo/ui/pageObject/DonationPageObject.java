@@ -1,10 +1,25 @@
 package br.ifsp.demo.ui.pageObject;
 
+import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
+
+@Slf4j
 public class DonationPageObject extends BasePageObject {
     public DonationPageObject(WebDriver driver) {
         super(driver);
         if (!currentUrl().contains("/donation")) throw new IllegalStateException("Wrong page url: " + driver.getCurrentUrl());
+    }
+
+    public AuthenticationPageObject logout() {
+        WebElement logoutButton = driver.findElement(By.id("logout-desktop-button"));
+        logoutButton.click();
+        new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.urlContains("/login"));
+        return new AuthenticationPageObject(driver);
     }
 }
