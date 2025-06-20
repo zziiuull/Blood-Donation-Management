@@ -77,4 +77,12 @@ class AuthenticationPageObjectTest extends BaseSeleniumTest {
                 .until(ExpectedConditions.urlContains("/donation"));
         assertThat(donationPage.currentUrl()).contains("/donation");
     }
+
+    @Test
+    @Tag("UiTest")
+    @DisplayName("Should get wrong user or password error message")
+    void shouldGetWrongUserOrPasswordErrorMessage() {
+        authPage.authenticateWithRandomCredentials();
+        assertThat(authPage.pageErrorMessage()).isEqualTo("Invalid email and/or password");
+    }
 }
