@@ -18,7 +18,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class AuthenticationPageObjectTest extends BaseSeleniumTest {
+class AuthenticationPageTest extends BaseSeleniumTest {
 
     private static final Faker faker = new Faker();
     private String email;
