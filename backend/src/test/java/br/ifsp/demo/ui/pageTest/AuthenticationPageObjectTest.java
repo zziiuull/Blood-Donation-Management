@@ -6,7 +6,6 @@ import br.ifsp.demo.presentation.security.user.JpaUserRepository;
 import br.ifsp.demo.ui.pageObject.AuthenticationPageObject;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.*;
-import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,5 +91,16 @@ class AuthenticationPageObjectTest extends BaseSeleniumTest {
     void shouldWarningTheRequiredFieldsWhenTryAuthenticateWithEmptyFields(){
         String message = authPage.authenticateWithEmptyCredentials();
         assertThat(message).isNotEmpty();
+    }
+
+    @Test
+    @Tag("UiTest")
+    @DisplayName("Should toggle password visibility on and off when clicking twice")
+    public void shouldTogglePasswordVisibilityOnAndOffWhenClickingTwice() {
+        authPage = new AuthenticationPageObject(driver);
+        boolean toggleWorks = authPage.toggleDoublePasswordVisibility();
+        assertThat(toggleWorks)
+                .withFailMessage("Expected password visibility to toggle ON (type='text') and then OFF (type='password') after clicking the toggle button twice, but it did not.")
+                .isTrue();
     }
 }
