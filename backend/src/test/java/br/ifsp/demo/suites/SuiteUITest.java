@@ -6,7 +6,7 @@ import org.junit.platform.suite.api.Suite;
 import org.junit.platform.suite.api.SuiteDisplayName;
 
 @Suite
-@SelectPackages({"br.ifsp.demo.presentation"})
+@SelectPackages({"br.ifsp.demo.ui"})
 @SuiteDisplayName("All UI tests")
 @IncludeTags({"UiTest"})
 public class SuiteUITest {
