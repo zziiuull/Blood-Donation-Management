@@ -67,4 +67,14 @@ class AuthenticationPageObjectTest extends BaseSeleniumTest {
         var registrationPage = authPage.navigateToRegistrationPage();
         assertThat(registrationPage.currentUrl()).contains("/register");
     }
+
+    @Test
+    @Tag("UiTest")
+    @DisplayName("Should navigate to donation page after authenticate")
+    void shouldNavigateToDonationPageAfterAuthenticate() {
+        var donationPage = authPage.authenticateWithCredentials(email, password);
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.urlContains("/donation"));
+        assertThat(donationPage.currentUrl()).contains("/donation");
+    }
 }
