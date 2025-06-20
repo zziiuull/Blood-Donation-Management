@@ -23,11 +23,8 @@ public class DonationPageTest extends BaseSeleniumTest {
     @Tag("UiTest")
     @DisplayName("Should navigate to login if user is not logged in")
     void shouldNavigateToLoginIfUserIsNotLoggedIn() {
-        DonationPageObject donationPageObject = new DonationPageObject(driver);
-
         new WebDriverWait(driver, Duration.ofSeconds(5))
                 .until(ExpectedConditions.urlContains("/login"));
-
-        assertThat(donationPageObject.pageUrl()).contains("/login");
+        assertThat(driver.getCurrentUrl()).contains("/login");
     }
 }
