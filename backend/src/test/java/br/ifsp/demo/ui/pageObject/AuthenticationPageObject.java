@@ -36,4 +36,11 @@ public class AuthenticationPageObject extends BasePageObject {
             .until(ExpectedConditions.visibilityOfElementLocated(
             By.cssSelector(".text-sm.me-4.font-medium.text-danger-600")));
     }
+
+    public RegisterPageObject navigateToRegistrationPage(){
+        driver.findElement(By.linkText("Register account")).click();
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+            .until(ExpectedConditions.urlContains("/register"));
+        return new RegisterPageObject(driver);
+    }
 }
