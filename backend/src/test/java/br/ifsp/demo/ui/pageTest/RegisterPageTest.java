@@ -8,7 +8,9 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -126,5 +128,54 @@ public class RegisterPageTest extends BaseSeleniumTest{
         wait.until(ExpectedConditions.urlContains("/login"));
 
         assertThat(driver.getCurrentUrl()).contains("/login");
+    }
+
+    @Tag("UiTest")
+    @ParameterizedTest(name = "Test invalid data for field: {0}")
+    @CsvSource({
+            "'name-input',   '12345', 'Nome inválido'",
+            "'lastname-input',   '12345', 'Último nome inválido'",
+            "'cpf-input',   'test', 'CPF inválido'",
+            "'cpf-input',   '1', 'CPF inválido'",
+            "'phone-input',   'test', 'Phone inválido'",
+            "'address-input',   '1', 'Address inválido'",
+            "'crm-input',   'test', 'CRM inválido'",
+            "'crm-input',   '1', 'CRM inválido'",
+            "'email-input',   'email', 'Inclua um \"@\" no endereço de e-mail.'",
+            "'email-input',   'email@', 'Insira uma parte depois de @.'",
+            "'password-input',     'a',          'Senha inválida'"
+    })
+    @DisplayName("Should display error message when a field is filled with invalid data")
+    void shouldDisplayErrorMessageWhenAFieldIsFilledWithInvalidData(String inputId, String invalidData, String expectedMessage){
+        String validFirstName = faker.name().firstName();
+        String validLastName = faker.name().lastName();
+        String validCpf = "12345678910";
+        String validPhone = faker.phoneNumber().cellPhone();
+        String validAddress = faker.address().fullAddress();
+        String validCrm = "123456";
+        String validState = "São Paulo";
+        String validEmail = faker.internet().emailAddress();
+        String validPassword = faker.internet().password();
+
+        if (!inputId.equals("name-input")) registerPageObject.fillName(validFirstName);
+        if (!inputId.equals("lastname-input")) registerPageObject.fillLastName(validLastName);
+        if (!inputId.equals("cpf-input")) registerPageObject.fillCpf(validCpf);
+        if (!inputId.equals("phone-input")) registerPageObject.fillPhone(validPhone);
+        if (!inputId.equals("address-input")) registerPageObject.fillAddress(validAddress);
+        if (!inputId.equals("crm-input")) registerPageObject.fillCrm(validCrm);
+        if (!inputId.equals("email-input")) registerPageObject.fillEmail(validEmail);
+        if (!inputId.equals("password-input")) registerPageObject.fillPassword(validPassword);
+
+        registerPageObject.selectState(validState);
+
+        By input = By.id(inputId);
+
+        driver.findElement(input).sendKeys(invalidData);
+
+        registerPageObject.clickRegisterButton();
+
+        String errorMessage = registerPageObject.getErrorMessageFor(inputId);
+        assertThat(errorMessage).isNotBlank();
+        assertThat(errorMessage).contains(expectedMessage);
     }
 }
