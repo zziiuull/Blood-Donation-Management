@@ -8,9 +8,14 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.util.List;
 
 @Slf4j
 public class DonationPageObject extends BasePageObject {
+
+    private final By registerTabButton = By.id("register-tab");
+    private final By registerDonationStepOneText = By.xpath("//h3[contains(text(), 'Select a donor')]");
+
     public DonationPageObject(WebDriver driver) {
         super(driver);
         if (!currentUrl().contains("/donation")) throw new IllegalStateException("Wrong page url: " + driver.getCurrentUrl());
@@ -28,5 +33,15 @@ public class DonationPageObject extends BasePageObject {
         button.click();
         new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.urlContains("/donation"));
         return new DonationPageObject(driver);
+    }
+
+    public void clickOnRegisterTabButton() {
+        driver.findElement(registerTabButton).click();
+    }
+
+    public boolean isRegisterDonationStepOneTextVisible() {
+        List<WebElement> elements = driver.findElements(registerDonationStepOneText);
+
+        return !elements.isEmpty();
     }
 }
