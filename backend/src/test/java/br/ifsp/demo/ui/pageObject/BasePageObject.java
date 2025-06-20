@@ -13,6 +13,10 @@ public class BasePageObject {
         return driver.getTitle();
     }
 
+    public String currentUrl() {
+        return driver.getCurrentUrl();
+    }
+
     public String pageUrl() {
         return driver.getCurrentUrl();
     }
