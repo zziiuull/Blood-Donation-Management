@@ -97,5 +97,14 @@ public class DonationPageTest extends BaseSeleniumTest {
             AuthenticationPageObject authenticationPageObject = donationPage.logout();
             assertThat(authenticationPageObject.pageUrl()).contains("/login");
         }
+        
+        @Test
+        @Tag("UiTest")
+        @DisplayName("Should stay on donation page when click on BDM button")
+        void shouldStayOnDonationPageWhenClickOnBdmButton(){
+            donationPage = authPage.authenticateWithCredentials(email, password);
+            DonationPageObject donationPageObject = donationPage.clickOnBDMButton();
+            assertThat(donationPageObject.pageUrl()).contains("/donation");
+        }
     }
 }

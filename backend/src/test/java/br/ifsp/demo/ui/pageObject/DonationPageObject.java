@@ -22,4 +22,11 @@ public class DonationPageObject extends BasePageObject {
         new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.urlContains("/login"));
         return new AuthenticationPageObject(driver);
     }
+
+    public DonationPageObject clickOnBDMButton() {
+        WebElement button = driver.findElement(By.xpath("//*[@id=\"navbar-link-home\"]/p"));
+        button.click();
+        new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.urlContains("/donation"));
+        return new DonationPageObject(driver);
+    }
 }
