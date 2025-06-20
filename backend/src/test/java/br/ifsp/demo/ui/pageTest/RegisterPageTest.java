@@ -8,10 +8,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -51,7 +48,7 @@ public class RegisterPageTest extends BaseSeleniumTest{
                 faker.internet().password()
         );
 
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         wait.until(ExpectedConditions.urlContains("/login"));
 
         assertThat(driver.getCurrentUrl()).contains("/login");
@@ -117,5 +114,17 @@ public class RegisterPageTest extends BaseSeleniumTest{
         registerPageObject.clickRegisterButton();
 
         assertThat(registerPageObject.getStateSelectionErrorMessage()).isEqualTo("Selecione um item da lista.");
+    }
+    
+    @Test
+    @Tag("UiTest")
+    @DisplayName("Should back to login page when click on login button")
+    void shouldBackToLoginPageWhenClickOnLoginButton(){
+        registerPageObject.backToLogin();
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        wait.until(ExpectedConditions.urlContains("/login"));
+
+        assertThat(driver.getCurrentUrl()).contains("/login");
     }
 }
