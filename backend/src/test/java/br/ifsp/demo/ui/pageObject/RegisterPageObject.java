@@ -3,50 +3,64 @@ package br.ifsp.demo.ui.pageObject;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class RegisterPageObject extends BasePageObject{
-    private static final String PAGE_TITLE = "Register";
-    private final WebElement nameInput = driver.findElement(By.id("name-input"));
-    private final WebElement lastNameInput = driver.findElement(By.id("lastname-input"));
-    private final WebElement cpfInput = driver.findElement(By.id("cpf-input"));
-    private final WebElement phoneInput = driver.findElement(By.id("phone-input"));
-    private final WebElement addressInput = driver.findElement(By.id("address-input"));
-    private final WebElement crmInput = driver.findElement(By.id("crm-input"));
-    private final WebElement emailInput = driver.findElement(By.id("email-input"));
-    private final WebElement passwordInput = driver.findElement(By.id("password-input"));
-    private final Select stateSelect = new Select(driver.findElement(By.id("react-aria2658155816-«r1f»")));
-    private final WebElement registerButton = driver.findElement(By.id("register-button"));
-    private final WebElement registerTitle = driver.findElement(By.id("register-title"));
-    private final WebElement loginButton = driver.findElement(By.id("login-link"));
-    private final WebElement eyeButton = driver.findElement(By.cssSelector("button[aria-label='toggle password visibility']"));
+import java.time.Duration;
 
-    public RegisterPageObject(WebDriver driver) { super(driver); }
+public class RegisterPageObject extends BasePageObject {
 
-    public void register(String name, String lastName, String CPF, String phone,
-                         String address, String crm, int state, String email, String password) {
-        nameInput.sendKeys(name);
-        lastNameInput.sendKeys(lastName);
-        cpfInput.sendKeys(CPF);
-        phoneInput.sendKeys(phone);
-        addressInput.sendKeys(address);
-        crmInput.sendKeys(crm);
-        stateSelect.selectByIndex(state);
-        emailInput.sendKeys(email);
-        passwordInput.sendKeys(password);
+    private final By nameInput = By.id("name-input");
+    private final By lastnameInput = By.id("lastname-input");
+    private final By cpfInput = By.id("cpf-input");
+    private final By phoneInput = By.id("phone-input");
+    private final By addressInput = By.id("address-input");
+    private final By crmInput = By.id("crm-input");
+    private final By stateSelectButton = By.id("state-select");
+    private final By emailInput = By.id("email-input");
+    private final By passwordInput = By.id("password-input");
+    private final By registerButton = By.id("register-button");
+    private final By loginLink = By.id("login-link");
+    private final By eyeButton = By.cssSelector("button[aria-label='toggle password visibility']");
 
-        registerButton.click();
+
+    public RegisterPageObject(WebDriver driver) {
+        super(driver);
     }
 
-    public String getPageTitle(){
-        return registerTitle.getText();
+    public void register(String name, String lastName, String cpf, String phone,
+                         String address, String crm, String state, String email, String password) {
+
+        driver.findElement(nameInput).sendKeys(name);
+        driver.findElement(lastnameInput).sendKeys(lastName);
+        driver.findElement(cpfInput).sendKeys(cpf);
+        driver.findElement(phoneInput).sendKeys(phone);
+        driver.findElement(addressInput).sendKeys(address);
+        driver.findElement(crmInput).sendKeys(crm);
+        selectState(state);
+        driver.findElement(emailInput).sendKeys(email);
+        driver.findElement(passwordInput).sendKeys(password);
+        driver.findElement(registerButton).click();
     }
 
-    public void backToLogin(){
-        loginButton.click();
+    private void selectState(String stateText) {
+        driver.findElement(stateSelectButton).click();
+
+        By stateOption = By.xpath(String.format("//li[@role='option'][normalize-space()='%s']", stateText));
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebElement optionToClick = wait.until(ExpectedConditions.visibilityOfElementLocated(stateOption));
+
+        Actions actions = new Actions(driver);
+        actions.moveToElement(optionToClick).click().perform();
     }
 
-    public void togglePasswordVisibility(){
-        eyeButton.click();
+    public void backToLogin() {
+        driver.findElement(loginLink).click();
+    }
+
+    public void togglePasswordVisibility() {
+        driver.findElement(eyeButton).click();
     }
 }
