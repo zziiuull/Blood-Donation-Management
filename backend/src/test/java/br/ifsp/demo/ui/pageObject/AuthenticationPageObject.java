@@ -37,6 +37,18 @@ public class AuthenticationPageObject extends BasePageObject {
             By.cssSelector(".text-sm.me-4.font-medium.text-danger-600")));
     }
 
+    public String authenticateWithEmptyCredentials() {
+        driver.findElement(By.xpath("//button[contains(text(), 'Login')]")).click();
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+            WebElement errorContainer = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                    By.cssSelector("[data-slot='error-message']")));
+            return errorContainer.getText();
+        } catch (TimeoutException e) {
+            return "";
+        }
+    }
+
     public RegisterPageObject navigateToRegistrationPage(){
         driver.findElement(By.linkText("Register account")).click();
         new WebDriverWait(driver, Duration.ofSeconds(5))
