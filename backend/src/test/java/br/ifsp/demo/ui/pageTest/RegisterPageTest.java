@@ -153,7 +153,7 @@ public class RegisterPageTest extends BaseSeleniumTest{
             "'crm-input',   'test', 'CRM inválido'",
             "'crm-input',   '1', 'CRM inválido'",
             "'email-input',   'email', 'Inclua um \"@\" no endereço de e-mail.'",
-            "'email-input',   'email@', 'Insira uma parte depois de @.'",
+            "'email-input',   'email@', 'Insira uma parte depois de \"@\".'",
             "'password-input',     'a',          'Senha inválida'"
     })
     @DisplayName("Should display error message when a field is filled with invalid data")
