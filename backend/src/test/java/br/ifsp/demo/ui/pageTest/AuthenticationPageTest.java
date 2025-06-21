@@ -15,13 +15,12 @@ import java.time.Duration;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class AuthenticationPageTest extends BaseSeleniumTest {
 
-    private static final Faker faker = new Faker();
+    private static final Faker faker = Faker.instance();
     private String email;
     private String password;
     private UUID userId;
