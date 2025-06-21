@@ -47,6 +47,10 @@ public class DonationPageObject extends BasePageObject {
         return !elements.isEmpty();
     }
 
+    public void clickOnUpdateTabButton() {
+        driver.findElement(updateTabButton).click();
+    }
+
     public boolean isupdateDonationSelectButtonVisible() {
         List<WebElement> elements = driver.findElements(updateDonationSelectButton);
 
