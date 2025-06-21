@@ -186,4 +186,22 @@ public class DonationPageObject extends BasePageObject {
 
         return new UpdateSeroExamPageObject(driver);
     }
+
+    public String donationRequestMessage() {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        return wait.until(ExpectedConditions.visibilityOf(driver
+            .findElement(By.xpath("//*[text()='Donation requested']")))).getText();
+    }
+
+    public String immunohematologyExamRequestMessage() {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        return wait.until(ExpectedConditions.visibilityOf(driver
+                .findElement(By.xpath("//*[text()='Immunohematology exam requested']")))).getText();
+    }
+
+    public String serologicalExamRequestMessage() {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        return wait.until(ExpectedConditions.visibilityOf(driver
+                .findElement(By.xpath("//*[text()='Serological screening exam requested']")))).getText();
+    }
 }

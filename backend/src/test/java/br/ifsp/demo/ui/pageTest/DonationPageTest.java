@@ -6,6 +6,7 @@ import br.ifsp.demo.presentation.security.user.JpaUserRepository;
 import br.ifsp.demo.ui.pageObject.AuthenticationPageObject;
 import br.ifsp.demo.ui.pageObject.DonationPageObject;
 import com.github.javafaker.Faker;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -127,6 +128,10 @@ public class DonationPageTest extends BaseSeleniumTest {
         void shouldRegisterADonationWithImmunohematologyExam(){
             donationPage = authPage.authenticateWithCredentials(email, password);
             donationPage.registerDonationWithImmunohematologyExam("Weverton");
+            SoftAssertions softly = new SoftAssertions();
+            softly.assertThat(donationPage.donationRequestMessage()).isEqualTo("Donation requested");
+            softly.assertThat(donationPage.immunohematologyExamRequestMessage()).isEqualTo("Immunohematology exam requested");
+            softly.assertAll();
         }
 
         @Test
@@ -135,6 +140,10 @@ public class DonationPageTest extends BaseSeleniumTest {
         void shouldRegisterADonationWithSerologicalExam(){
             donationPage = authPage.authenticateWithCredentials(email, password);
             donationPage.registerDonationWithSerologicalExam("Weverton");
+            SoftAssertions softly = new SoftAssertions();
+            softly.assertThat(donationPage.donationRequestMessage()).isEqualTo("Donation requested");
+            softly.assertThat(donationPage.serologicalExamRequestMessage()).isEqualTo("Serological screening exam requested");
+            softly.assertAll();
         }
 
         @Test
@@ -143,6 +152,11 @@ public class DonationPageTest extends BaseSeleniumTest {
         void shouldRegisterADonationWithAllExams(){
             donationPage = authPage.authenticateWithCredentials(email, password);
             donationPage.registerDonationWithAllExams("Ana Beatriz");
+            SoftAssertions softly = new SoftAssertions();
+            softly.assertThat(donationPage.donationRequestMessage()).isEqualTo("Donation requested");
+            softly.assertThat(donationPage.immunohematologyExamRequestMessage()).isEqualTo("Immunohematology exam requested");
+            softly.assertThat(donationPage.serologicalExamRequestMessage()).isEqualTo("Serological screening exam requested");
+            softly.assertAll();
         }
     }
 
