@@ -2,6 +2,7 @@ package br.ifsp.demo.ui.pageTest;
 
 import br.ifsp.demo.presentation.security.user.JpaUserRepository;
 import br.ifsp.demo.presentation.security.user.User;
+import br.ifsp.demo.ui.pageObject.AuthenticationPageObject;
 import br.ifsp.demo.ui.pageObject.RegisterPageObject;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.*;
@@ -212,5 +213,15 @@ public class RegisterPageTest extends BaseSeleniumTest{
 
         Optional<User> optionalUser = userRepository.findByEmail(email);
         optionalUser.ifPresent(user -> userRepository.delete(user));
+    }
+
+    @Test
+    @Tag("UiTest")
+    @DisplayName("Should toggle password visibility on and off when clicking twice")
+    public void shouldTogglePasswordVisibilityOnAndOffWhenClickingTwice() {
+        boolean toggleWorks = registerPageObject.toggleDoublePasswordVisibility();
+        assertThat(toggleWorks)
+                .withFailMessage("Expected password visibility to toggle ON (type='text') and then OFF (type='password') after clicking the toggle button twice, but it did not.")
+                .isTrue();
     }
 }

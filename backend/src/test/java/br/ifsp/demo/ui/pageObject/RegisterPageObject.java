@@ -119,8 +119,26 @@ public class RegisterPageObject extends BasePageObject {
         driver.findElement(loginLink).click();
     }
 
-    public void togglePasswordVisibility() {
-        driver.findElement(eyeButton).click();
+    public boolean toggleDoublePasswordVisibility() {
+        WebElement passwordInput = driver.findElement(By.id("password-input"));
+        passwordInput.clear();
+
+        String password = faker.internet().password(8, 16);
+        passwordInput.sendKeys(password);
+
+        WebElement toggleButton = new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.elementToBeClickable(By.cssSelector("button[aria-label='toggle password visibility']")));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+
+        toggleButton.click();
+        boolean firstToggle = wait.until(d -> passwordInput.getAttribute("type").equals("text"));
+
+        toggleButton = new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.elementToBeClickable(By.cssSelector("button[aria-label='toggle password visibility']")));
+        toggleButton.click();
+        boolean secondToggle = wait.until(d -> passwordInput.getAttribute("type").equals("password"));
+
+        return firstToggle && secondToggle;
     }
 
     public String emailErrorMessage(String email) {
