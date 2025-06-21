@@ -2,6 +2,10 @@ package br.ifsp.demo.ui.pageObject;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
 
 public class UpdateImmunoExamPageObject extends BasePageObject{
 
@@ -16,5 +20,12 @@ public class UpdateImmunoExamPageObject extends BasePageObject{
         if (!currentUrl().contains("/exams")) throw new IllegalStateException("Wrong page url: " + driver.getCurrentUrl());
     }
 
+    public void selectBloodType(String bloodType) {
+        driver.findElement(bloodTypeSelect).click();
 
+        By optionLocator = By.xpath(String.format("//li[@role='option'][normalize-space()='%s']", bloodType));
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        wait.until(ExpectedConditions.elementToBeClickable(optionLocator)).click();
+    }
 }
