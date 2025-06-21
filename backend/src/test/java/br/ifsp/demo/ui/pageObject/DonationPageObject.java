@@ -16,9 +16,10 @@ public class DonationPageObject extends BasePageObject {
     private final By registerTabButton = By.id("register-tab");
     private final By registerDonationStepOneText = By.xpath("//h3[contains(text(), 'Select a donor')]");
     private final By updateTabButton = By.id("update-tab");
-    private final By updateDonationSelectButton = By.id("donation-autocomplete");
+    private final By donationAutocompleteSelectButton = By.id("donation-autocomplete");
     private final By viewTabButton = By.id("view-tab");
-    
+    private final By activeUpdateTabLocator = By.xpath("//button[@id='update-tab' and @aria-selected='true']");
+    private final By activeViewTabLocator = By.xpath("//button[@id='view-tab' and @aria-selected='true']");
 
     public DonationPageObject(WebDriver driver) {
         super(driver);
@@ -53,13 +54,21 @@ public class DonationPageObject extends BasePageObject {
         driver.findElement(updateTabButton).click();
     }
 
-    public boolean isUpdateDonationSelectButtonVisible() {
-        List<WebElement> elements = driver.findElements(updateDonationSelectButton);
+    public boolean isDonationAutocompleteSelectButtonVisible() {
+        List<WebElement> elements = driver.findElements(donationAutocompleteSelectButton);
 
         return !elements.isEmpty();
     }
 
     public void clickOnViewTabButton() {
         driver.findElement(viewTabButton).click();
+    }
+
+    public boolean isUpdateTabActive() {
+        return !driver.findElements(activeUpdateTabLocator).isEmpty();
+    }
+
+    public boolean isViewTabActive() {
+        return !driver.findElements(activeViewTabLocator).isEmpty();
     }
 }

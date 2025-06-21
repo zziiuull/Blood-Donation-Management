@@ -131,7 +131,19 @@ public class DonationPageTest extends BaseSeleniumTest {
         void shouldGoToUpdateDonationWhenClickOnUpdateDonation(){
             donationPage = authPage.authenticateWithCredentials(email, password);
             donationPage.clickOnUpdateTabButton();
-            assertThat(donationPage.isUpdateDonationSelectButtonVisible()).isTrue();
+            assertThat(donationPage.isUpdateTabActive()).isTrue();
+        }
+    }
+
+    @Nested
+    class ViewDonation {
+
+        @Test
+        @DisplayName("Should go to view donation when click on view donation")
+        void shouldGoToViewDonationWhenClickOnViewDonation(){
+            donationPage = authPage.authenticateWithCredentials(email, password);
+            donationPage.clickOnViewTabButton();
+            assertThat(donationPage.isViewTabActive()).isTrue();
         }
     }
 }
