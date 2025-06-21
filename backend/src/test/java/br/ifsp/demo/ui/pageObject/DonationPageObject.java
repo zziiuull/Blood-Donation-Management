@@ -2,6 +2,7 @@ package br.ifsp.demo.ui.pageObject;
 
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -19,6 +20,11 @@ public class DonationPageObject extends BasePageObject {
     private final By updateDonationSelectButton = By.id("donation-autocomplete");
     private final By viewTabButton = By.xpath("//*[@id=\"view-tab\"]/div");
     private final By viewDonationSelectButton = By.id("donation-autocomplete");
+    private final By donorSelect = By.id("donor-autocomplete");
+    private final By appointmentSelect = By.id("appointment-autocomplete");
+    private final By immunohematologyCheckbox = By.xpath("//*[@id=\"immunohematologyexam-checkbox-\"]");
+    private final By serologicalCheckbox = By.xpath("///*[@id=\"serologicalscreeningexam-checkbox-\"]");
+    private final By confirmationRegister = By.xpath("//div[@role='alert']//div[contains(text(), 'exam requested')]");
 
     public DonationPageObject(WebDriver driver) {
         super(driver);
@@ -49,6 +55,33 @@ public class DonationPageObject extends BasePageObject {
         return !elements.isEmpty();
     }
 
+    private void selectADonorToRegister(String donorName) {
+        WebElement donorSelectElement = driver.findElement(donorSelect);
+        donorSelectElement.sendKeys(donorName);
+        new WebDriverWait(driver, Duration.ofSeconds(5)).until(
+                ExpectedConditions.textToBePresentInElementValue(donorSelectElement, donorName)
+        );
+        donorSelectElement.sendKeys(Keys.ENTER);
+    }
+
+    private void selectFirstAppointmentToRegister() {
+        WebElement appointmentSelectElement = driver.findElement(appointmentSelect);
+        appointmentSelectElement.click();
+
+        WebElement firstAppointment = driver.findElement(By.xpath("//span[contains(text(), 'Banco de Doação')]"));
+        new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.visibilityOf(firstAppointment));
+
+        firstAppointment.click();
+    }
+
+    private void selectImmunohematologyCheckboxToRegister() {
+        driver.findElement(immunohematologyCheckbox).click();
+    }
+
+    private void selectSerologicalCheckboxToRegister() {
+        driver.findElement(serologicalCheckbox).click();
+    }
+
     public void clickOnUpdateTabButton() {
         driver.findElement(updateTabButton).click();
     }
@@ -66,5 +99,20 @@ public class DonationPageObject extends BasePageObject {
     public boolean isViewDonationSelectButtonVisible() {
         List<WebElement> elements = driver.findElements(viewDonationSelectButton);
         return !elements.isEmpty();
+    }
+
+    public void registerDonationWithImmunohematologyExam(String donorName) {
+        clickOnRegisterTabButton();
+        new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.visibilityOf(driver.findElement(donorSelect)));
+        selectADonorToRegister(donorName);
+        new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.visibilityOf(driver.findElement(appointmentSelect)));
+        selectFirstAppointmentToRegister();
+        new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.visibilityOf(driver.findElement(immunohematologyCheckbox)));
+        selectImmunohematologyCheckboxToRegister();
+        new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.attributeContains(driver.findElement(immunohematologyCheckbox), "data-selected", "true"));
+        driver.findElement(By.id("register-donation-button")).click();
+
+        // TODO: Trocar essa linha para verificar a mensagem de sucesso
+        new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.invisibilityOf(driver.findElement(appointmentSelect)));
     }
 }
