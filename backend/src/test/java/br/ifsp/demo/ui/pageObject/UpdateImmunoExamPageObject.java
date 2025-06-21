@@ -44,4 +44,9 @@ public class UpdateImmunoExamPageObject extends BasePageObject{
         textarea.clear();
         textarea.sendKeys(text);
     }
+
+    public DonationPageObject clickApproveButton() {
+        driver.findElement(approveButton).click();
+        return new DonationPageObject(driver);
+    }
 }
