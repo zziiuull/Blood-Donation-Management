@@ -1,6 +1,5 @@
 package br.ifsp.demo.ui.pageObject;
 
-import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -11,7 +10,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.util.List;
 
-@Slf4j
 public class DonationPageObject extends BasePageObject {
 
     private final By registerTabButton = By.id("register-tab");
