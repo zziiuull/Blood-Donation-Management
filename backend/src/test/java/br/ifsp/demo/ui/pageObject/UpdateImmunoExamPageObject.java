@@ -28,4 +28,13 @@ public class UpdateImmunoExamPageObject extends BasePageObject{
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         wait.until(ExpectedConditions.elementToBeClickable(optionLocator)).click();
     }
+
+    public void selectIrregularAntibodies(String antibodyStatus) {
+        driver.findElement(irregularAntibodiesSelect).click();
+
+        By optionLocator = By.xpath(String.format("//li[@role='option'][normalize-space()='%s']", antibodyStatus));
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        wait.until(ExpectedConditions.elementToBeClickable(optionLocator)).click();
+    }
 }
