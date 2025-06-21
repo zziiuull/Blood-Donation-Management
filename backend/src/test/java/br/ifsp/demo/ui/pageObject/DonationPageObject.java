@@ -23,6 +23,7 @@ public class DonationPageObject extends BasePageObject {
     private final By appointmentSelect = By.id("appointment-autocomplete");
     private final By immunohematologyCheckbox = By.xpath("//*[@id=\"immunohematologyexam-checkbox-\"]");
     private final By serologicalCheckbox = By.xpath("//*[@id=\"serologicalscreeningexam-checkbox-\"]");
+    private final By updateExamLink = By.linkText("Update");
 
     public DonationPageObject(WebDriver driver) {
         super(driver);
@@ -151,5 +152,29 @@ public class DonationPageObject extends BasePageObject {
         driver.findElement(donationAutocompleteSelectButton).sendKeys(Keys.ENTER);
         By donorNameElementBy = By.xpath("//p[text()='" + donorName + "']");
         new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.visibilityOf(driver.findElement(donorNameElementBy)));
+    }
+
+    public void clickOnDonationAutocompleteSelectButton() {
+        driver.findElement(donationAutocompleteSelectButton).click();
+    }
+
+    public void selectFirstDonationInList() {
+        driver.findElement(donationAutocompleteSelectButton).click();
+
+        By firstOptionLocator = By.xpath("(//div[@role='listbox']//li[@role='option'])[1]");
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
+        WebElement firstOption = wait.until(ExpectedConditions.elementToBeClickable(firstOptionLocator));
+
+        firstOption.click();
+    }
+
+    public UpdateExamPageObject clickUpdateExamLink(){
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebElement link = wait.until(ExpectedConditions.elementToBeClickable(updateExamLink));
+
+        link.click();
+
+        return new UpdateExamPageObject(driver);
     }
 }
