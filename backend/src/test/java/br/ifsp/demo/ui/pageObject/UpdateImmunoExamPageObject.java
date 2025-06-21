@@ -49,4 +49,9 @@ public class UpdateImmunoExamPageObject extends BasePageObject{
         driver.findElement(approveButton).click();
         return new DonationPageObject(driver);
     }
+
+    public DonationPageObject clickRejectButton() {
+        driver.findElement(rejectButton).click();
+        return new DonationPageObject(driver);
+    }
 }
