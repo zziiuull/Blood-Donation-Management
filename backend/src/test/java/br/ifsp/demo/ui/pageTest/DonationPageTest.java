@@ -157,6 +157,18 @@ public class DonationPageTest extends BaseSeleniumTest {
             donationPage.clickOnUpdateTabButton();
             assertThat(donationPage.isUpdateTabActive()).isTrue();
         }
+
+        @Test
+        @Tag("UiTest")
+        @DisplayName("Should update a Immuno exam")
+        void shouldUpdateAImmunoExam(){
+            donationPage = authPage.authenticateWithCredentials(email, password);
+
+            donationPage.registerDonationWithAllExams("Weverton");
+            donationPage.clickOnUpdateTabButton();
+            donationPage.selectDonationInList("Weverton");
+            donationPage.clickUpdateForImmunohematologyExam();
+        }
     }
 
     @Nested

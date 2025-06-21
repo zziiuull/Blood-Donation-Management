@@ -156,33 +156,35 @@ public class DonationPageObject extends BasePageObject {
         new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.visibilityOf(driver.findElement(donorNameElementBy)));
     }
 
-    public void clickOnDonationAutocompleteSelectButton() {
-        driver.findElement(donationAutocompleteSelectButton).click();
-    }
+    public void selectDonationInList(String donorName) {
+        WebElement selectDonation = driver.findElement(donationAutocompleteSelectButton);
+        selectDonation.sendKeys(donorName);
 
-    public void selectFirstDonationInList() {
-        driver.findElement(donationAutocompleteSelectButton).click();
+        new WebDriverWait(driver, Duration.ofSeconds(5)).until(
+                ExpectedConditions.textToBePresentInElementValue(selectDonation, donorName)
+        );
 
-        By firstOptionLocator = By.xpath("(//div[@role='listbox']//li[@role='option'])[1]");
-
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
-        WebElement firstOption = wait.until(ExpectedConditions.elementToBeClickable(firstOptionLocator));
-
-        firstOption.click();
+        selectDonation.sendKeys(Keys.ENTER);
     }
 
     public UpdateImmunoExamPageObject clickUpdateForImmunohematologyExam() {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
         WebElement link = wait.until(ExpectedConditions.elementToBeClickable(updateImmunoExamLink));
         link.click();
+
+        wait.until(ExpectedConditions.urlContains("/exams/immunohematology/"));
 
         return new UpdateImmunoExamPageObject(driver);
     }
 
     public UpdateSeroExamPageObject clickUpdateForSerologicalExam() {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
         WebElement link = wait.until(ExpectedConditions.elementToBeClickable(updateSeroExamLink));
         link.click();
+
+        wait.until(ExpectedConditions.urlContains("/exams/serological-screening/"));
 
         return new UpdateSeroExamPageObject(driver);
     }
