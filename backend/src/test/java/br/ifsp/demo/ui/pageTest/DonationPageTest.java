@@ -1,5 +1,8 @@
 package br.ifsp.demo.ui.pageTest;
 
+import br.ifsp.demo.domain.model.donation.Appointment;
+import br.ifsp.demo.domain.model.donation.AppointmentStatus;
+import br.ifsp.demo.infrastructure.repository.appointment.AppointmentRepository;
 import br.ifsp.demo.infrastructure.repository.donation.DonationRepository;
 import br.ifsp.demo.presentation.security.auth.AuthenticationService;
 import br.ifsp.demo.presentation.security.auth.RegisterUserRequest;
@@ -39,6 +42,8 @@ public class DonationPageTest extends BaseSeleniumTest {
     AuthenticationService authenticationService;
     @Autowired
     DonationRepository donationRepository;
+    @Autowired
+    AppointmentRepository appointmentRepository;
 
     @Override
     protected void setInitialPage() {
@@ -124,7 +129,9 @@ public class DonationPageTest extends BaseSeleniumTest {
                     .filter(donation -> donation.getCreatedAt().toLocalDate().isEqual(LocalDate.now()))
                     .reduce((first, second) -> second)
                     .ifPresent(lastDonation -> {
-                        System.out.println("Última Donation do dia: " + lastDonation);
+                        Appointment appointment = lastDonation.getAppointment();
+                        appointment.setStatus(AppointmentStatus.SCHEDULED);
+                        appointmentRepository.save(appointment);
                         donationRepository.deleteById(lastDonation.getId());
                     });
         }
@@ -179,6 +186,55 @@ public class DonationPageTest extends BaseSeleniumTest {
     @Nested
     class UpdateDonation {
 
+        @Nested
+        class RegisterDonation {
+
+            @AfterEach
+            public void tearDown() {
+                donationRepository.findAll().stream()
+                        .filter(donation -> donation.getCreatedAt().toLocalDate().isEqual(LocalDate.now()))
+                        .reduce((first, second) -> second)
+                        .ifPresent(lastDonation -> {
+                            Appointment appointment = lastDonation.getAppointment();
+                            appointment.setStatus(AppointmentStatus.SCHEDULED);
+                            appointmentRepository.save(appointment);
+                            donationRepository.deleteById(lastDonation.getId());
+                        });
+            }
+
+            @Test
+            @Tag("UiTest")
+            @DisplayName("Should update a Immuno exam")
+            void shouldUpdateAImmunoExam(){
+                donationPage = authPage.authenticateWithCredentials(email, password);
+
+                donationPage.registerDonationWithAllExams("Weverton");
+                donationPage.clickOnUpdateTabButton();
+                donationPage.selectDonationInList("Weverton");
+                donationPage.clickUpdateForImmunohematologyExam();
+
+                new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.urlContains("/exams/immunohematology/"));
+
+                assertThat(driver.getCurrentUrl()).contains("/exams/immunohematology/");
+            }
+
+            @Test
+            @Tag("UiTest")
+            @DisplayName("Should update a Sero exam")
+            void shouldUpdateASeroExam(){
+                donationPage = authPage.authenticateWithCredentials(email, password);
+
+                donationPage.registerDonationWithAllExams("Weverton");
+                donationPage.clickOnUpdateTabButton();
+                donationPage.selectDonationInList("Weverton");
+                donationPage.clickUpdateForSerologicalExam();
+
+                new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.urlContains("/exams/serological-screening/"));
+
+                assertThat(driver.getCurrentUrl()).contains("/exams/serological-screening/");
+            }
+        }
+
         @Test
         @Tag("UiTest")
         @DisplayName("Should go to update donation when click on update donation")
@@ -187,42 +243,38 @@ public class DonationPageTest extends BaseSeleniumTest {
             donationPage.clickOnUpdateTabButton();
             assertThat(donationPage.isUpdateTabActive()).isTrue();
         }
-
-        @Test
-        @Tag("UiTest")
-        @DisplayName("Should update a Immuno exam")
-        void shouldUpdateAImmunoExam(){
-            donationPage = authPage.authenticateWithCredentials(email, password);
-
-            donationPage.registerDonationWithAllExams("Weverton");
-            donationPage.clickOnUpdateTabButton();
-            donationPage.selectDonationInList("Weverton");
-            donationPage.clickUpdateForImmunohematologyExam();
-
-            new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.urlContains("/exams/immunohematology/"));
-
-            assertThat(driver.getCurrentUrl()).contains("/exams/immunohematology/");
-        }
-
-        @Test
-        @Tag("UiTest")
-        @DisplayName("Should update a Sero exam")
-        void shouldUpdateASeroExam(){
-            donationPage = authPage.authenticateWithCredentials(email, password);
-
-            donationPage.registerDonationWithAllExams("Weverton");
-            donationPage.clickOnUpdateTabButton();
-            donationPage.selectDonationInList("Weverton");
-            donationPage.clickUpdateForSerologicalExam();
-
-            new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.urlContains("/exams/serological-screening/"));
-
-            assertThat(driver.getCurrentUrl()).contains("/exams/serological-screening/");
-        }
     }
 
     @Nested
     class ViewDonation {
+
+        @Nested
+        class RegisterDonation {
+
+            @AfterEach
+            public void tearDown() {
+                donationRepository.findAll().stream()
+                        .filter(donation -> donation.getCreatedAt().toLocalDate().isEqual(LocalDate.now()))
+                        .reduce((first, second) -> second)
+                        .ifPresent(lastDonation -> {
+                            Appointment appointment = lastDonation.getAppointment();
+                            appointment.setStatus(AppointmentStatus.SCHEDULED);
+                            appointmentRepository.save(appointment);
+                            donationRepository.deleteById(lastDonation.getId());
+                        });
+            }
+
+            @Test
+            @Tag("UiTest")
+            @DisplayName("Should show view of a donation")
+            void shouldShowViewOfADonation() throws InterruptedException {
+                String donorName = "Ana Beatriz";
+                donationPage = authPage.authenticateWithCredentials(email, password);
+                donationPage.registerDonationWithAllExams(donorName);
+                donationPage.viewDonationRegistered(donorName);
+                assertThat(donationPage.isViewingDonation(donorName)).isTrue();
+            }
+        }
 
         @Test
         @Tag("UiTest")
@@ -231,17 +283,6 @@ public class DonationPageTest extends BaseSeleniumTest {
             donationPage = authPage.authenticateWithCredentials(email, password);
             donationPage.clickOnViewTabButton();
             assertThat(donationPage.isViewTabActive()).isTrue();
-        }
-
-        @Test
-        @Tag("UiTest")
-        @DisplayName("Should show view of a donation")
-        void shouldShowViewOfADonation() throws InterruptedException {
-            String donorName = "Ana Beatriz";
-            donationPage = authPage.authenticateWithCredentials(email, password);
-            donationPage.registerDonationWithAllExams(donorName);
-            donationPage.viewDonationRegistered(donorName);
-            assertThat(donationPage.isViewingDonation(donorName)).isTrue();
         }
     }
 }
