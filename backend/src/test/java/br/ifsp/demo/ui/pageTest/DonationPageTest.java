@@ -17,6 +17,7 @@ import java.time.Duration;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -109,7 +110,7 @@ public class DonationPageTest extends BaseSeleniumTest {
     }
     
     @Nested
-    class NavigationButtons {
+    class RegisterDonation {
         
         @Test
         @Tag("UiTest")
@@ -118,6 +119,19 @@ public class DonationPageTest extends BaseSeleniumTest {
             donationPage = authPage.authenticateWithCredentials(email, password);
             donationPage.clickOnRegisterTabButton();
             assertThat(donationPage.isRegisterDonationStepOneTextVisible()).isTrue();
+        }
+    }
+
+    @Nested
+    class UpdateDonation {
+
+        @Test
+        @Tag("UiTest")
+        @DisplayName("Should go to update donation when click on update donation")
+        void shouldGoToUpdateDonationWhenClickOnUpdateDonation(){
+            donationPage = authPage.authenticateWithCredentials(email, password);
+            donationPage.clickOnUpdateTabButton();
+            assertThat(donationPage.isUpdateDonationSelectButtonVisible()).isTrue();
         }
     }
 }
