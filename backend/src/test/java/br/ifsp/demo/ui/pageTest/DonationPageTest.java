@@ -203,6 +203,22 @@ public class DonationPageTest extends BaseSeleniumTest {
 
             assertThat(driver.getCurrentUrl()).contains("/exams/immunohematology/");
         }
+
+        @Test
+        @Tag("UiTest")
+        @DisplayName("Should update a Sero exam")
+        void shouldUpdateASeroExam(){
+            donationPage = authPage.authenticateWithCredentials(email, password);
+
+            donationPage.registerDonationWithAllExams("Weverton");
+            donationPage.clickOnUpdateTabButton();
+            donationPage.selectDonationInList("Weverton");
+            donationPage.clickUpdateForSerologicalExam();
+
+            new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.urlContains("/exams/serological-screening/"));
+
+            assertThat(driver.getCurrentUrl()).contains("/exams/serological-screening/");
+        }
     }
 
     @Nested
