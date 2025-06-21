@@ -138,4 +138,20 @@ public class DonationPageObject extends BasePageObject {
         driver.findElement(By.id("register-donation-button")).click();
         new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.invisibilityOf(driver.findElement(appointmentSelect)));
     }
+
+    public boolean isViewingDonation(String donorName) {
+        By donorNameElementBy = By.xpath("//p[text()='" + donorName + "']");
+        WebElement donorNameElement = driver.findElement(donorNameElementBy);
+        return donorNameElement.getText().equals(donorName);
+    }
+
+    public void viewDonationRegistered(String donorName) throws InterruptedException {
+        clickOnViewTabButton();
+        new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.visibilityOf(driver.findElement(donationAutocompleteSelectButton)));
+        driver.findElement(donationAutocompleteSelectButton).sendKeys(donorName);
+        new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.textToBePresentInElementValue(donationAutocompleteSelectButton, donorName));
+        driver.findElement(donationAutocompleteSelectButton).sendKeys(Keys.ENTER);
+        By donorNameElementBy = By.xpath("//p[text()='" + donorName + "']");
+        new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.visibilityOf(driver.findElement(donorNameElementBy)));
+    }
 }

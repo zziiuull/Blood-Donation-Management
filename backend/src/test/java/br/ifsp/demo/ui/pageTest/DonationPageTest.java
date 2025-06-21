@@ -163,11 +163,23 @@ public class DonationPageTest extends BaseSeleniumTest {
     class ViewDonation {
 
         @Test
+        @Tag("UiTest")
         @DisplayName("Should go to view donation when click on view donation")
         void shouldGoToViewDonationWhenClickOnViewDonation(){
             donationPage = authPage.authenticateWithCredentials(email, password);
             donationPage.clickOnViewTabButton();
             assertThat(donationPage.isViewTabActive()).isTrue();
+        }
+
+        @Test
+        @Tag("UiTest")
+        @DisplayName("Should show view of a donation")
+        void shouldShowViewOfADonation() throws InterruptedException {
+            String donorName = "Ana Beatriz";
+            donationPage = authPage.authenticateWithCredentials(email, password);
+            donationPage.registerDonationWithAllExams(donorName);
+            donationPage.viewDonationRegistered(donorName);
+            assertThat(donationPage.isViewingDonation(donorName)).isTrue();
         }
     }
 }
