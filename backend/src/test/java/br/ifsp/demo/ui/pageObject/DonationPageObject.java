@@ -23,8 +23,7 @@ public class DonationPageObject extends BasePageObject {
     private final By donorSelect = By.id("donor-autocomplete");
     private final By appointmentSelect = By.id("appointment-autocomplete");
     private final By immunohematologyCheckbox = By.xpath("//*[@id=\"immunohematologyexam-checkbox-\"]");
-    private final By serologicalCheckbox = By.xpath("///*[@id=\"serologicalscreeningexam-checkbox-\"]");
-    private final By confirmationRegister = By.xpath("//div[@role='alert']//div[contains(text(), 'exam requested')]");
+    private final By serologicalCheckbox = By.xpath("//*[@id=\"serologicalscreeningexam-checkbox-\"]");
 
     public DonationPageObject(WebDriver driver) {
         super(driver);
@@ -110,6 +109,21 @@ public class DonationPageObject extends BasePageObject {
         new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.visibilityOf(driver.findElement(immunohematologyCheckbox)));
         selectImmunohematologyCheckboxToRegister();
         new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.attributeContains(driver.findElement(immunohematologyCheckbox), "data-selected", "true"));
+        driver.findElement(By.id("register-donation-button")).click();
+
+        // TODO: Trocar essa linha para verificar a mensagem de sucesso
+        new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.invisibilityOf(driver.findElement(appointmentSelect)));
+    }
+
+    public void registerDonationWithSerologicalExam(String donorName) {
+        clickOnRegisterTabButton();
+        new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.visibilityOf(driver.findElement(donorSelect)));
+        selectADonorToRegister(donorName);
+        new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.visibilityOf(driver.findElement(appointmentSelect)));
+        selectFirstAppointmentToRegister();
+        new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.visibilityOf(driver.findElement(serologicalCheckbox)));
+        selectSerologicalCheckboxToRegister();
+        new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.attributeContains(driver.findElement(serologicalCheckbox), "data-selected", "true"));
         driver.findElement(By.id("register-donation-button")).click();
 
         // TODO: Trocar essa linha para verificar a mensagem de sucesso

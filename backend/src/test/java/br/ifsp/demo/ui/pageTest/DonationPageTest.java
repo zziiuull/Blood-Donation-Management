@@ -130,6 +130,16 @@ public class DonationPageTest extends BaseSeleniumTest {
 
             // TODO: validar se realmente foi registrado
         }
+
+        @Test
+        @Tag("UiTest")
+        @DisplayName("Should register a donation with serological exam")
+        void shouldRegisterADonationWithSerologicalExam(){
+            donationPage = authPage.authenticateWithCredentials(email, password);
+            donationPage.registerDonationWithSerologicalExam("Weverton");
+
+            // TODO: validar se realmente foi registrado
+        }
     }
 
     @Nested
