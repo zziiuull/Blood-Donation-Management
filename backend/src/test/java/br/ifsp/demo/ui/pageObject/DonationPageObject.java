@@ -123,4 +123,8 @@ public class DonationPageObject extends BasePageObject {
         driver.findElement(By.id("register-donation-button")).click();
         new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.invisibilityOf(driver.findElement(appointmentSelect)));
     }
+
+    public void clickOnDonationAutocompleteSelectButton() {
+        driver.findElement(donationAutocompleteSelectButton).click();
+    }
 }
