@@ -98,7 +98,6 @@ class AuthenticationPageTest extends BaseSeleniumTest {
     @Tag("UiTest")
     @DisplayName("Should toggle password visibility on and off when clicking twice")
     public void shouldTogglePasswordVisibilityOnAndOffWhenClickingTwice() {
-        authPage = new AuthenticationPageObject(driver);
         boolean toggleWorks = authPage.toggleDoublePasswordVisibility();
         assertThat(toggleWorks)
                 .withFailMessage("Expected password visibility to toggle ON (type='text') and then OFF (type='password') after clicking the toggle button twice, but it did not.")
