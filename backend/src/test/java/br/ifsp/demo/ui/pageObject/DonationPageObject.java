@@ -139,5 +139,13 @@ public class DonationPageObject extends BasePageObject {
 
         firstOption.click();
     }
-    
+
+    public UpdateExamPageObject clickUpdateExamLink(){
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebElement link = wait.until(ExpectedConditions.elementToBeClickable(updateExamLink));
+
+        link.click();
+
+        return new UpdateExamPageObject(driver);
+    }
 }
