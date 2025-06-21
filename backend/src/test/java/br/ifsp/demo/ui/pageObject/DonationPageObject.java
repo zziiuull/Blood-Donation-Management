@@ -25,6 +25,8 @@ public class DonationPageObject extends BasePageObject {
     private final By serologicalCheckbox = By.xpath("//*[@id=\"serologicalscreeningexam-checkbox-\"]");
     private final By updateImmunoExamLink = By.xpath("//h3[text()='Immunohematology exam']/following-sibling::div//a[text()='Update']");
     private final By updateSeroExamLink = By.xpath("//h3[text()='Serological screening exam']/following-sibling::div//a[text()='Update']");
+    private final By bloodTypeInTableLocator = By.xpath("//h3[text()='Immunohematology exam']/following-sibling::div//td[4]");
+    private final By antibodiesInTableLocator = By.xpath("//h3[text()='Immunohematology exam']/following-sibling::div//td[5]");
 
 
     public DonationPageObject(WebDriver driver) {
@@ -205,5 +207,19 @@ public class DonationPageObject extends BasePageObject {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         return wait.until(ExpectedConditions.visibilityOf(driver
                 .findElement(By.xpath("//*[text()='Serological screening exam requested']")))).getText();
+    }
+
+    public String getUpdatedBloodTypeTextFromTable() {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.not(ExpectedConditions.textToBe(bloodTypeInTableLocator, "N/A")));
+
+        return driver.findElement(bloodTypeInTableLocator).getText();
+    }
+
+    public String getUpdatedAntibodiesTextFromTable() {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.not(ExpectedConditions.textToBe(antibodiesInTableLocator, "N/A")));
+
+        return driver.findElement(antibodiesInTableLocator).getText();
     }
 }
