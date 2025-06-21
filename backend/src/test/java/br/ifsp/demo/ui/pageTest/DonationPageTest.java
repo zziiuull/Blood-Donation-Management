@@ -134,4 +134,16 @@ public class DonationPageTest extends BaseSeleniumTest {
             assertThat(donationPage.isUpdateDonationSelectButtonVisible()).isTrue();
         }
     }
+
+    @Nested
+    class ViewDonation {
+        @Test
+        @Tag("UiTest")
+        @DisplayName("Should go to view donation when click on view donation")
+        void shouldGoToViewDonationWhenClickOnViewDonation(){
+            donationPage = authPage.authenticateWithCredentials(email, password);
+            donationPage.clickOnViewTabButton();
+            assertThat(donationPage.isViewDonationSelectButtonVisible()).isTrue();
+        }
+    }
 }

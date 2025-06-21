@@ -17,6 +17,8 @@ public class DonationPageObject extends BasePageObject {
     private final By registerDonationStepOneText = By.xpath("//h3[contains(text(), 'Select a donor')]");
     private final By updateTabButton = By.id("update-tab");
     private final By updateDonationSelectButton = By.id("donation-autocomplete");
+    private final By viewTabButton = By.xpath("//*[@id=\"view-tab\"]/div");
+    private final By viewDonationSelectButton = By.id("donation-autocomplete");
 
     public DonationPageObject(WebDriver driver) {
         super(driver);
@@ -54,6 +56,15 @@ public class DonationPageObject extends BasePageObject {
     public boolean isUpdateDonationSelectButtonVisible() {
         List<WebElement> elements = driver.findElements(updateDonationSelectButton);
 
+        return !elements.isEmpty();
+    }
+
+    public void clickOnViewTabButton() {
+        driver.findElement(viewTabButton).click();
+    }
+
+    public boolean isViewDonationSelectButtonVisible() {
+        List<WebElement> elements = driver.findElements(viewDonationSelectButton);
         return !elements.isEmpty();
     }
 }
