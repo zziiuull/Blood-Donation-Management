@@ -1,5 +1,6 @@
 package br.ifsp.demo.ui.pageTest;
 
+import br.ifsp.demo.infrastructure.repository.donation.DonationRepository;
 import br.ifsp.demo.presentation.security.auth.AuthenticationService;
 import br.ifsp.demo.presentation.security.auth.RegisterUserRequest;
 import br.ifsp.demo.presentation.security.user.JpaUserRepository;
@@ -15,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.chrono.ChronoLocalDateTime;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,6 +37,8 @@ public class DonationPageTest extends BaseSeleniumTest {
     JpaUserRepository userRepository;
     @Autowired
     AuthenticationService authenticationService;
+    @Autowired
+    DonationRepository donationRepository;
 
     @Override
     protected void setInitialPage() {
@@ -112,6 +117,17 @@ public class DonationPageTest extends BaseSeleniumTest {
     
     @Nested
     class RegisterDonation {
+
+        @AfterEach
+        public void tearDown() {
+            donationRepository.findAll().stream()
+                    .filter(donation -> donation.getCreatedAt().toLocalDate().isEqual(LocalDate.now()))
+                    .reduce((first, second) -> second)
+                    .ifPresent(lastDonation -> {
+                        System.out.println("Última Donation do dia: " + lastDonation);
+                        donationRepository.deleteById(lastDonation.getId());
+                    });
+        }
         
         @Test
         @Tag("UiTest")
