@@ -123,4 +123,19 @@ public class DonationPageObject extends BasePageObject {
         driver.findElement(By.id("register-donation-button")).click();
         new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.invisibilityOf(driver.findElement(appointmentSelect)));
     }
+
+    public void registerDonationWithAllExams(String donorName) {
+        clickOnRegisterTabButton();
+        new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.visibilityOf(driver.findElement(donorSelect)));
+        selectADonorToRegister(donorName);
+        new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.visibilityOf(driver.findElement(appointmentSelect)));
+        selectFirstAppointmentToRegister();
+        new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.visibilityOf(driver.findElement(immunohematologyCheckbox)));
+        selectImmunohematologyCheckboxToRegister();
+        new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.attributeContains(driver.findElement(immunohematologyCheckbox), "data-selected", "true"));
+        selectSerologicalCheckboxToRegister();
+        new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.attributeContains(driver.findElement(serologicalCheckbox), "data-selected", "true"));
+        driver.findElement(By.id("register-donation-button")).click();
+        new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.invisibilityOf(driver.findElement(appointmentSelect)));
+    }
 }

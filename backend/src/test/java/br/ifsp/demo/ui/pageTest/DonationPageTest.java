@@ -136,6 +136,14 @@ public class DonationPageTest extends BaseSeleniumTest {
             donationPage = authPage.authenticateWithCredentials(email, password);
             donationPage.registerDonationWithSerologicalExam("Weverton");
         }
+
+        @Test
+        @Tag("UiTest")
+        @DisplayName("Should register a donation with all exams")
+        void shouldRegisterADonationWithAllExams(){
+            donationPage = authPage.authenticateWithCredentials(email, password);
+            donationPage.registerDonationWithAllExams("Ana Beatriz");
+        }
     }
 
     @Nested
