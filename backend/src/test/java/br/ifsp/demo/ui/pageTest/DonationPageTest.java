@@ -198,6 +198,10 @@ public class DonationPageTest extends BaseSeleniumTest {
             donationPage.clickOnUpdateTabButton();
             donationPage.selectDonationInList("Weverton");
             donationPage.clickUpdateForImmunohematologyExam();
+
+            new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.urlContains("/exams/immunohematology/"));
+
+            assertThat(driver.getCurrentUrl()).contains("/exams/immunohematology/");
         }
     }
 
