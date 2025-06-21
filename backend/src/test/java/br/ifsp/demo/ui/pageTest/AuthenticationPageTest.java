@@ -88,6 +88,7 @@ class AuthenticationPageTest extends BaseSeleniumTest {
     }
 
     @Test
+    @Tag("UiTest")
     @DisplayName("Should warning the required fields when try authenticate with empty fields")
     void shouldWarningTheRequiredFieldsWhenTryAuthenticateWithEmptyFields(){
         String message = authPage.authenticateWithEmptyCredentials();
@@ -106,12 +107,14 @@ class AuthenticationPageTest extends BaseSeleniumTest {
     }
     
     @Test
+    @Tag("UiTest")
     @DisplayName("Should warning when email is invalid")
     void shouldWarningWhenEmailIsInvalid(){
         assertThat(authPage.emailInvalidErrorMessage()).isNotEmpty();
     }
 
     @Test
+    @Tag("UiTest")
     @DisplayName("Should warning when email is uncompleted")
     void shouldWarningWhenEmailIsUncompleted(){
         assertThat(authPage.emailUncompletedErrorMessage()).isNotEmpty();
