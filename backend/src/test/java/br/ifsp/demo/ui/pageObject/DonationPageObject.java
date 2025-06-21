@@ -25,7 +25,9 @@ public class DonationPageObject extends BasePageObject {
     private final By appointmentSelect = By.id("appointment-autocomplete");
     private final By immunohematologyCheckbox = By.xpath("//*[@id=\"immunohematologyexam-checkbox-\"]");
     private final By serologicalCheckbox = By.xpath("//*[@id=\"serologicalscreeningexam-checkbox-\"]");
-    private final By updateExamLink = By.linkText("Update");
+    private final By updateImmunoExamLink = By.xpath("//h3[text()='Immunohematology exam']/following-sibling::div//a[text()='Update']");
+    private final By updateSeroExamLink = By.xpath("//h3[text()='Serological screening exam']/following-sibling::div//a[text()='Update']");
+
 
     public DonationPageObject(WebDriver driver) {
         super(driver);
@@ -171,12 +173,19 @@ public class DonationPageObject extends BasePageObject {
         firstOption.click();
     }
 
-    public UpdateExamPageObject clickUpdateExamLink(){
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        WebElement link = wait.until(ExpectedConditions.elementToBeClickable(updateExamLink));
-
+    public UpdateImmunoExamPageObject clickUpdateForImmunohematologyExam() {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        WebElement link = wait.until(ExpectedConditions.elementToBeClickable(updateImmunoExamLink));
         link.click();
 
-        return new UpdateExamPageObject(driver);
+        return new UpdateImmunoExamPageObject(driver);
+    }
+
+    public UpdateSeroExamPageObject clickUpdateForSerologicalExam() {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        WebElement link = wait.until(ExpectedConditions.elementToBeClickable(updateSeroExamLink));
+        link.click();
+
+        return new UpdateSeroExamPageObject(driver);
     }
 }
