@@ -12,7 +12,6 @@ import java.time.Duration;
 
 public class AuthenticationPageObject extends BasePageObject {
     private static final Faker faker = new Faker();
-    private static final String PAGE_URL = "login";
 
     public AuthenticationPageObject(WebDriver driver) {
         super(driver);
@@ -83,7 +82,33 @@ public class AuthenticationPageObject extends BasePageObject {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
             WebElement errorContainer = wait.until(ExpectedConditions.visibilityOfElementLocated(
                     By.cssSelector(".text-sm.me-4.font-medium.text-danger-600")));
-            return errorContainer.getText();
+            return errorContainer.getText().trim();
+        } catch (TimeoutException e) {
+            return "";
+        }
+    }
+
+    public String emailInvalidErrorMessage() {
+        try {
+            driver.findElement(By.id("email-input")).sendKeys(faker.name().firstName());
+            driver.findElement(By.xpath("//button[contains(text(), 'Login')]")).click();
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+            WebElement errorContainer = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                    By.cssSelector("[data-slot='error-message']")));
+            return errorContainer.getText().trim();
+        } catch (TimeoutException e) {
+            return "";
+        }
+    }
+
+    public String emailUncompletedErrorMessage() {
+        try {
+            driver.findElement(By.id("email-input")).sendKeys(faker.name().firstName() + "@");
+            driver.findElement(By.xpath("//button[contains(text(), 'Login')]")).click();
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+            WebElement errorContainer = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                    By.cssSelector("[data-slot='error-message']")));
+            return errorContainer.getText().trim();
         } catch (TimeoutException e) {
             return "";
         }

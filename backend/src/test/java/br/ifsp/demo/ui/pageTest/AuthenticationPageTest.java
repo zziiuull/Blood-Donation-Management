@@ -15,6 +15,7 @@ import java.time.Duration;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -102,5 +103,17 @@ class AuthenticationPageTest extends BaseSeleniumTest {
         assertThat(toggleWorks)
                 .withFailMessage("Expected password visibility to toggle ON (type='text') and then OFF (type='password') after clicking the toggle button twice, but it did not.")
                 .isTrue();
+    }
+    
+    @Test
+    @DisplayName("Should warning when email is invalid")
+    void shouldWarningWhenEmailIsInvalid(){
+        assertThat(authPage.emailInvalidErrorMessage()).isNotEmpty();
+    }
+
+    @Test
+    @DisplayName("Should warning when email is uncompleted")
+    void shouldWarningWhenEmailIsUncompleted(){
+        assertThat(authPage.emailUncompletedErrorMessage()).isNotEmpty();
     }
 }
