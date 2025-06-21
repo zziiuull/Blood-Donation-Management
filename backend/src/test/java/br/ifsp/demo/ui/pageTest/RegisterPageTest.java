@@ -20,6 +20,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -188,5 +189,28 @@ public class RegisterPageTest extends BaseSeleniumTest{
         String errorMessage = registerPageObject.getErrorMessageFor(inputId);
         assertThat(errorMessage).isNotBlank();
         assertThat(errorMessage).contains(expectedMessage);
+    }
+
+    @Test
+    @Tag("UiTest")
+    @DisplayName("Should warning email already registered")
+    void shouldWarningEmailAlreadyRegistered(){
+        String email = faker.internet().emailAddress();
+        registerPageObject.register(
+                faker.name().firstName(),
+                faker.name().lastName(),
+                "12345678910",
+                faker.phoneNumber().cellPhone(),
+                faker.address().fullAddress(),
+                "12345",
+                "São Paulo",
+                email,
+                faker.internet().password()
+        );
+        String errorMessage = registerPageObject.emailErrorMessage(email);
+        assertThat(errorMessage).isEqualTo("Email already registered: " + email);
+
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        optionalUser.ifPresent(user -> userRepository.delete(user));
     }
 }

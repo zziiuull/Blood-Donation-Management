@@ -1,6 +1,8 @@
 package br.ifsp.demo.ui.pageObject;
 
+import com.github.javafaker.Faker;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -10,6 +12,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 
 public class RegisterPageObject extends BasePageObject {
+    private static final Faker faker = Faker.instance();
 
     private final By nameInput = By.id("name-input");
     private final By lastnameInput = By.id("lastname-input");
@@ -118,5 +121,31 @@ public class RegisterPageObject extends BasePageObject {
 
     public void togglePasswordVisibility() {
         driver.findElement(eyeButton).click();
+    }
+
+    public String emailErrorMessage(String email) {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        WebElement registerLink = wait.until(ExpectedConditions.elementToBeClickable(By.linkText("Register account")));
+        registerLink.click();
+
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("name-input")));
+        try {
+            register(
+                    faker.name().firstName(),
+                    faker.name().lastName(),
+                    "12345678910",
+                    faker.phoneNumber().cellPhone(),
+                    faker.address().fullAddress(),
+                    "12345",
+                    "São Paulo",
+                    email,
+                    faker.internet().password()
+            );
+            wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+            String xpath = String.format("//*[text()='Email already registered: %s']", email);
+            return wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath))).getText();
+        } catch (TimeoutException e) {
+            return "";
+        }
     }
 }
