@@ -127,8 +127,6 @@ public class DonationPageTest extends BaseSeleniumTest {
         void shouldRegisterADonationWithImmunohematologyExam(){
             donationPage = authPage.authenticateWithCredentials(email, password);
             donationPage.registerDonationWithImmunohematologyExam("Weverton");
-
-            // TODO: validar se realmente foi registrado
         }
 
         @Test
@@ -137,8 +135,6 @@ public class DonationPageTest extends BaseSeleniumTest {
         void shouldRegisterADonationWithSerologicalExam(){
             donationPage = authPage.authenticateWithCredentials(email, password);
             donationPage.registerDonationWithSerologicalExam("Weverton");
-
-            // TODO: validar se realmente foi registrado
         }
     }
 

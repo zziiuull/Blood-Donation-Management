@@ -21,7 +21,6 @@ public class DonationPageObject extends BasePageObject {
     private final By viewTabButton = By.id("view-tab");
     private final By activeUpdateTabLocator = By.xpath("//button[@id='update-tab' and @aria-selected='true']");
     private final By activeViewTabLocator = By.xpath("//button[@id='view-tab' and @aria-selected='true']");
-    private final By viewDonationSelectButton = By.id("donation-autocomplete");
     private final By donorSelect = By.id("donor-autocomplete");
     private final By appointmentSelect = By.id("appointment-autocomplete");
     private final By immunohematologyCheckbox = By.xpath("//*[@id=\"immunohematologyexam-checkbox-\"]");
@@ -109,8 +108,6 @@ public class DonationPageObject extends BasePageObject {
         selectImmunohematologyCheckboxToRegister();
         new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.attributeContains(driver.findElement(immunohematologyCheckbox), "data-selected", "true"));
         driver.findElement(By.id("register-donation-button")).click();
-
-        // TODO: Trocar essa linha para verificar a mensagem de sucesso
         new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.invisibilityOf(driver.findElement(appointmentSelect)));
     }
 
@@ -124,8 +121,6 @@ public class DonationPageObject extends BasePageObject {
         selectSerologicalCheckboxToRegister();
         new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.attributeContains(driver.findElement(serologicalCheckbox), "data-selected", "true"));
         driver.findElement(By.id("register-donation-button")).click();
-
-        // TODO: Trocar essa linha para verificar a mensagem de sucesso
         new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.invisibilityOf(driver.findElement(appointmentSelect)));
     }
 }
