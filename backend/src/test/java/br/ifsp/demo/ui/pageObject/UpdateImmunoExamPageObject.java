@@ -61,13 +61,19 @@ public class UpdateImmunoExamPageObject extends BasePageObject{
         return this;
     }
 
-    public DonationPageObject clickRejectButton() {
+    public DonationPageObject clickRejectButtonAndExpectSuccess() {
         driver.findElement(rejectButton).click();
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         wait.until(ExpectedConditions.urlContains("/donation"));
 
         return new DonationPageObject(driver);
+    }
+
+    public UpdateImmunoExamPageObject clickRejectButtonAndExpectFailure() {
+        driver.findElement(rejectButton).click();
+
+        return this;
     }
 
     public String getUpdateExamErrorToastText() {

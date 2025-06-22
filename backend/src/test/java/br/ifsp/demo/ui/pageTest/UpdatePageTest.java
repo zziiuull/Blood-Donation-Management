@@ -25,6 +25,7 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -146,7 +147,7 @@ public class UpdatePageTest extends BaseSeleniumTest{
             immunoPage.selectIrregularAntibodies(irregularAntibodies);
             immunoPage.fillObservations(faker.lorem().sentence());
 
-            DonationPageObject donationPage = immunoPage.clickRejectButton();
+            DonationPageObject donationPage = immunoPage.clickRejectButtonAndExpectSuccess();
 
             String selectedBloodType = donationPage.getUpdatedBloodTypeTextFromTable();
             String selectedIrregularAntibodies = donationPage.getUpdatedAntibodiesTextFromTable();
@@ -172,6 +173,27 @@ public class UpdatePageTest extends BaseSeleniumTest{
             immunoPage.fillObservations(faker.lorem().sentence());
 
             immunoPage.clickApproveButtonAndExpectFailure();
+
+            assertThat(immunoPage.getUpdateExamErrorToastText()).isNotNull();
+        }
+
+        @Test
+        @Tag("UiTest")
+        @DisplayName("Should display error toast when can not reject the exam")
+        void shouldDisplayErrorToastWhenCanNotRejectTheExam(){
+            String irregularAntibodies = "Negative";
+
+            donationPage.registerDonationWithAllExams("Weverton");
+            donationPage.clickOnUpdateTabButton();
+            donationPage.selectDonationInList("Weverton");
+
+            UpdateImmunoExamPageObject immunoPage = donationPage.clickUpdateForImmunohematologyExam();
+
+            immunoPage.selectBloodType("A POS");
+            immunoPage.selectIrregularAntibodies(irregularAntibodies);
+            immunoPage.fillObservations(faker.lorem().sentence());
+
+            immunoPage.clickRejectButtonAndExpectFailure();
 
             assertThat(immunoPage.getUpdateExamErrorToastText()).isNotNull();
         }
