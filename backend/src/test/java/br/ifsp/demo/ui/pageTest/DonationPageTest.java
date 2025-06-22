@@ -99,6 +99,19 @@ public class DonationPageTest extends BaseSeleniumTest {
             donationPage = authPage.authenticateWithCredentials(email, password);
             assertThat(donationPage.pageUrl()).contains("/donation");
         }
+
+        @Test
+        @Tag("UiTest")
+        @DisplayName("Should remain logged in when navigating to the page again")
+        void shouldRemainLoggedInOnPageRevisit() {
+            DonationPageObject donationPage = authPage.authenticateWithCredentials(email, password);
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            wait.until(ExpectedConditions.urlContains("/donation"));
+
+            driver.get("http://localhost:3000/donation");
+
+            assertThat(donationPage.isDonationTitleVisible()).isTrue();
+        }
     }
 
     @Nested

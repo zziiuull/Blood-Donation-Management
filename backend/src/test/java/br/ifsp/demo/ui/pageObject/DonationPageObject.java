@@ -11,7 +11,7 @@ import java.util.List;
 
 public class DonationPageObject extends BasePageObject {
 
-    private Faker faker = Faker.instance();
+    private final By donationTitle = By.id("donation-title");
     private final By registerTabButton = By.id("register-tab");
     private final By registerDonationStepOneText = By.xpath("//h3[contains(text(), 'Select a donor')]");
     private final By updateTabButton = By.id("update-tab");
@@ -52,6 +52,10 @@ public class DonationPageObject extends BasePageObject {
         button.click();
         new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.urlContains("/donation"));
         return new DonationPageObject(driver);
+    }
+
+    public boolean isDonationTitleVisible() {
+        return driver.findElement(donationTitle).isDisplayed();
     }
 
     public void clickOnRegisterTabButton() {
