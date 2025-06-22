@@ -55,13 +55,19 @@ public class UpdateSeroExamPageObject extends BasePageObject {
         return this;
     }
 
-    public DonationPageObject clickRejectButton() {
+    public DonationPageObject clickRejectButtonAndExpectSucceess() {
         driver.findElement(rejectButton).click();
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         wait.until(ExpectedConditions.urlContains("/donation"));
 
         return new DonationPageObject(driver);
+    }
+
+    public UpdateSeroExamPageObject clickRejectButtonAndExpectFailure() {
+        driver.findElement(rejectButton).click();
+
+        return this;
     }
 
     public String getUpdateExamErrorToastText() {

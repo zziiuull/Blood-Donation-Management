@@ -25,7 +25,6 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -47,6 +46,8 @@ public class UpdatePageTest extends BaseSeleniumTest{
     private UUID userId;
     private AuthenticationPageObject authPage;
     private DonationPageObject donationPage;
+
+    List<String> allDiseaseKeys = List.of("hepatitisB", "hepatitisC", "chagasDisease", "syphilis", "aids", "htlv1_2");
 
     @Override
     protected void setInitialPage() {
@@ -260,7 +261,7 @@ public class UpdatePageTest extends BaseSeleniumTest{
             seroPage.selectDiseaseStatus("htlv1_2", positive);
             seroPage.fillObservations(faker.lorem().sentence());
 
-            DonationPageObject donationPage = seroPage.clickRejectButton();
+            DonationPageObject donationPage = seroPage.clickRejectButtonAndExpectSucceess();
 
             String selectedHepatitisB = donationPage.getUpdatedHepatitisBStatus();
             String selectedHepatitisC = donationPage.getUpdatedHepatitisCStatus();
@@ -288,8 +289,6 @@ public class UpdatePageTest extends BaseSeleniumTest{
 
             UpdateSeroExamPageObject seroPage = donationPage.clickUpdateForSerologicalExam();
 
-            List<String> allDiseaseKeys = List.of("hepatitisB", "hepatitisC", "chagasDisease", "syphilis", "aids", "htlv1_2");
-
             for (String key : allDiseaseKeys) {
                 if (key.equals(positiveDisease)) {
                     seroPage.selectDiseaseStatus(key, "Positive");
@@ -313,6 +312,27 @@ public class UpdatePageTest extends BaseSeleniumTest{
                     "aids",
                     "htlv1_2"
             );
+        }
+
+        @Test
+        @Tag("UiTest")
+        @DisplayName("Should display error toast when can not reject exam")
+        void shouldDisplayErrorToastWhenCanNotRejectExam(){
+            donationPage.registerDonationWithAllExams("Weverton");
+            donationPage.clickOnUpdateTabButton();
+            donationPage.selectDonationInList("Weverton");
+
+            UpdateSeroExamPageObject seroPage = donationPage.clickUpdateForSerologicalExam();
+
+            for (String key : allDiseaseKeys) {
+                seroPage.selectDiseaseStatus(key, "Negative");
+            }
+
+            seroPage.fillObservations(faker.lorem().sentence());
+
+            seroPage.clickRejectButtonAndExpectFailure();
+
+            assertThat(seroPage.getUpdateExamErrorToastText()).isNotNull();
         }
     }
 
