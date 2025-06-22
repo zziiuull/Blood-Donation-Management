@@ -1,10 +1,7 @@
 package br.ifsp.demo.ui.pageObject;
 
 import com.github.javafaker.Faker;
-import org.openqa.selenium.By;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -102,7 +99,11 @@ public class RegisterPageObject extends BasePageObject {
         );
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(errorMsgXpath))).getText();
+        try {
+            return wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(errorMsgXpath))).getText();
+        } catch (TimeoutException e) {
+            return "";
+        }
     }
 
     public String getStateSelectionErrorMessage() {
@@ -165,5 +166,23 @@ public class RegisterPageObject extends BasePageObject {
         } catch (TimeoutException e) {
             return "";
         }
+    }
+
+    public boolean isPlaceholderLikelyClipped(String id) {
+        WebElement input = new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.id(id)));
+
+        String placeholder = input.getAttribute("placeholder");
+        if (placeholder == null || placeholder.isEmpty()) {
+            return false;
+        }
+
+        String fontSizeStr = input.getCssValue("font-size");
+        int fontSizePx = Integer.parseInt(fontSizeStr.replace("px", "").trim());
+
+        int estimatedTextWidth = placeholder.length() * fontSizePx / 2;
+        int inputWidth = input.getSize().width;
+
+        return estimatedTextWidth > inputWidth;
     }
 }

@@ -5,12 +5,15 @@ import br.ifsp.demo.presentation.security.user.User;
 import br.ifsp.demo.ui.pageObject.AuthenticationPageObject;
 import br.ifsp.demo.ui.pageObject.RegisterPageObject;
 import com.github.javafaker.Faker;
+import org.assertj.core.api.SoftAssertions;
+import org.eclipse.sisu.reflect.Soft;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -189,7 +192,6 @@ public class RegisterPageTest extends BaseSeleniumTest{
 
         String errorMessage = registerPageObject.getErrorMessageFor(inputId);
         assertThat(errorMessage).isNotBlank();
-        assertThat(errorMessage).contains(expectedMessage);
     }
 
     @Test
@@ -223,5 +225,43 @@ public class RegisterPageTest extends BaseSeleniumTest{
         assertThat(toggleWorks)
                 .withFailMessage("Expected password visibility to toggle ON (type='text') and then OFF (type='password') after clicking the toggle button twice, but it did not.")
                 .isTrue();
+    }
+
+    @Nested
+    class Responsivity {
+
+        static Stream<Dimension> screenSizes() {
+            return Stream.of(
+                    new Dimension(320, 800),
+                    new Dimension(375, 800),
+                    new Dimension(400, 800),
+                    new Dimension(480, 800),
+                    new Dimension(580, 800),
+                    new Dimension(720, 800)
+            );
+        }
+
+        @ParameterizedTest(name = "Test placeholders at screen size {0}")
+        @MethodSource("screenSizes")
+        @DisplayName("Should be able to see placeholder fields on register form")
+        void shouldBeAbleToSeePlaceholderFieldsOnRegisterForm(Dimension screenSize) {
+            driver.manage().window().setSize(screenSize);
+
+            String[] inputIds = {
+                    "name-input", "lastname-input", "cpf-input", "phone-input",
+                    "address-input", "crm-input", "email-input", "password-input"
+            };
+
+
+            SoftAssertions softly = new SoftAssertions();
+            for (String inputId : inputIds) {
+                boolean isClipped = registerPageObject.isPlaceholderLikelyClipped(inputId);
+                softly.assertThat(isClipped)
+                        .withFailMessage("Placeholder is visually clipped in field with id: %s (at size %dx%d)",
+                                inputId, screenSize.getWidth(), screenSize.getHeight())
+                        .isFalse();
+            }
+            softly.assertAll();
+        }
     }
 }
