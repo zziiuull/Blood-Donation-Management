@@ -1,6 +1,9 @@
 package br.ifsp.demo.ui.pageTest;
 
+import br.ifsp.demo.domain.model.donation.Appointment;
+import br.ifsp.demo.domain.model.donation.AppointmentStatus;
 import br.ifsp.demo.infrastructure.repository.appointment.AppointmentRepository;
+import br.ifsp.demo.infrastructure.repository.donation.DonationRepository;
 import br.ifsp.demo.presentation.security.auth.AuthenticationService;
 import br.ifsp.demo.presentation.security.auth.RegisterUserRequest;
 import br.ifsp.demo.presentation.security.user.JpaUserRepository;
@@ -16,6 +19,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -32,6 +36,8 @@ public class UpdatePageTest extends BaseSeleniumTest{
     JpaUserRepository userRepository;
     @Autowired
     AppointmentRepository appointmentRepository;
+    @Autowired
+    DonationRepository donationRepository;
 
 
     private static final Faker faker = Faker.instance();
@@ -73,6 +79,16 @@ public class UpdatePageTest extends BaseSeleniumTest{
     public void tearDown() {
         userRepository.deleteById(userId);
         super.tearDown();
+
+        donationRepository.findAll().stream()
+                .filter(donation -> donation.getCreatedAt().toLocalDate().isEqual(LocalDate.now()))
+                .reduce((first, second) -> second)
+                .ifPresent(lastDonation -> {
+                    Appointment appointment = lastDonation.getAppointment();
+                    appointment.setStatus(AppointmentStatus.SCHEDULED);
+                    appointmentRepository.save(appointment);
+                    donationRepository.deleteById(lastDonation.getId());
+                });
     }
 
     @Nested
@@ -89,7 +105,7 @@ public class UpdatePageTest extends BaseSeleniumTest{
                 "'AB POS', 'AB+'",
                 "'AB NEG', 'AB-'",
                 "'O POS', 'O+'",
-                "'O NEG, 'O-'"
+                "'O NEG', 'O-'"
         })
         void shouldApproveImmunoExamToEachBloodType(String bloodType, String expectedBloodType) {
             String irregularAntibodies = "Negative";
