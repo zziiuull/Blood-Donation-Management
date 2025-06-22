@@ -1,9 +1,6 @@
 package br.ifsp.demo.ui.pageObject;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -27,6 +24,12 @@ public class DonationPageObject extends BasePageObject {
     private final By updateSeroExamLink = By.xpath("//h3[text()='Serological screening exam']/following-sibling::div//a[text()='Update']");
     private final By bloodTypeInTableLocator = By.xpath("//h3[text()='Immunohematology exam']/following-sibling::div//td[4]");
     private final By antibodiesInTableLocator = By.xpath("//h3[text()='Immunohematology exam']/following-sibling::div//td[5]");
+    private final By hepatitisBStatusInTable = By.xpath("//h3[text()='Serological screening exam']/following-sibling::div//td[4]");
+    private final By hepatitisCStatusInTable = By.xpath("//h3[text()='Serological screening exam']/following-sibling::div//td[5]");
+    private final By chagasDiseaseStatusInTable = By.xpath("//h3[text()='Serological screening exam']/following-sibling::div//td[6]");
+    private final By syphilisStatusInTable = By.xpath("//h3[text()='Serological screening exam']/following-sibling::div//td[7]");
+    private final By aidsStatusInTable = By.xpath("//h3[text()='Serological screening exam']/following-sibling::div//td[8]");
+    private final By htlvStatusInTable = By.xpath("//h3[text()='Serological screening exam']/following-sibling::div//td[9]");
 
 
     public DonationPageObject(WebDriver driver) {
@@ -222,4 +225,42 @@ public class DonationPageObject extends BasePageObject {
 
         return driver.findElement(antibodiesInTableLocator).getText();
     }
+
+    private String getTextFromElementWithScroll(By locator) {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+        WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(locator));
+
+        JavascriptExecutor executor = (JavascriptExecutor) driver;
+        executor.executeScript("arguments[0].scrollIntoView({block: 'center'});", element);
+
+        wait.until(ExpectedConditions.visibilityOf(element));
+
+        return element.getText();
+    }
+
+    public String getUpdatedHepatitisBStatus() {
+        return getTextFromElementWithScroll(hepatitisBStatusInTable);
+    }
+
+    public String getUpdatedHepatitisCStatus() {
+        return getTextFromElementWithScroll(hepatitisCStatusInTable);
+    }
+
+    public String getUpdatedChagasDiseaseStatus() {
+        return getTextFromElementWithScroll(chagasDiseaseStatusInTable);
+    }
+
+    public String getUpdatedSyphilisStatus() {
+        return getTextFromElementWithScroll(syphilisStatusInTable);
+    }
+
+    public String getUpdatedAidsStatus() {
+        return getTextFromElementWithScroll(aidsStatusInTable);
+    }
+
+    public String getUpdatedHtlvStatus() {
+        return getTextFromElementWithScroll(htlvStatusInTable);
+    }
+
 }

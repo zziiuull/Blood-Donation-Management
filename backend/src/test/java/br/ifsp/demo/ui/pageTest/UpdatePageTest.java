@@ -7,17 +7,15 @@ import br.ifsp.demo.presentation.security.user.JpaUserRepository;
 import br.ifsp.demo.ui.pageObject.AuthenticationPageObject;
 import br.ifsp.demo.ui.pageObject.DonationPageObject;
 import br.ifsp.demo.ui.pageObject.UpdateImmunoExamPageObject;
+import br.ifsp.demo.ui.pageObject.UpdateSeroExamPageObject;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.*;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.Duration;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -121,5 +119,43 @@ public class UpdatePageTest extends BaseSeleniumTest{
 
         assertThat(selectedIrregularAntibodies).isEqualTo("POSITIVE");
         assertThat(selectedBloodType).isEqualTo("A+");
+    }
+
+    @Test
+    @Tag("UiTest")
+    @DisplayName("Should approve sero exam")
+    void shouldApproveSeroExam(){
+        String positive = "Positive";
+        String negative = "Negative";
+
+        donationPage.registerDonationWithAllExams("Weverton");
+        donationPage.clickOnUpdateTabButton();
+        donationPage.selectDonationInList("Weverton");
+
+        UpdateSeroExamPageObject seroPage = donationPage.clickUpdateForSerologicalExam();
+
+        seroPage.selectDiseaseStatus("hepatitisB", negative);
+        seroPage.selectDiseaseStatus("hepatitisC", negative);
+        seroPage.selectDiseaseStatus("chagasDisease", negative);
+        seroPage.selectDiseaseStatus("syphilis", negative);
+        seroPage.selectDiseaseStatus("aids", negative);
+        seroPage.selectDiseaseStatus("htlv1_2", negative);
+        seroPage.fillObservations(faker.lorem().sentence());
+
+        DonationPageObject donationPage = seroPage.clickApproveButton();
+
+        String selectedHepatitisB = donationPage.getUpdatedHepatitisBStatus();
+        String selectedHepatitisC = donationPage.getUpdatedHepatitisCStatus();
+        String selectedChagasDisease = donationPage.getUpdatedChagasDiseaseStatus();
+        String selectedSyphilis = donationPage.getUpdatedSyphilisStatus();
+        String selectedAids= donationPage.getUpdatedAidsStatus();
+        String selectedHtlvStatus = donationPage.getUpdatedHtlvStatus();
+
+        assertThat(selectedHepatitisB).isEqualTo("NEGATIVE");
+        assertThat(selectedHepatitisC).isEqualTo("NEGATIVE");
+        assertThat(selectedChagasDisease).isEqualTo("NEGATIVE");
+        assertThat(selectedSyphilis).isEqualTo("NEGATIVE");
+        assertThat(selectedAids).isEqualTo("NEGATIVE");
+        assertThat(selectedHtlvStatus).isEqualTo("NEGATIVE");
     }
 }
