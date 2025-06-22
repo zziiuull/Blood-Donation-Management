@@ -1,5 +1,6 @@
 package br.ifsp.demo.ui.pageObject;
 
+import br.ifsp.demo.ui.pageTest.ViewPageTest;
 import com.github.javafaker.Faker;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.locators.RelativeLocator;
@@ -313,5 +314,31 @@ public class DonationPageObject extends BasePageObject {
         seroPage.fillObservations(seroObservations);
 
         seroPage.clickApproveButtonAndExpectSuccess();
+    }
+
+    public ViewImmunohematologyObject cickOnViewImmunohematologyButton() {
+        By immunohematologyButton = By.xpath("//a[starts-with(@href, '/exams/immunohematology/')]");
+        WebElement button = driver.findElement(immunohematologyButton);
+        new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.visibilityOf(
+                button
+        ));
+        button.click();
+        new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.urlContains(
+                "/exams/immunohematology/"
+        ));
+        return new ViewImmunohematologyObject(driver);
+    }
+
+    public ViewSerologicalObject cickOnViewSerologicalButton() {
+        By immunohematologyButton = By.xpath("//a[starts-with(@href, '/exams/serological-screening/')]");
+        WebElement button = driver.findElement(immunohematologyButton);
+        new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.visibilityOf(
+                button
+        ));
+        button.click();
+        new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.urlContains(
+                "/exams/serological-screening/"
+        ));
+        return new ViewSerologicalObject(driver);
     }
 }
