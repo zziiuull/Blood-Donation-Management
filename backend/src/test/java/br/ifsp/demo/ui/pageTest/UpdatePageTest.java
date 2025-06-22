@@ -1,6 +1,7 @@
 package br.ifsp.demo.ui.pageTest;
 
 import br.ifsp.demo.domain.model.common.BloodType;
+import br.ifsp.demo.infrastructure.repository.appointment.AppointmentRepository;
 import br.ifsp.demo.presentation.security.auth.AuthenticationService;
 import br.ifsp.demo.presentation.security.auth.RegisterUserRequest;
 import br.ifsp.demo.presentation.security.user.JpaUserRepository;
@@ -27,6 +28,8 @@ public class UpdatePageTest extends BaseSeleniumTest{
     AuthenticationService authenticationService;
     @Autowired
     JpaUserRepository userRepository;
+    @Autowired
+    AppointmentRepository appointmentRepository;
 
 
     private static final Faker faker = Faker.instance();
@@ -35,7 +38,6 @@ public class UpdatePageTest extends BaseSeleniumTest{
     private UUID userId;
     private AuthenticationPageObject authPage;
     private DonationPageObject donationPage;
-    private BloodType bloodType;
 
     @Override
     protected void setInitialPage() {
@@ -73,11 +75,21 @@ public class UpdatePageTest extends BaseSeleniumTest{
 
     @Nested
     class Immuno {
-        @Test
+
+        @ParameterizedTest
         @Tag("UiTest")
-        @DisplayName("Should approve immuno exam")
-        void shouldApproveImmunoExam(){
-            String bloodType = "A POS";
+        @DisplayName("Should approve immuno exam to each blood type")
+        @CsvSource({
+                "'A POS', 'A+'",
+                "'A NEG', 'A-'",
+                "'B POS', 'B+'",
+                "'B NEG', 'B-'",
+                "'AB POS', 'AB+'",
+                "'AB NEG', 'AB-'",
+                "'O POS', 'O+'",
+                "'O NEG, 'O-'"
+        })
+        void shouldApproveImmunoExamToEachBloodType(String bloodType, String expectedBloodType) {
             String irregularAntibodies = "Negative";
 
             donationPage.registerDonationWithAllExams("Weverton");
@@ -96,7 +108,7 @@ public class UpdatePageTest extends BaseSeleniumTest{
             String selectedIrregularAntibodies = donationPage.getUpdatedAntibodiesTextFromTable();
 
             assertThat(selectedIrregularAntibodies).isEqualTo("NEGATIVE");
-            assertThat(selectedBloodType).isEqualTo("A+");
+            assertThat(selectedBloodType).isEqualTo(expectedBloodType);
         }
 
         @Test
@@ -125,20 +137,10 @@ public class UpdatePageTest extends BaseSeleniumTest{
             assertThat(selectedBloodType).isEqualTo("A+");
         }
         
-        @ParameterizedTest
+        @Test
         @Tag("UiTest")
-        @DisplayName("Should display error toast when can not approve the exam to each blood type")
-        @CsvSource({
-                "'A POS'",
-                "'A NEG'",
-                "'B POS'",
-                "'B NEG'",
-                "'AB POS'",
-                "'AB NEG'",
-                "'O POS'",
-                "'O NEG'"
-        })
-        void shouldDisplayErrorToastWhenCanNotApproveTheExamToEachBloodType(String bloodType){
+        @DisplayName("Should display error toast when can not approve the exam")
+        void shouldDisplayErrorToastWhenCanNotApproveTheExam(String bloodType){
             String irregularAntibodies = "Positive";
 
             donationPage.registerDonationWithAllExams("Weverton");
