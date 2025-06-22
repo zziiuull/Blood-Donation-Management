@@ -88,7 +88,7 @@ public class UpdatePageTest extends BaseSeleniumTest{
             immunoPage.selectIrregularAntibodies(irregularAntibodies);
             immunoPage.fillObservations(faker.lorem().sentence());
 
-            DonationPageObject donationPage = immunoPage.clickApproveButton();
+            DonationPageObject donationPage = immunoPage.clickApproveButtonAndExpectSuccess();
 
             String selectedBloodType = donationPage.getUpdatedBloodTypeTextFromTable();
             String selectedIrregularAntibodies = donationPage.getUpdatedAntibodiesTextFromTable();
@@ -122,6 +122,28 @@ public class UpdatePageTest extends BaseSeleniumTest{
             assertThat(selectedIrregularAntibodies).isEqualTo("POSITIVE");
             assertThat(selectedBloodType).isEqualTo("A+");
         }
+        
+        @Test
+        @Tag("UiTest")
+        @DisplayName("Should display error toast when can not approve the exam")
+        void shouldDisplayErrorToastWhenCanNotApproveTheExam(){
+            String bloodType = "A POS";
+            String irregularAntibodies = "Positive";
+
+            donationPage.registerDonationWithAllExams("Weverton");
+            donationPage.clickOnUpdateTabButton();
+            donationPage.selectDonationInList("Weverton");
+
+            UpdateImmunoExamPageObject immunoPage = donationPage.clickUpdateForImmunohematologyExam();
+
+            immunoPage.selectBloodType(bloodType);
+            immunoPage.selectIrregularAntibodies(irregularAntibodies);
+            immunoPage.fillObservations(faker.lorem().sentence());
+
+            immunoPage.clickApproveButtonAndExpectFailure();
+
+            assertThat(immunoPage.getUpdateExamErrorToastText()).isNotNull();
+        }
     }
 
     @Nested
@@ -146,7 +168,7 @@ public class UpdatePageTest extends BaseSeleniumTest{
             seroPage.selectDiseaseStatus("htlv1_2", negative);
             seroPage.fillObservations(faker.lorem().sentence());
 
-            DonationPageObject donationPage = seroPage.clickApproveButton();
+            DonationPageObject donationPage = seroPage.clickApproveButtonAndExpectSuccess();
 
             String selectedHepatitisB = donationPage.getUpdatedHepatitisBStatus();
             String selectedHepatitisC = donationPage.getUpdatedHepatitisCStatus();
