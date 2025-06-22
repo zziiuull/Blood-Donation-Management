@@ -60,4 +60,11 @@ public class UpdateSeroExamPageObject extends BasePageObject {
         Select select = new Select(selectElement);
         select.selectByVisibleText(optionText);
     }
+
+    public void selectHtlvOption(String optionText) {
+        WebElement selectElement = new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.visibilityOfElementLocated(htlvSelect));
+        Select select = new Select(selectElement);
+        select.selectByVisibleText(optionText);
+    }
 }
