@@ -1,5 +1,7 @@
 package br.ifsp.demo.ui.pageTest;
 
+import br.ifsp.demo.domain.model.donation.Appointment;
+import br.ifsp.demo.domain.model.donation.AppointmentStatus;
 import br.ifsp.demo.infrastructure.repository.appointment.AppointmentRepository;
 import br.ifsp.demo.infrastructure.repository.donation.DonationRepository;
 import br.ifsp.demo.presentation.security.auth.AuthenticationService;
@@ -20,9 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.fail;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -74,6 +76,17 @@ public class ViewPageTest extends BaseSeleniumTest{
     @AfterEach
     public void tearDown() {
         userRepository.deleteById(userId);
+
+        donationRepository.findAll().stream()
+            .filter(donation -> donation.getCreatedAt().toLocalDate().isEqual(LocalDate.now()))
+            .reduce((first, second) -> second)
+            .ifPresent(lastDonation -> {
+                Appointment appointment = lastDonation.getAppointment();
+                appointment.setStatus(AppointmentStatus.SCHEDULED);
+                appointmentRepository.save(appointment);
+                donationRepository.deleteById(lastDonation.getId());
+        });
+
         super.tearDown();
     }
 
