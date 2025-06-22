@@ -126,4 +126,27 @@ public class ViewPageTest extends BaseSeleniumTest{
         softly.assertThat(viewPage.observations()).isEqualTo("Observations: " + seroObs);
         softly.assertAll();
     }
+
+    @Test
+    @Tag("UiTest")
+    @DisplayName("Click on view immunohematology without update and confirm informations")
+    void clickOnViewImmunohematologyWithoutUpdateAndConfirmInformations(){
+        String donorName = "Ana Beatriz";
+
+        donationPage.registerDonationWithAllExams(donorName);
+        ((JavascriptExecutor) driver).executeScript("window.scrollTo(0, 0);");
+        new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.elementToBeClickable(
+                By.id("view-tab")
+        ));
+        donationPage.viewDonationRegistered(donorName);
+        ViewImmunohematologyObject viewPage = donationPage.cickOnViewImmunohematologyButton();
+
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(viewPage.status()).isEqualTo("Status: Under analysis");
+        softly.assertThat(viewPage.bloodType()).isEqualTo("Blood type: Not informed");
+        softly.assertThat(viewPage.irregularAntibodies()).isEqualTo("Irregular Antibodies: Not informed");
+        softly.assertThat(viewPage.observations()).isEqualTo("Observations: No observations");
+
+        softly.assertAll();
+    }
 }
