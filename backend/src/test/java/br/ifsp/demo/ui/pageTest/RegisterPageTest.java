@@ -2,11 +2,9 @@ package br.ifsp.demo.ui.pageTest;
 
 import br.ifsp.demo.presentation.security.user.JpaUserRepository;
 import br.ifsp.demo.presentation.security.user.User;
-import br.ifsp.demo.ui.pageObject.AuthenticationPageObject;
 import br.ifsp.demo.ui.pageObject.RegisterPageObject;
 import com.github.javafaker.Faker;
 import org.assertj.core.api.SoftAssertions;
-import org.eclipse.sisu.reflect.Soft;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -24,7 +22,6 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)

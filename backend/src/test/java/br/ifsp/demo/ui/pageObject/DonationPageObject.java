@@ -1,7 +1,5 @@
 package br.ifsp.demo.ui.pageObject;
 
-import br.ifsp.demo.ui.pageTest.ViewPageTest;
-import com.github.javafaker.Faker;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.locators.RelativeLocator;
 import org.openqa.selenium.support.ui.ExpectedConditions;
