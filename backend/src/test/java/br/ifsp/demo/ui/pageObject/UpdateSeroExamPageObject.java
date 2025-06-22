@@ -73,4 +73,13 @@ public class UpdateSeroExamPageObject extends BasePageObject {
         textarea.clear();
         textarea.sendKeys(text);
     }
+
+    public DonationPageObject clickApproveButton() {
+        driver.findElement(approveButton).click();
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.urlContains("/donation"));
+
+        return new DonationPageObject(driver);
+    }
 }
