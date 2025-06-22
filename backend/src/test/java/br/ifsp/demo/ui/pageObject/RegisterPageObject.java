@@ -1,10 +1,7 @@
 package br.ifsp.demo.ui.pageObject;
 
 import com.github.javafaker.Faker;
-import org.openqa.selenium.By;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -132,17 +129,21 @@ public class RegisterPageObject extends BasePageObject {
 
         WebElement toggleButton = new WebDriverWait(driver, Duration.ofSeconds(5))
                 .until(ExpectedConditions.elementToBeClickable(By.cssSelector("button[aria-label='toggle password visibility']")));
+
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
-        toggleButton.click();
+        clickWithJavaScript(toggleButton);
         boolean firstToggle = wait.until(d -> passwordInput.getAttribute("type").equals("text"));
 
-        toggleButton = new WebDriverWait(driver, Duration.ofSeconds(5))
-                .until(ExpectedConditions.elementToBeClickable(By.cssSelector("button[aria-label='toggle password visibility']")));
-        toggleButton.click();
+        clickWithJavaScript(toggleButton);
         boolean secondToggle = wait.until(d -> passwordInput.getAttribute("type").equals("password"));
 
         return firstToggle && secondToggle;
+    }
+
+    private void clickWithJavaScript(WebElement element) {
+        JavascriptExecutor executor = (JavascriptExecutor) driver;
+        executor.executeScript("arguments[0].click();", element);
     }
 
     public String emailErrorMessage(String email) {
