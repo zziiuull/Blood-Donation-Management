@@ -33,5 +33,10 @@ public class UpdateSeroExamPageObject extends BasePageObject {
         select.selectByVisibleText(optionText);
     }
 
-
+    public void selectHepatitisCOption(String optionText) {
+        WebElement selectElement = new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.visibilityOfElementLocated(hepatitisCSelect));
+        Select select = new Select(selectElement);
+        select.selectByVisibleText(optionText);
+    }
 }
