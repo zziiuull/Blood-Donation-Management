@@ -56,6 +56,10 @@ public class UpdateImmunoExamPageObject extends BasePageObject{
 
     public DonationPageObject clickRejectButton() {
         driver.findElement(rejectButton).click();
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.urlContains("/donation"));
+
         return new DonationPageObject(driver);
     }
 }

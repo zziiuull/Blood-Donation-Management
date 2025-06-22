@@ -17,6 +17,7 @@ import java.time.Duration;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -93,6 +94,32 @@ public class UpdatePageTest extends BaseSeleniumTest{
         String selectedIrregularAntibodies = donationPage.getUpdatedAntibodiesTextFromTable();
 
         assertThat(selectedIrregularAntibodies).isEqualTo("NEGATIVE");
+        assertThat(selectedBloodType).isEqualTo("A+");
+    }
+    
+    @Test
+    @Tag("UiTest")
+    @DisplayName("Should reject immuno exam")
+    void shouldRejectImmunoExam(){
+        String bloodType = "A POS";
+        String irregularAntibodies = "Positive";
+
+        donationPage.registerDonationWithAllExams("Weverton");
+        donationPage.clickOnUpdateTabButton();
+        donationPage.selectDonationInList("Weverton");
+
+        UpdateImmunoExamPageObject immunoPage = donationPage.clickUpdateForImmunohematologyExam();
+
+        immunoPage.selectBloodType(bloodType);
+        immunoPage.selectIrregularAntibodies(irregularAntibodies);
+        immunoPage.fillObservations(faker.lorem().sentence());
+
+        DonationPageObject donationPage = immunoPage.clickRejectButton();
+
+        String selectedBloodType = donationPage.getUpdatedBloodTypeTextFromTable();
+        String selectedIrregularAntibodies = donationPage.getUpdatedAntibodiesTextFromTable();
+
+        assertThat(selectedIrregularAntibodies).isEqualTo("POSITIVE");
         assertThat(selectedBloodType).isEqualTo("A+");
     }
 }
