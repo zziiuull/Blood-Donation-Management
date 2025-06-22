@@ -12,7 +12,10 @@ import br.ifsp.demo.ui.pageObject.DonationPageObject;
 import com.github.javafaker.Faker;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -22,6 +25,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -92,7 +96,7 @@ public class DonationPageTest extends BaseSeleniumTest {
         @Test
         @Tag("UiTest")
         @DisplayName("Should navigate to donation page when user login")
-        void shouldNavigateToDonationPageWhenUserLogin(){
+        void shouldNavigateToDonationPageWhenUserLogin() {
             donationPage = authPage.authenticateWithCredentials(email, password);
             assertThat(donationPage.pageUrl()).contains("/donation");
         }
@@ -116,22 +120,22 @@ public class DonationPageTest extends BaseSeleniumTest {
         @Test
         @Tag("UiTest")
         @DisplayName("Should logout when click on logout button")
-        void shouldLogoutWhenClickOnLogoutButton(){
+        void shouldLogoutWhenClickOnLogoutButton() {
             donationPage = authPage.authenticateWithCredentials(email, password);
             AuthenticationPageObject authenticationPageObject = donationPage.logout();
             assertThat(authenticationPageObject.pageUrl()).contains("/login");
         }
-        
+
         @Test
         @Tag("UiTest")
         @DisplayName("Should stay on donation page when click on BDM button")
-        void shouldStayOnDonationPageWhenClickOnBdmButton(){
+        void shouldStayOnDonationPageWhenClickOnBdmButton() {
             donationPage = authPage.authenticateWithCredentials(email, password);
             DonationPageObject donationPageObject = donationPage.clickOnBDMButton();
             assertThat(donationPageObject.pageUrl()).contains("/donation");
         }
     }
-    
+
     @Nested
     class RegisterDonation {
 
@@ -147,11 +151,11 @@ public class DonationPageTest extends BaseSeleniumTest {
                         donationRepository.deleteById(lastDonation.getId());
                     });
         }
-        
+
         @Test
         @Tag("UiTest")
         @DisplayName("Should stay on register donation page when click on register donation")
-        void shouldStayOnRegisterDonationPageWhenClickOnRegisterDonation(){
+        void shouldStayOnRegisterDonationPageWhenClickOnRegisterDonation() {
             donationPage = authPage.authenticateWithCredentials(email, password);
             donationPage.clickOnRegisterTabButton();
             assertThat(donationPage.isRegisterDonationStepOneTextVisible()).isTrue();
@@ -160,7 +164,7 @@ public class DonationPageTest extends BaseSeleniumTest {
         @Test
         @Tag("UiTest")
         @DisplayName("Should register a donation with immunohematology exam")
-        void shouldRegisterADonationWithImmunohematologyExam(){
+        void shouldRegisterADonationWithImmunohematologyExam() {
             donationPage = authPage.authenticateWithCredentials(email, password);
             donationPage.registerDonationWithImmunohematologyExam("Weverton");
             SoftAssertions softly = new SoftAssertions();
@@ -172,7 +176,7 @@ public class DonationPageTest extends BaseSeleniumTest {
         @Test
         @Tag("UiTest")
         @DisplayName("Should register a donation with serological exam")
-        void shouldRegisterADonationWithSerologicalExam(){
+        void shouldRegisterADonationWithSerologicalExam() {
             donationPage = authPage.authenticateWithCredentials(email, password);
             donationPage.registerDonationWithSerologicalExam("Weverton");
             SoftAssertions softly = new SoftAssertions();
@@ -184,7 +188,7 @@ public class DonationPageTest extends BaseSeleniumTest {
         @Test
         @Tag("UiTest")
         @DisplayName("Should register a donation with all exams")
-        void shouldRegisterADonationWithAllExams(){
+        void shouldRegisterADonationWithAllExams() {
             donationPage = authPage.authenticateWithCredentials(email, password);
             donationPage.registerDonationWithAllExams("Ana Beatriz");
             SoftAssertions softly = new SoftAssertions();
@@ -217,7 +221,7 @@ public class DonationPageTest extends BaseSeleniumTest {
             @Test
             @Tag("UiTest")
             @DisplayName("Should update a Immuno exam")
-            void shouldUpdateAImmunoExam(){
+            void shouldUpdateAImmunoExam() {
                 donationPage = authPage.authenticateWithCredentials(email, password);
 
                 donationPage.registerDonationWithAllExams("Weverton");
@@ -233,7 +237,7 @@ public class DonationPageTest extends BaseSeleniumTest {
             @Test
             @Tag("UiTest")
             @DisplayName("Should update a Sero exam")
-            void shouldUpdateASeroExam(){
+            void shouldUpdateASeroExam() {
                 donationPage = authPage.authenticateWithCredentials(email, password);
 
                 donationPage.registerDonationWithAllExams("Weverton");
@@ -250,7 +254,7 @@ public class DonationPageTest extends BaseSeleniumTest {
         @Test
         @Tag("UiTest")
         @DisplayName("Should go to update donation when click on update donation")
-        void shouldGoToUpdateDonationWhenClickOnUpdateDonation(){
+        void shouldGoToUpdateDonationWhenClickOnUpdateDonation() {
             donationPage = authPage.authenticateWithCredentials(email, password);
             donationPage.clickOnUpdateTabButton();
             assertThat(donationPage.isUpdateTabActive()).isTrue();
@@ -331,10 +335,38 @@ public class DonationPageTest extends BaseSeleniumTest {
         @Test
         @Tag("UiTest")
         @DisplayName("Should go to view donation when click on view donation")
-        void shouldGoToViewDonationWhenClickOnViewDonation(){
+        void shouldGoToViewDonationWhenClickOnViewDonation() {
             donationPage = authPage.authenticateWithCredentials(email, password);
             donationPage.clickOnViewTabButton();
             assertThat(donationPage.isViewTabActive()).isTrue();
+        }
+    }
+
+    @Nested
+    class Responsivity {
+
+        static Stream<Dimension> screenSizes() {
+            return Stream.of(
+                    new Dimension(320, 800),
+                    new Dimension(375, 800),
+                    new Dimension(400, 800),
+                    new Dimension(480, 800),
+                    new Dimension(580, 800),
+                    new Dimension(720, 800)
+            );
+        }
+
+        @ParameterizedTest(name = "Test placeholders at screen size {0}")
+        @Tag("UiTest")
+        @MethodSource("screenSizes")
+        @DisplayName("Should be able to scroll to view button on navigation bar")
+        void shouldBeAbleToScrollToViewButtonOnNavigationBar(Dimension screenSize){
+            driver.manage().window().setSize(screenSize);
+            donationPage = authPage.authenticateWithCredentials(email, password);
+            donationPage.scrollAndClickOnViewTabButton();
+            assertThat(donationPage.isViewTabActive())
+                    .withFailMessage("Expected tab content to be visible after clicking tabList.")
+                    .isTrue();
         }
     }
 }

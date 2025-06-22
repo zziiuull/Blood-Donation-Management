@@ -102,6 +102,38 @@ public class DonationPageObject extends BasePageObject {
         driver.findElement(viewTabButton).click();
     }
 
+    public void scrollAndClickOnViewTabButton() {
+        By tabListLocator = By.cssSelector("[data-slot='tabList']");
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+
+        WebElement tabListElement = wait.until(ExpectedConditions.visibilityOfElementLocated(tabListLocator));
+
+        ((JavascriptExecutor) driver).executeScript(
+                "arguments[0].scrollIntoView({behavior: 'instant', block: 'center'});", tabListElement);
+
+        if (!isInViewport(tabListElement)) {
+            throw new IllegalStateException("The tabList element is not fully visible inside the viewport after scrolling.");
+        }
+
+        wait.until(ExpectedConditions.elementToBeClickable(viewTabButton)).click();
+    }
+
+    private boolean isInViewport(WebElement element) {
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        Object result = js.executeScript(
+                "var rect = arguments[0].getBoundingClientRect();" +
+                        "return (" +
+                        "rect.top >= 0 && " +
+                        "rect.left >= 0 && " +
+                        "rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && " +
+                        "rect.right <= (window.innerWidth || document.documentElement.clientWidth)" +
+                        ");",
+                element
+        );
+
+        return Boolean.TRUE.equals(result);
+    }
+
     public boolean isUpdateTabActive() {
         return !driver.findElements(activeUpdateTabLocator).isEmpty();
     }
