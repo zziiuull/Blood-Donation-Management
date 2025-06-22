@@ -8,6 +8,7 @@ import br.ifsp.demo.presentation.security.user.JpaUserRepository;
 import br.ifsp.demo.ui.pageObject.AuthenticationPageObject;
 import br.ifsp.demo.ui.pageObject.DonationPageObject;
 import br.ifsp.demo.ui.pageObject.ViewImmunohematologyObject;
+import br.ifsp.demo.ui.pageObject.ViewSerologicalObject;
 import com.github.javafaker.Faker;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.*;
@@ -96,6 +97,33 @@ public class ViewPageTest extends BaseSeleniumTest{
         softly.assertThat(viewPage.bloodType()).isEqualTo("Blood type: A +");
         softly.assertThat(viewPage.irregularAntibodies()).isEqualTo("Irregular Antibodies: Negative");
         softly.assertThat(viewPage.observations()).isEqualTo("Observations: " + immunoObs);
+        softly.assertAll();
+    }
+
+    @Test
+    @Tag("UiTest")
+    @DisplayName("Click on view serological and confirm informations")
+    void clickOnViewSerologicalAndConfirmInformations(){
+        String donorName = "Ana Beatriz";
+        String immunoObs = "immuno obs";
+        String seroObs = "sero obs";
+
+        donationPage.updateExams(donorName, "A POS", immunoObs, seroObs);
+        ((JavascriptExecutor) driver).executeScript("window.scrollTo(0, 0);");
+        new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.elementToBeClickable(
+                By.id("view-tab")
+        ));
+        donationPage.viewDonationRegistered(donorName);
+        ViewSerologicalObject viewPage = donationPage.cickOnViewSerologicalButton();
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(viewPage.status()).isEqualTo("Status: APPROVED");
+        softly.assertThat(viewPage.hepatitisB()).isEqualTo("Hepatitis B: NEGATIVE");
+        softly.assertThat(viewPage.hepatitisC()).isEqualTo("Hepatitis C: NEGATIVE");
+        softly.assertThat(viewPage.chagasDisease()).isEqualTo("Chagas Disease: NEGATIVE");
+        softly.assertThat(viewPage.syphilis()).isEqualTo("Syphilis: NEGATIVE");
+        softly.assertThat(viewPage.aids()).isEqualTo("AIDS: NEGATIVE");
+        softly.assertThat(viewPage.htlv()).isEqualTo("HTLV 1/2: NEGATIVE");
+        softly.assertThat(viewPage.observations()).isEqualTo("Observations: " + seroObs);
         softly.assertAll();
     }
 }

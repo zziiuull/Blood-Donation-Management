@@ -324,4 +324,17 @@ public class DonationPageObject extends BasePageObject {
         ));
         return new ViewImmunohematologyObject(driver);
     }
+
+    public ViewSerologicalObject cickOnViewSerologicalButton() {
+        By immunohematologyButton = By.xpath("//a[starts-with(@href, '/exams/serological-screening/')]");
+        WebElement button = driver.findElement(immunohematologyButton);
+        new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.visibilityOf(
+                button
+        ));
+        button.click();
+        new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.urlContains(
+                "/exams/serological-screening/"
+        ));
+        return new ViewSerologicalObject(driver);
+    }
 }
