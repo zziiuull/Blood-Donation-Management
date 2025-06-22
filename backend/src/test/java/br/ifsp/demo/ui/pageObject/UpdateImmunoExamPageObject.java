@@ -1,9 +1,6 @@
 package br.ifsp.demo.ui.pageObject;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -28,7 +25,9 @@ public class UpdateImmunoExamPageObject extends BasePageObject{
         By optionLocator = By.xpath(String.format("//li[@role='option'][normalize-space()='%s']", bloodType));
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-        wait.until(ExpectedConditions.elementToBeClickable(optionLocator)).click();
+        ((JavascriptExecutor) driver)
+                .executeScript("arguments[0].click();",wait
+                .until(ExpectedConditions.elementToBeClickable(optionLocator)));
     }
 
     public void selectIrregularAntibodies(String antibodyStatus) {
