@@ -1,6 +1,5 @@
 package br.ifsp.demo.ui.pageTest;
 
-import br.ifsp.demo.domain.model.common.BloodType;
 import br.ifsp.demo.infrastructure.repository.appointment.AppointmentRepository;
 import br.ifsp.demo.presentation.security.auth.AuthenticationService;
 import br.ifsp.demo.presentation.security.auth.RegisterUserRequest;
@@ -13,10 +12,13 @@ import com.github.javafaker.Faker;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -140,7 +142,7 @@ public class UpdatePageTest extends BaseSeleniumTest{
         @Test
         @Tag("UiTest")
         @DisplayName("Should display error toast when can not approve the exam")
-        void shouldDisplayErrorToastWhenCanNotApproveTheExam(String bloodType){
+        void shouldDisplayErrorToastWhenCanNotApproveTheExam(){
             String irregularAntibodies = "Positive";
 
             donationPage.registerDonationWithAllExams("Weverton");
@@ -149,7 +151,7 @@ public class UpdatePageTest extends BaseSeleniumTest{
 
             UpdateImmunoExamPageObject immunoPage = donationPage.clickUpdateForImmunohematologyExam();
 
-            immunoPage.selectBloodType(bloodType);
+            immunoPage.selectBloodType("A POS");
             immunoPage.selectIrregularAntibodies(irregularAntibodies);
             immunoPage.fillObservations(faker.lorem().sentence());
 
@@ -161,6 +163,7 @@ public class UpdatePageTest extends BaseSeleniumTest{
 
     @Nested
     class Sero {
+
         @Test
         @Tag("UiTest")
         @DisplayName("Should approve sero exam")
@@ -234,6 +237,44 @@ public class UpdatePageTest extends BaseSeleniumTest{
             assertThat(selectedSyphilis).isEqualTo("NEGATIVE");
             assertThat(selectedAids).isEqualTo("NEGATIVE");
             assertThat(selectedHtlvStatus).isEqualTo("POSITIVE");
+        }
+
+        @ParameterizedTest
+        @Tag("UiTest")
+        @DisplayName("Should display error toast when can not approve exam for each disease")
+        @MethodSource("provideDiseaseKeys")
+        void shouldDisplayErrorToastWhenCanNotApproveExamForEachDisease(String positiveDisease){
+            donationPage.registerDonationWithAllExams("Weverton");
+            donationPage.clickOnUpdateTabButton();
+            donationPage.selectDonationInList("Weverton");
+
+            UpdateSeroExamPageObject seroPage = donationPage.clickUpdateForSerologicalExam();
+
+            List<String> allDiseaseKeys = List.of("hepatitisB", "hepatitisC", "chagasDisease", "syphilis", "aids", "htlv1_2");
+
+            for (String key : allDiseaseKeys) {
+                if (key.equals(positiveDisease)) {
+                    seroPage.selectDiseaseStatus(key, "Positive");
+                } else {
+                    seroPage.selectDiseaseStatus(key, "Negative");
+                }
+            }
+            seroPage.fillObservations(faker.lorem().sentence());
+
+            seroPage.clickApproveButtonAndExpectFailure();
+
+            assertThat(seroPage.getUpdateExamErrorToastText()).isNotNull();
+        }
+
+        private static Stream<String> provideDiseaseKeys() {
+            return Stream.of(
+                    "hepatitisB",
+                    "hepatitisC",
+                    "chagasDisease",
+                    "syphilis",
+                    "aids",
+                    "htlv1_2"
+            );
         }
     }
 

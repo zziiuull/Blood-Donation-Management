@@ -1,9 +1,6 @@
 package br.ifsp.demo.ui.pageObject;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -65,5 +62,19 @@ public class UpdateSeroExamPageObject extends BasePageObject {
         wait.until(ExpectedConditions.urlContains("/donation"));
 
         return new DonationPageObject(driver);
+    }
+
+    public String getUpdateExamErrorToastText() {
+        By errorToastLocator = By.xpath("//*[text()='Error updating exam']");
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+
+        try {
+            WebElement toastElement = wait.until(ExpectedConditions.visibilityOfElementLocated(errorToastLocator));
+            return toastElement.getText();
+        } catch (TimeoutException e) {
+            System.out.println("Não foi encontrada a notificação de erro 'Error updating exam'.");
+            return "";
+        }
     }
 }
