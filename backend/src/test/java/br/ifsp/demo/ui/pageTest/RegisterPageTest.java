@@ -40,6 +40,11 @@ public class RegisterPageTest extends BaseSeleniumTest{
         this.registerPageObject = new RegisterPageObject(driver);
     }
 
+    @AfterEach
+    public void tearDown(){
+        super.tearDown();
+    }
+
     @Override
     protected void setInitialPage(){
         String page = "http://localhost:3000/register";
@@ -147,7 +152,7 @@ public class RegisterPageTest extends BaseSeleniumTest{
     }
 
     @Tag("UiTest")
-    @ParameterizedTest(name = "Test invalid data for field: {0}")
+    @ParameterizedTest(name = "Field: {0}")
     @CsvSource({
             "'name-input',   '12345', 'Nome inválido'",
             "'lastname-input',   '12345', 'Último nome inválido'",
