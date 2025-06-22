@@ -272,7 +272,18 @@ public class DonationPageTest extends BaseSeleniumTest {
                 donationPage = authPage.authenticateWithCredentials(email, password);
                 donationPage.registerDonationWithAllExams(donorName);
                 donationPage.viewDonationRegistered(donorName);
-                assertThat(donationPage.isViewingDonation(donorName)).isTrue();
+                SoftAssertions softly = new SoftAssertions();
+                softly.assertThat(donationPage.getDonorOfView(donorName)).isEqualTo(donorName);
+                softly.assertThat(donationPage.getQuantityOfExamUnderAnalysisOfView()).isEqualTo(2);
+                softly.assertThat(donationPage.getColumnTextOfView("BLOOD TYPE")).isEqualTo("N/A");
+                softly.assertThat(donationPage.getColumnTextOfView("IRREGULAR ANTIBODIES")).isEqualTo("N/A");
+                softly.assertThat(donationPage.getColumnTextOfView("HEPATITIS B")).isEqualTo("N/A");
+                softly.assertThat(donationPage.getColumnTextOfView("HEPATITIS C")).isEqualTo("N/A");
+                softly.assertThat(donationPage.getColumnTextOfView("CHAGAS DISEASE")).isEqualTo("N/A");
+                softly.assertThat(donationPage.getColumnTextOfView("SYPHILIS")).isEqualTo("N/A");
+                softly.assertThat(donationPage.getColumnTextOfView("AIDS")).isEqualTo("N/A");
+                softly.assertThat(donationPage.getColumnTextOfView("HTLV I/II")).isEqualTo("N/A");
+                softly.assertAll();
             }
         }
 

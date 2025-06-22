@@ -1,6 +1,7 @@
 package br.ifsp.demo.ui.pageObject;
 
 import org.openqa.selenium.*;
+import org.openqa.selenium.support.locators.RelativeLocator;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -145,11 +146,25 @@ public class DonationPageObject extends BasePageObject {
         new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.invisibilityOf(driver.findElement(appointmentSelect)));
     }
 
-    public boolean isViewingDonation(String donorName) {
+    public String getDonorOfView(String donorName) {
         By donorNameElementBy = By.xpath("//p[text()='" + donorName + "']");
         WebElement donorNameElement = driver.findElement(donorNameElementBy);
-        return donorNameElement.getText().equals(donorName);
+        return donorNameElement.getText();
     }
+
+    public int getQuantityOfExamUnderAnalysisOfView() {
+        By underAnalysis = By.xpath("//p[text()='UNDER ANALYSIS']");
+        List<WebElement> elements = driver.findElements(underAnalysis);
+        return elements.size();
+    }
+
+    public String getColumnTextOfView(String columnName) {
+        final By locator = RelativeLocator.with(By.tagName("p"))
+                .below(By.xpath("//th[text()='" + columnName + "']"));
+        WebElement element = driver.findElement(locator);
+        return element.getText();
+    }
+
 
     public void viewDonationRegistered(String donorName) throws InterruptedException {
         clickOnViewTabButton();
