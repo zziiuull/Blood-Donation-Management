@@ -170,4 +170,33 @@ public class ViewPageTest extends BaseSeleniumTest{
         softly.assertThat(viewPage.observations()).isEqualTo("Observations: " + immunoObs);
         softly.assertAll();
     }
+
+    @Test
+    @Tag("UiTest")
+    @DisplayName("Click on view serological with rejected exam and confirm informations")
+    void clickOnViewSerologicalWithRejectedExamAndConfirmInformations(){
+        String donorName = "Ana Beatriz";
+        String immunoObs = "immuno obs";
+        String seroObs = "sero obs";
+
+        donationPage.updateRejectExams(donorName, "A POS", immunoObs, seroObs);
+        ((JavascriptExecutor) driver).executeScript("window.scrollTo(0, 0);");
+        new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.elementToBeClickable(
+                By.id("view-tab")
+        ));
+
+        donationPage.viewDonationRegistered(donorName);
+        ViewSerologicalObject viewPage = donationPage.cickOnViewSerologicalButton();
+
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(viewPage.status()).isEqualTo("Status: REJECTED");
+        softly.assertThat(viewPage.hepatitisB()).isEqualTo("Hepatitis B: POSITIVE");
+        softly.assertThat(viewPage.hepatitisC()).isEqualTo("Hepatitis C: POSITIVE");
+        softly.assertThat(viewPage.chagasDisease()).isEqualTo("Chagas Disease: NEGATIVE");
+        softly.assertThat(viewPage.syphilis()).isEqualTo("Syphilis: POSITIVE");
+        softly.assertThat(viewPage.aids()).isEqualTo("AIDS: NEGATIVE");
+        softly.assertThat(viewPage.htlv()).isEqualTo("HTLV 1/2: POSITIVE");
+        softly.assertThat(viewPage.observations()).isEqualTo("Observations: " + seroObs);
+        softly.assertAll();
+    }
 }
