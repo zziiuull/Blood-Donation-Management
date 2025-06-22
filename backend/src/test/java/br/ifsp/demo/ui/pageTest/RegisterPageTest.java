@@ -39,7 +39,7 @@ public class RegisterPageTest extends BaseSeleniumTest{
     void setUpRegisterPage(){
         this.registerPageObject = new RegisterPageObject(driver);
     }
-    
+
     @AfterEach
     public void tearDown(){
         super.tearDown();
@@ -152,7 +152,7 @@ public class RegisterPageTest extends BaseSeleniumTest{
     }
 
     @Tag("UiTest")
-    @ParameterizedTest(name = "Test invalid data for field: {0}")
+    @ParameterizedTest(name = "Field: {0}")
     @CsvSource({
             "'name-input',   '12345', 'Nome inválido'",
             "'lastname-input',   '12345', 'Último nome inválido'",
