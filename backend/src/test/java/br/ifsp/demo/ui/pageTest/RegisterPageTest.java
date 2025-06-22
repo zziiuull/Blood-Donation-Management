@@ -190,8 +190,15 @@ public class RegisterPageTest extends BaseSeleniumTest{
 
         registerPageObject.clickRegisterButton();
 
+        assertThat(driver.getCurrentUrl())
+                .withFailMessage("Test failed: Current URL does not contain '/register'. This likely means the form was submitted and accepted even with invalid input, causing an unexpected redirect (e.g., to login page).")
+                .contains("/register");
+
         String errorMessage = registerPageObject.getErrorMessageFor(inputId);
-        assertThat(errorMessage).isNotBlank();
+
+        assertThat(errorMessage)
+                .withFailMessage("Test failed: No error message was found for input field '%s' after submitting invalid value '%s'. Expected a validation error on the register page.", inputId, invalidData)
+                .isNotBlank();
     }
 
     @Test
