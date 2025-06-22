@@ -10,6 +10,8 @@ import br.ifsp.demo.ui.pageObject.UpdateImmunoExamPageObject;
 import br.ifsp.demo.ui.pageObject.UpdateSeroExamPageObject;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -123,11 +125,20 @@ public class UpdatePageTest extends BaseSeleniumTest{
             assertThat(selectedBloodType).isEqualTo("A+");
         }
         
-        @Test
+        @ParameterizedTest
         @Tag("UiTest")
-        @DisplayName("Should display error toast when can not approve the exam")
-        void shouldDisplayErrorToastWhenCanNotApproveTheExam(){
-            String bloodType = "A POS";
+        @DisplayName("Should display error toast when can not approve the exam to each blood type")
+        @CsvSource({
+                "'A POS'",
+                "'A NEG'",
+                "'B POS'",
+                "'B NEG'",
+                "'AB POS'",
+                "'AB NEG'",
+                "'O POS'",
+                "'O NEG'"
+        })
+        void shouldDisplayErrorToastWhenCanNotApproveTheExamToEachBloodType(String bloodType){
             String irregularAntibodies = "Positive";
 
             donationPage.registerDonationWithAllExams("Weverton");
