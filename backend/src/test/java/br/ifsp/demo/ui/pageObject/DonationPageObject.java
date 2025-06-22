@@ -1,5 +1,6 @@
 package br.ifsp.demo.ui.pageObject;
 
+import com.github.javafaker.Faker;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -9,6 +10,7 @@ import java.util.List;
 
 public class DonationPageObject extends BasePageObject {
 
+    private Faker faker = Faker.instance();
     private final By registerTabButton = By.id("register-tab");
     private final By registerDonationStepOneText = By.xpath("//h3[contains(text(), 'Select a donor')]");
     private final By updateTabButton = By.id("update-tab");
@@ -263,4 +265,36 @@ public class DonationPageObject extends BasePageObject {
         return getTextFromElementWithScroll(htlvStatusInTable);
     }
 
+    public DonationPageObject updateExams(DonationPageObject donationPage, String name) {
+        String negative = "Negative";
+
+        donationPage.registerDonationWithAllExams(name);
+        donationPage.clickOnUpdateTabButton();
+        donationPage.selectDonationInList(name);
+
+        UpdateImmunoExamPageObject immunoPage = donationPage.clickUpdateForImmunohematologyExam();
+
+        immunoPage.selectBloodType("A POS");
+        immunoPage.selectIrregularAntibodies("Negative");
+        immunoPage.fillObservations(faker.lorem().sentence());
+
+        donationPage = immunoPage.clickApproveButtonAndExpectSuccess();
+
+        donationPage.clickOnUpdateTabButton();
+        donationPage.selectDonationInList(name);
+
+        UpdateSeroExamPageObject seroPage = donationPage.clickUpdateForSerologicalExam();
+
+        seroPage.selectDiseaseStatus("hepatitisB", negative);
+        seroPage.selectDiseaseStatus("hepatitisC", negative);
+        seroPage.selectDiseaseStatus("chagasDisease", negative);
+        seroPage.selectDiseaseStatus("syphilis", negative);
+        seroPage.selectDiseaseStatus("aids", negative);
+        seroPage.selectDiseaseStatus("htlv1_2", negative);
+        seroPage.fillObservations(faker.lorem().sentence());
+
+        seroPage.clickApproveButtonAndExpectSuccess();
+
+        return this;
+    }
 }
