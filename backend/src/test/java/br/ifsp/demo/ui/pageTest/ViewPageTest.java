@@ -22,8 +22,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.Duration;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ViewPageTest extends BaseSeleniumTest{
@@ -147,6 +145,29 @@ public class ViewPageTest extends BaseSeleniumTest{
         softly.assertThat(viewPage.irregularAntibodies()).isEqualTo("Irregular Antibodies: Not informed");
         softly.assertThat(viewPage.observations()).isEqualTo("Observations: No observations");
 
+        softly.assertAll();
+    }
+
+    @Test
+    @Tag("UiTest")
+    @DisplayName("Click on view immunohematology with rejected exam and confirm informations")
+    void clickOnViewImmunohematologyWithRejectedExamAndConfirmInformations(){
+        String donorName = "Ana Beatriz";
+        String immunoObs = "immuno obs";
+        String seroObs = "sero obs";
+
+        donationPage.updateRejectExams(donorName, "A POS", immunoObs, seroObs);
+        ((JavascriptExecutor) driver).executeScript("window.scrollTo(0, 0);");
+        new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.elementToBeClickable(
+                By.id("view-tab")
+        ));
+        donationPage.viewDonationRegistered(donorName);
+        ViewImmunohematologyObject viewPage = donationPage.cickOnViewImmunohematologyButton();
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(viewPage.status()).isEqualTo("Status: REJECTED");
+        softly.assertThat(viewPage.bloodType()).isEqualTo("Blood type: A +");
+        softly.assertThat(viewPage.irregularAntibodies()).isEqualTo("Irregular Antibodies: Positive");
+        softly.assertThat(viewPage.observations()).isEqualTo("Observations: " + immunoObs);
         softly.assertAll();
     }
 }

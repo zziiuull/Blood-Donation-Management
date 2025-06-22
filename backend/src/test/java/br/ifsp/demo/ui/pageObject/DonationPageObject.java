@@ -316,6 +316,38 @@ public class DonationPageObject extends BasePageObject {
         seroPage.clickApproveButtonAndExpectSuccess();
     }
 
+    public void updateRejectExams(String donorName, String bloodType, String immunoObservations, String seroObservations) {
+        String positive = "Positive";
+        String negative = "Negative";
+
+        registerDonationWithAllExams(donorName);
+        clickOnUpdateTabButton();
+        selectDonationInList(donorName);
+
+        UpdateImmunoExamPageObject immunoPage = clickUpdateForImmunohematologyExam();
+
+        immunoPage.selectBloodType(bloodType);
+        immunoPage.selectIrregularAntibodies(positive);
+        immunoPage.fillObservations(immunoObservations);
+
+        immunoPage.clickRejectButtonAndExpectSuccess();
+
+        clickOnUpdateTabButton();
+        selectDonationInList(donorName);
+
+        UpdateSeroExamPageObject seroPage = clickUpdateForSerologicalExam();
+
+        seroPage.selectDiseaseStatus("hepatitisB", positive);
+        seroPage.selectDiseaseStatus("hepatitisC", positive);
+        seroPage.selectDiseaseStatus("chagasDisease", negative);
+        seroPage.selectDiseaseStatus("syphilis", positive);
+        seroPage.selectDiseaseStatus("aids", negative);
+        seroPage.selectDiseaseStatus("htlv1_2", positive);
+        seroPage.fillObservations(seroObservations);
+
+        seroPage.clickRejectButtonAndExpectSucceess();
+    }
+
     public ViewImmunohematologyObject cickOnViewImmunohematologyButton() {
         By immunohematologyButton = By.xpath("//a[starts-with(@href, '/exams/immunohematology/')]");
         WebElement button = driver.findElement(immunohematologyButton);
