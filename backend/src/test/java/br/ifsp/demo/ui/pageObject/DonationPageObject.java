@@ -168,7 +168,7 @@ public class DonationPageObject extends BasePageObject {
     }
 
 
-    public void viewDonationRegistered(String donorName) throws InterruptedException {
+    public void viewDonationRegistered(String donorName) {
         clickOnViewTabButton();
         new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.visibilityOf(driver.findElement(donationAutocompleteSelectButton)));
         driver.findElement(donationAutocompleteSelectButton).sendKeys(donorName);
@@ -280,25 +280,25 @@ public class DonationPageObject extends BasePageObject {
         return getTextFromElementWithScroll(htlvStatusInTable);
     }
 
-    public DonationPageObject updateExams(DonationPageObject donationPage, String name) {
+    public void updateExams(String donorName, String bloodType, String immunoObservations, String seroObservations) {
         String negative = "Negative";
 
-        donationPage.registerDonationWithAllExams(name);
-        donationPage.clickOnUpdateTabButton();
-        donationPage.selectDonationInList(name);
+        registerDonationWithAllExams(donorName);
+        clickOnUpdateTabButton();
+        selectDonationInList(donorName);
 
-        UpdateImmunoExamPageObject immunoPage = donationPage.clickUpdateForImmunohematologyExam();
+        UpdateImmunoExamPageObject immunoPage = clickUpdateForImmunohematologyExam();
 
-        immunoPage.selectBloodType("A POS");
-        immunoPage.selectIrregularAntibodies("Negative");
-        immunoPage.fillObservations(faker.lorem().sentence());
+        immunoPage.selectBloodType(bloodType);
+        immunoPage.selectIrregularAntibodies(negative);
+        immunoPage.fillObservations(immunoObservations);
 
-        donationPage = immunoPage.clickApproveButtonAndExpectSuccess();
+        immunoPage.clickApproveButtonAndExpectSuccess();
 
-        donationPage.clickOnUpdateTabButton();
-        donationPage.selectDonationInList(name);
+        clickOnUpdateTabButton();
+        selectDonationInList(donorName);
 
-        UpdateSeroExamPageObject seroPage = donationPage.clickUpdateForSerologicalExam();
+        UpdateSeroExamPageObject seroPage = clickUpdateForSerologicalExam();
 
         seroPage.selectDiseaseStatus("hepatitisB", negative);
         seroPage.selectDiseaseStatus("hepatitisC", negative);
@@ -306,10 +306,8 @@ public class DonationPageObject extends BasePageObject {
         seroPage.selectDiseaseStatus("syphilis", negative);
         seroPage.selectDiseaseStatus("aids", negative);
         seroPage.selectDiseaseStatus("htlv1_2", negative);
-        seroPage.fillObservations(faker.lorem().sentence());
+        seroPage.fillObservations(seroObservations);
 
         seroPage.clickApproveButtonAndExpectSuccess();
-
-        return this;
     }
 }

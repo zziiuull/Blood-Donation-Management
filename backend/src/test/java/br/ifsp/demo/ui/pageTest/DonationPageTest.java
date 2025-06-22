@@ -12,7 +12,9 @@ import br.ifsp.demo.ui.pageObject.DonationPageObject;
 import com.github.javafaker.Faker;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.*;
+import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Point;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -267,7 +269,7 @@ public class DonationPageTest extends BaseSeleniumTest {
             @Test
             @Tag("UiTest")
             @DisplayName("Should show view of a donation")
-            void shouldShowViewOfADonation() throws InterruptedException {
+            void shouldShowViewOfADonation() {
                 String donorName = "Ana Beatriz";
                 donationPage = authPage.authenticateWithCredentials(email, password);
                 donationPage.registerDonationWithAllExams(donorName);
@@ -283,6 +285,35 @@ public class DonationPageTest extends BaseSeleniumTest {
                 softly.assertThat(donationPage.getColumnTextOfView("SYPHILIS")).isEqualTo("N/A");
                 softly.assertThat(donationPage.getColumnTextOfView("AIDS")).isEqualTo("N/A");
                 softly.assertThat(donationPage.getColumnTextOfView("HTLV I/II")).isEqualTo("N/A");
+                softly.assertAll();
+            }
+
+            @Test
+            @Tag("UiTest")
+            @DisplayName("should show view of a donation updated")
+            void shouldShowViewOfADonationUpdated() {
+                String donorName = "Ana Beatriz";
+                String bloodType = "A+";
+                String immunoObs = "immuno obs";
+                String seroObs = "sero obs";
+                String negative = "NEGATIVE";
+                donationPage = authPage.authenticateWithCredentials(email, password);
+                donationPage.updateExams(donorName, "A POS", immunoObs, seroObs);
+                ((JavascriptExecutor) driver).executeScript("window.scrollTo(0, 0);");
+                new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.elementToBeClickable(
+                        By.id("view-tab")
+                ));
+                donationPage.viewDonationRegistered(donorName);
+                SoftAssertions softly = new SoftAssertions();
+                softly.assertThat(donationPage.getDonorOfView(donorName)).isEqualTo(donorName);
+                softly.assertThat(donationPage.getColumnTextOfView("BLOOD TYPE")).isEqualTo(bloodType);
+                softly.assertThat(donationPage.getColumnTextOfView("IRREGULAR ANTIBODIES")).isEqualTo(negative);
+                softly.assertThat(donationPage.getColumnTextOfView("HEPATITIS B")).isEqualTo(negative);
+                softly.assertThat(donationPage.getColumnTextOfView("HEPATITIS C")).isEqualTo(negative);
+                softly.assertThat(donationPage.getColumnTextOfView("CHAGAS DISEASE")).isEqualTo(negative);
+                softly.assertThat(donationPage.getColumnTextOfView("SYPHILIS")).isEqualTo(negative);
+                softly.assertThat(donationPage.getColumnTextOfView("AIDS")).isEqualTo(negative);
+                softly.assertThat(donationPage.getColumnTextOfView("HTLV I/II")).isEqualTo(negative);
                 softly.assertAll();
             }
         }
