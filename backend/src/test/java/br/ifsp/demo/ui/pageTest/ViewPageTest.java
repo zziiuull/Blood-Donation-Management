@@ -149,4 +149,31 @@ public class ViewPageTest extends BaseSeleniumTest{
 
         softly.assertAll();
     }
+
+    @Test
+    @Tag("UiTest")
+    @DisplayName("click On View Serological Without Update And Confirm Informations")
+    void clickOnViewSerologicalWithouUpdateAndConfirmInformations(){
+        String donorName = "Ana Beatriz";
+
+        donationPage.registerDonationWithAllExams(donorName);
+        ((JavascriptExecutor) driver).executeScript("window.scrollTo(0, 0);");
+        new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.elementToBeClickable(
+                By.id("view-tab")
+        ));
+        donationPage.viewDonationRegistered(donorName);
+        ViewSerologicalObject viewPage = donationPage.cickOnViewSerologicalButton();
+
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(viewPage.status()).isEqualTo("Status: Under analysis");
+        softly.assertThat(viewPage.hepatitisB()).isEqualTo("Hepatitis B: Not informed");
+        softly.assertThat(viewPage.hepatitisC()).isEqualTo("Hepatitis C: Not informed");
+        softly.assertThat(viewPage.chagasDisease()).isEqualTo("Chagas Disease: Not informed");
+        softly.assertThat(viewPage.syphilis()).isEqualTo("Syphilis: Not informed");
+        softly.assertThat(viewPage.aids()).isEqualTo("AIDS: Not informed");
+        softly.assertThat(viewPage.htlv()).isEqualTo("HTLV 1/2: Not informed");
+        softly.assertThat(viewPage.observations()).isEqualTo("Observations: No observations");
+
+        softly.assertAll();
+    }
 }
