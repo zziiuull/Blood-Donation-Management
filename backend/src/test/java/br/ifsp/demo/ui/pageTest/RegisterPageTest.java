@@ -239,6 +239,30 @@ public class RegisterPageTest extends BaseSeleniumTest{
                 .isTrue();
     }
 
+    @Test
+    @Tag("UiTest")
+    @DisplayName("Should not be vulnerable to SQL Injection in Name field during registration")
+    void shouldNotBeVulnerableToSqlInjectionInNameField() {
+        String maliciousName = "Test' OR '1'='1";
+        String email = faker.internet().emailAddress();
+
+        registerPageObject.register(
+                maliciousName,
+                faker.name().lastName(),
+                "12345678910",
+                faker.phoneNumber().cellPhone(),
+                faker.address().fullAddress(),
+                "123456",
+                "São Paulo",
+                email,
+                faker.internet().password()
+        );
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        wait.until(ExpectedConditions.urlContains("/login"));
+        assertThat(driver.getCurrentUrl()).contains("/login");
+    }
+
     @Nested
     class Responsivity {
 
