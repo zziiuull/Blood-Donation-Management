@@ -67,4 +67,10 @@ public class UpdateSeroExamPageObject extends BasePageObject {
         Select select = new Select(selectElement);
         select.selectByVisibleText(optionText);
     }
+
+    public void fillObservations(String text) {
+        WebElement textarea = driver.findElement(observationsTextarea);
+        textarea.clear();
+        textarea.sendKeys(text);
+    }
 }
