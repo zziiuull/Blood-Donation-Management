@@ -39,6 +39,11 @@ public class RegisterPageTest extends BaseSeleniumTest{
     void setUpRegisterPage(){
         this.registerPageObject = new RegisterPageObject(driver);
     }
+    
+    @AfterEach
+    public void tearDown(){
+        super.tearDown();
+    }
 
     @Override
     protected void setInitialPage(){
