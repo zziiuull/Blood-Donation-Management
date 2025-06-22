@@ -274,6 +274,7 @@ public class RegisterPageTest extends BaseSeleniumTest{
             );
         }
 
+        @Tag("UiTest")
         @ParameterizedTest(name = "Test placeholders at screen size {0}")
         @MethodSource("screenSizes")
         @DisplayName("Should be able to see placeholder fields on register form")

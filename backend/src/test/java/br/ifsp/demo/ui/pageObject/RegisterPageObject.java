@@ -95,16 +95,6 @@ public class RegisterPageObject extends BasePageObject {
         driver.findElement(registerButton).click();
     }
 
-    public boolean isOnRegisterPage() {
-        try {
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-            wait.until(ExpectedConditions.urlContains("/register"));
-            return true;
-        } catch (TimeoutException e) {
-            return false;
-        }
-    }
-
     public String getErrorMessageFor(String inputId) {
         String errorMsgXpath = String.format(
                 "//input[@id='%s']/ancestor::div[contains(@class, 'relative')]/following-sibling::div//div[contains(@class, 'text-danger')]",
