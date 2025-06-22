@@ -68,94 +68,138 @@ public class UpdatePageTest extends BaseSeleniumTest{
         userRepository.deleteById(userId);
         super.tearDown();
     }
-    
-    @Test
-    @Tag("UiTest")
-    @DisplayName("Should approve immuno exam")
-    void shouldApproveImmunoExam(){
-        String bloodType = "A POS";
-        String irregularAntibodies = "Negative";
 
-        donationPage.registerDonationWithAllExams("Weverton");
-        donationPage.clickOnUpdateTabButton();
-        donationPage.selectDonationInList("Weverton");
+    @Nested
+    class Immuno {
+        @Test
+        @Tag("UiTest")
+        @DisplayName("Should approve immuno exam")
+        void shouldApproveImmunoExam(){
+            String bloodType = "A POS";
+            String irregularAntibodies = "Negative";
 
-        UpdateImmunoExamPageObject immunoPage = donationPage.clickUpdateForImmunohematologyExam();
+            donationPage.registerDonationWithAllExams("Weverton");
+            donationPage.clickOnUpdateTabButton();
+            donationPage.selectDonationInList("Weverton");
 
-        immunoPage.selectBloodType(bloodType);
-        immunoPage.selectIrregularAntibodies(irregularAntibodies);
-        immunoPage.fillObservations(faker.lorem().sentence());
+            UpdateImmunoExamPageObject immunoPage = donationPage.clickUpdateForImmunohematologyExam();
 
-        DonationPageObject donationPage = immunoPage.clickApproveButton();
+            immunoPage.selectBloodType(bloodType);
+            immunoPage.selectIrregularAntibodies(irregularAntibodies);
+            immunoPage.fillObservations(faker.lorem().sentence());
 
-        String selectedBloodType = donationPage.getUpdatedBloodTypeTextFromTable();
-        String selectedIrregularAntibodies = donationPage.getUpdatedAntibodiesTextFromTable();
+            DonationPageObject donationPage = immunoPage.clickApproveButton();
 
-        assertThat(selectedIrregularAntibodies).isEqualTo("NEGATIVE");
-        assertThat(selectedBloodType).isEqualTo("A+");
+            String selectedBloodType = donationPage.getUpdatedBloodTypeTextFromTable();
+            String selectedIrregularAntibodies = donationPage.getUpdatedAntibodiesTextFromTable();
+
+            assertThat(selectedIrregularAntibodies).isEqualTo("NEGATIVE");
+            assertThat(selectedBloodType).isEqualTo("A+");
+        }
+
+        @Test
+        @Tag("UiTest")
+        @DisplayName("Should reject immuno exam")
+        void shouldRejectImmunoExam(){
+            String bloodType = "A POS";
+            String irregularAntibodies = "Positive";
+
+            donationPage.registerDonationWithAllExams("Weverton");
+            donationPage.clickOnUpdateTabButton();
+            donationPage.selectDonationInList("Weverton");
+
+            UpdateImmunoExamPageObject immunoPage = donationPage.clickUpdateForImmunohematologyExam();
+
+            immunoPage.selectBloodType(bloodType);
+            immunoPage.selectIrregularAntibodies(irregularAntibodies);
+            immunoPage.fillObservations(faker.lorem().sentence());
+
+            DonationPageObject donationPage = immunoPage.clickRejectButton();
+
+            String selectedBloodType = donationPage.getUpdatedBloodTypeTextFromTable();
+            String selectedIrregularAntibodies = donationPage.getUpdatedAntibodiesTextFromTable();
+
+            assertThat(selectedIrregularAntibodies).isEqualTo("POSITIVE");
+            assertThat(selectedBloodType).isEqualTo("A+");
+        }
     }
-    
-    @Test
-    @Tag("UiTest")
-    @DisplayName("Should reject immuno exam")
-    void shouldRejectImmunoExam(){
-        String bloodType = "A POS";
-        String irregularAntibodies = "Positive";
 
-        donationPage.registerDonationWithAllExams("Weverton");
-        donationPage.clickOnUpdateTabButton();
-        donationPage.selectDonationInList("Weverton");
+    @Nested
+    class Sero {
+        @Test
+        @Tag("UiTest")
+        @DisplayName("Should approve sero exam")
+        void shouldApproveSeroExam(){
+            String negative = "Negative";
 
-        UpdateImmunoExamPageObject immunoPage = donationPage.clickUpdateForImmunohematologyExam();
+            donationPage.registerDonationWithAllExams("Weverton");
+            donationPage.clickOnUpdateTabButton();
+            donationPage.selectDonationInList("Weverton");
 
-        immunoPage.selectBloodType(bloodType);
-        immunoPage.selectIrregularAntibodies(irregularAntibodies);
-        immunoPage.fillObservations(faker.lorem().sentence());
+            UpdateSeroExamPageObject seroPage = donationPage.clickUpdateForSerologicalExam();
 
-        DonationPageObject donationPage = immunoPage.clickRejectButton();
+            seroPage.selectDiseaseStatus("hepatitisB", negative);
+            seroPage.selectDiseaseStatus("hepatitisC", negative);
+            seroPage.selectDiseaseStatus("chagasDisease", negative);
+            seroPage.selectDiseaseStatus("syphilis", negative);
+            seroPage.selectDiseaseStatus("aids", negative);
+            seroPage.selectDiseaseStatus("htlv1_2", negative);
+            seroPage.fillObservations(faker.lorem().sentence());
 
-        String selectedBloodType = donationPage.getUpdatedBloodTypeTextFromTable();
-        String selectedIrregularAntibodies = donationPage.getUpdatedAntibodiesTextFromTable();
+            DonationPageObject donationPage = seroPage.clickApproveButton();
 
-        assertThat(selectedIrregularAntibodies).isEqualTo("POSITIVE");
-        assertThat(selectedBloodType).isEqualTo("A+");
+            String selectedHepatitisB = donationPage.getUpdatedHepatitisBStatus();
+            String selectedHepatitisC = donationPage.getUpdatedHepatitisCStatus();
+            String selectedChagasDisease = donationPage.getUpdatedChagasDiseaseStatus();
+            String selectedSyphilis = donationPage.getUpdatedSyphilisStatus();
+            String selectedAids= donationPage.getUpdatedAidsStatus();
+            String selectedHtlvStatus = donationPage.getUpdatedHtlvStatus();
+
+            assertThat(selectedHepatitisB).isEqualTo("NEGATIVE");
+            assertThat(selectedHepatitisC).isEqualTo("NEGATIVE");
+            assertThat(selectedChagasDisease).isEqualTo("NEGATIVE");
+            assertThat(selectedSyphilis).isEqualTo("NEGATIVE");
+            assertThat(selectedAids).isEqualTo("NEGATIVE");
+            assertThat(selectedHtlvStatus).isEqualTo("NEGATIVE");
+        }
+
+        @Test
+        @Tag("UiTest")
+        @DisplayName("Should reject exam")
+        void shouldRejectExam(){
+            String negative = "Negative";
+            String positive = "Positive";
+
+            donationPage.registerDonationWithAllExams("Weverton");
+            donationPage.clickOnUpdateTabButton();
+            donationPage.selectDonationInList("Weverton");
+
+            UpdateSeroExamPageObject seroPage = donationPage.clickUpdateForSerologicalExam();
+
+            seroPage.selectDiseaseStatus("hepatitisB", negative);
+            seroPage.selectDiseaseStatus("hepatitisC", negative);
+            seroPage.selectDiseaseStatus("chagasDisease", negative);
+            seroPage.selectDiseaseStatus("syphilis", negative);
+            seroPage.selectDiseaseStatus("aids", negative);
+            seroPage.selectDiseaseStatus("htlv1_2", positive);
+            seroPage.fillObservations(faker.lorem().sentence());
+
+            DonationPageObject donationPage = seroPage.clickRejectButton();
+
+            String selectedHepatitisB = donationPage.getUpdatedHepatitisBStatus();
+            String selectedHepatitisC = donationPage.getUpdatedHepatitisCStatus();
+            String selectedChagasDisease = donationPage.getUpdatedChagasDiseaseStatus();
+            String selectedSyphilis = donationPage.getUpdatedSyphilisStatus();
+            String selectedAids= donationPage.getUpdatedAidsStatus();
+            String selectedHtlvStatus = donationPage.getUpdatedHtlvStatus();
+
+            assertThat(selectedHepatitisB).isEqualTo("NEGATIVE");
+            assertThat(selectedHepatitisC).isEqualTo("NEGATIVE");
+            assertThat(selectedChagasDisease).isEqualTo("NEGATIVE");
+            assertThat(selectedSyphilis).isEqualTo("NEGATIVE");
+            assertThat(selectedAids).isEqualTo("NEGATIVE");
+            assertThat(selectedHtlvStatus).isEqualTo("POSITIVE");
+        }
     }
 
-    @Test
-    @Tag("UiTest")
-    @DisplayName("Should approve sero exam")
-    void shouldApproveSeroExam(){
-        String positive = "Positive";
-        String negative = "Negative";
-
-        donationPage.registerDonationWithAllExams("Weverton");
-        donationPage.clickOnUpdateTabButton();
-        donationPage.selectDonationInList("Weverton");
-
-        UpdateSeroExamPageObject seroPage = donationPage.clickUpdateForSerologicalExam();
-
-        seroPage.selectDiseaseStatus("hepatitisB", negative);
-        seroPage.selectDiseaseStatus("hepatitisC", negative);
-        seroPage.selectDiseaseStatus("chagasDisease", negative);
-        seroPage.selectDiseaseStatus("syphilis", negative);
-        seroPage.selectDiseaseStatus("aids", negative);
-        seroPage.selectDiseaseStatus("htlv1_2", negative);
-        seroPage.fillObservations(faker.lorem().sentence());
-
-        DonationPageObject donationPage = seroPage.clickApproveButton();
-
-        String selectedHepatitisB = donationPage.getUpdatedHepatitisBStatus();
-        String selectedHepatitisC = donationPage.getUpdatedHepatitisCStatus();
-        String selectedChagasDisease = donationPage.getUpdatedChagasDiseaseStatus();
-        String selectedSyphilis = donationPage.getUpdatedSyphilisStatus();
-        String selectedAids= donationPage.getUpdatedAidsStatus();
-        String selectedHtlvStatus = donationPage.getUpdatedHtlvStatus();
-
-        assertThat(selectedHepatitisB).isEqualTo("NEGATIVE");
-        assertThat(selectedHepatitisC).isEqualTo("NEGATIVE");
-        assertThat(selectedChagasDisease).isEqualTo("NEGATIVE");
-        assertThat(selectedSyphilis).isEqualTo("NEGATIVE");
-        assertThat(selectedAids).isEqualTo("NEGATIVE");
-        assertThat(selectedHtlvStatus).isEqualTo("NEGATIVE");
-    }
 }
