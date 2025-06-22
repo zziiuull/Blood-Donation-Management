@@ -403,4 +403,22 @@ public class DonationPageObject extends BasePageObject {
         ));
         return new ViewSerologicalObject(driver);
     }
+
+    public void openMenuAndClickLogout() {
+        By menuToggle = By.id("navbar-menu-toggle");
+        By logoutButton = By.id("logout-mobile-button");
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        try {
+            WebElement toggleButton = wait.until(ExpectedConditions.elementToBeClickable(menuToggle));
+            toggleButton.click();
+
+            WebElement logoutBtn = wait.until(ExpectedConditions.visibilityOfElementLocated(logoutButton));
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", logoutBtn);
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", logoutBtn);
+        } catch (TimeoutException e) {
+            throw new AssertionError(
+                    "Failed to find or click the menu toggle or logout button within 5 seconds. ", e);
+        }
+    }
 }

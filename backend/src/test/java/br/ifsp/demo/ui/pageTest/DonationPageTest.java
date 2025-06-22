@@ -28,6 +28,7 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -348,10 +349,10 @@ public class DonationPageTest extends BaseSeleniumTest {
         static Stream<Dimension> screenSizes() {
             return Stream.of(
                     new Dimension(320, 800),
-                    new Dimension(375, 800),
                     new Dimension(400, 800),
-                    new Dimension(480, 800),
                     new Dimension(580, 800),
+                    new Dimension(639, 800),
+                    new Dimension(680, 800),
                     new Dimension(720, 800)
             );
         }
@@ -367,6 +368,26 @@ public class DonationPageTest extends BaseSeleniumTest {
             assertThat(donationPage.isViewTabActive())
                     .withFailMessage("Expected tab content to be visible after clicking tabList.")
                     .isTrue();
+        }
+
+        @ParameterizedTest(name = "Test placeholders at screen size {0}")
+        @Tag("UiTest")
+        @MethodSource("screenSizes")
+        @DisplayName("Should logout and redirect to login page when clicking logout on mobile menu")
+        void shouldLogoutAndRedirectToLoginPageWhenClickingLogoutOnMobileMenu(Dimension screenSize) {
+            driver.manage().window().setSize(screenSize);
+            donationPage = authPage.authenticateWithCredentials(email, password);
+
+            assertThatCode(() -> donationPage.openMenuAndClickLogout())
+                    .withFailMessage("Failed to open menu and click logout.")
+                    .doesNotThrowAnyException();
+
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+            wait.until(ExpectedConditions.urlContains("/login"));
+
+            assertThat(driver.getCurrentUrl())
+                    .withFailMessage("Expected to be redirected to the login page after logout, but was at: " + driver.getCurrentUrl())
+                    .contains("/login");
         }
     }
 }
