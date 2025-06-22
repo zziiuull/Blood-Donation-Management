@@ -57,8 +57,6 @@ public class UpdatePageTest extends BaseSeleniumTest{
 
     @BeforeEach
     public void classSetUp(){
-        super.setUp();
-
         authPage = new AuthenticationPageObject(driver);
 
         email = faker.internet().emailAddress();
