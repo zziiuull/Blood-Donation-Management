@@ -1,0 +1,1200 @@
+package br.ifsp.demo.presentation.controller.exam;
+
+import br.ifsp.demo.application.service.dto.exam.ImmunohematologyExamDTO;
+import br.ifsp.demo.application.service.dto.exam.SerologicalScreeningExamDTO;
+import br.ifsp.demo.application.service.exam.ExamRegistrationService;
+import br.ifsp.demo.application.service.exam.ExamRequestService;
+import br.ifsp.demo.domain.model.common.BloodType;
+import br.ifsp.demo.domain.model.donation.Appointment;
+import br.ifsp.demo.domain.model.donation.CollectionSite;
+import br.ifsp.demo.domain.model.donation.Donation;
+import br.ifsp.demo.domain.model.donor.Donor;
+import br.ifsp.demo.domain.model.exam.DiseaseDetection;
+import br.ifsp.demo.domain.model.exam.Exam;
+import br.ifsp.demo.domain.model.exam.IrregularAntibodies;
+import br.ifsp.demo.domain.model.physician.Physician;
+import br.ifsp.demo.infrastructure.repository.appointment.AppointmentRepository;
+import br.ifsp.demo.infrastructure.repository.collectionSite.CollectionSiteRepository;
+import br.ifsp.demo.infrastructure.repository.donation.DonationRepository;
+import br.ifsp.demo.infrastructure.repository.donor.DonorRepository;
+import br.ifsp.demo.infrastructure.repository.exam.ExamRepository;
+import br.ifsp.demo.presentation.BaseApiIntegrationTest;
+import br.ifsp.demo.presentation.EntityBuilder;
+import br.ifsp.demo.presentation.controller.exam.request.ImmunohematologyExamRequest;
+import br.ifsp.demo.presentation.controller.exam.request.SerologicalScreeningExamRequest;
+import io.restassured.filter.log.LogDetail;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Stream;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.*;
+
+class ExamControllerTest extends BaseApiIntegrationTest {
+    private final List<UUID> createdDonationIds = new ArrayList<>();
+    private final List<UUID> createdDonorIds = new ArrayList<>();
+    private final List<UUID> createdAppointmentIds = new ArrayList<>();
+    private final List<UUID> createdCollectionSiteIds = new ArrayList<>();
+    private final List<UUID> createdExamIds = new ArrayList<>();
+
+    @Autowired
+    private DonationRepository donationRepository;
+    @Autowired
+    private DonorRepository donorRepository;
+    @Autowired
+    private AppointmentRepository appointmentRepository;
+    @Autowired
+    private CollectionSiteRepository collectionSiteRepository;
+    @Autowired
+    private ExamRepository examRepository;
+
+    private Donor donor;
+    private Appointment appointment;
+    private CollectionSite collectionSite;
+    private Physician user;
+    private String token;
+
+    @BeforeEach
+    void setup() {
+        donor = EntityBuilder.createRandomDonor();
+        donorRepository.save(donor);
+        createdDonorIds.add(donor.getId());
+        collectionSite = EntityBuilder.createRandomCollectionSite();
+        collectionSiteRepository.save(collectionSite);
+        createdCollectionSiteIds.add(collectionSite.getId());
+        appointment = EntityBuilder.createRandomAppointment(collectionSite);
+        appointmentRepository.save(appointment);
+        createdAppointmentIds.add(appointment.getId());
+        this.user = registerPhysician("password123");
+        this.token = authenticate(user.getEmail(), "password123");
+    }
+
+    @AfterEach
+    void tearDown() {
+        createdDonationIds.forEach(id -> donationRepository.deleteById(id));
+        createdDonationIds.clear();
+        createdDonorIds.forEach(id -> donorRepository.deleteById(id));
+        createdDonorIds.clear();
+        createdAppointmentIds.forEach(id -> appointmentRepository.deleteById(id));
+        createdAppointmentIds.clear();
+        createdCollectionSiteIds.forEach(id -> collectionSiteRepository.deleteById(id));
+        createdCollectionSiteIds.clear();
+        createdExamIds.forEach(id -> examRepository.deleteById(id));
+    }
+
+    @Nested
+    class RequestImmunohematologyExamTests {
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should request immunohematology exam and return 200 with exam id")
+        void shouldRequestImmunohematologyExamAndReturn200WithExamId() {
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+            .when()
+                .post("/api/v1/exam/request/immunohematology/" + donation.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.OK.value())
+                .body("id", notNullValue())
+                .body("donationId", equalTo(donation.getId().toString()))
+                .body("examStatus", equalTo("UNDER_ANALYSIS"))
+                .body("createdAt", notNullValue())
+                .body("updatedAt", notNullValue())
+                .body("observations", nullValue())
+                .body("bloodType", nullValue())
+                .body("irregularAntibodies", nullValue());
+        }
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 409 if immunohematology exam was already requested")
+        void shouldReturn409IfImmunohematologyExamWasAlreadyRequested() {
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            examRequestService.requestImmunohematologyExam(donation);
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+            .when()
+                .post("/api/v1/exam/request/immunohematology/" + donation.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.CONFLICT.value());
+        }
+
+        @Test
+        @DisplayName("Should return 404 if donation not found")
+        void shouldReturn404IfDonationNotFound() {
+            UUID nonExistentDonationId = UUID.randomUUID();
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+            .when()
+                .post("/api/v1/exam/request/immunohematology/" + nonExistentDonationId)
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.NOT_FOUND.value())
+                .body("message", containsString("Donation does not exist"));
+        }
+    }
+
+    @Nested
+    class RequestSerologicalExamTests {
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should request serological exam and return 200 with exam id")
+        void shouldRequestSerologicalExamAndReturn200WithExamId(){
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+            .when()
+                .post("/api/v1/exam/request/serologicalscreening/" + donation.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.OK.value())
+                .body("id", notNullValue())
+                .body("bloodType", nullValue())
+                .body("donationId", equalTo(donation.getId().toString()))
+                .body("examStatus", equalTo("UNDER_ANALYSIS"))
+                .body("irregularAntibodies", nullValue())
+                .body("observations", nullValue())
+                .body("createdAt", notNullValue())
+                .body("updatedAt", notNullValue());
+        }
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 409 if serological exam was already requested")
+        void shouldReturn409IfSerologicalExamWasAlreadyRequested() {
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            examRequestService.requestSerologicalScreeningExam(donation);
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+            .when()
+                .post("/api/v1/exam/request/serologicalscreening/" + donation.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.CONFLICT.value());
+        }
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 404 if donation not found")
+        void shouldReturn404IfDonationNotFound(){
+            UUID nonExistentDonationId = UUID.randomUUID();
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+            .when()
+                .post("/api/v1/exam/request/serologicalscreening/" + nonExistentDonationId)
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.NOT_FOUND.value())
+                .body("message", containsString("Donation does not exist"));
+        }
+    }
+
+    @Nested
+    class ApproveImmunohematologyExamTests {
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("should approve immunohematology exam and return 200")
+        void shouldApproveImmunohematologyExamAndReturn200(){
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestImmunohematologyExam(donation));
+            createdExamIds.add(exam.getId());
+
+            ImmunohematologyExamRequest examRequest = new ImmunohematologyExamRequest(BloodType.O_NEG, IrregularAntibodies.NEGATIVE);
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/immunohematology/approve/" + exam.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.OK.value())
+                .body("id", notNullValue())
+                .body("bloodType", equalTo("O_NEG"))
+                .body("donationId", equalTo(donation.getId().toString()))
+                .body("examStatus", equalTo("APPROVED"))
+                .body("irregularAntibodies", equalTo("NEGATIVE"))
+                .body("createdAt", notNullValue())
+                .body("updatedAt", notNullValue())
+                .body("observations", notNullValue());
+        }
+
+        @ParameterizedTest
+        @MethodSource("provideInvalidImmunohematologyExamRequests")
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 400 with correct validation message during immunohematology exam approval when request fields are null")
+        void shouldReturn400WithValidationMessageDuringImmunohematologyExamApprovalWhenRequestFieldsAreNull(ImmunohematologyExamRequest examRequest, String expectedMessage) {
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestImmunohematologyExam(donation));
+            createdExamIds.add(exam.getId());
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/immunohematology/approve/" + exam.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .body("message", containsString(expectedMessage));
+        }
+
+        private static Stream<Arguments> provideInvalidImmunohematologyExamRequests() {
+            return Stream.of(
+                    Arguments.of(new ImmunohematologyExamRequest(null, IrregularAntibodies.NEGATIVE), "bloodType field is required"),
+                    Arguments.of(new ImmunohematologyExamRequest(BloodType.O_NEG, null), "irregularAntibodies field is required")
+            );
+        }
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 400 if immunohematology exam should not be approved")
+        void shouldReturn400IfImmunohematologyExamShouldNotBeApproved(){
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestImmunohematologyExam(donation));
+            createdExamIds.add(exam.getId());
+
+            ImmunohematologyExamRequest examRequest = new ImmunohematologyExamRequest(BloodType.O_NEG, IrregularAntibodies.POSITIVE);
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/immunohematology/approve/" + exam.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.BAD_REQUEST.value());
+        }
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 409 if immunohematology exam was already analyzed")
+        void shouldReturn409IfImmunohematologyExamWasAlreadyAnalyzed() {
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            ExamRegistrationService examRegistrationService = new ExamRegistrationService(examRepository);
+
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestImmunohematologyExam(donation));
+            createdExamIds.add(exam.getId());
+
+            ImmunohematologyExamRequest examRequest = new ImmunohematologyExamRequest(BloodType.O_NEG, IrregularAntibodies.NEGATIVE);
+
+            examRegistrationService.registerApprovedExam(
+                    exam.getId(),
+                    ImmunohematologyExamDTO.fromRequest(examRequest),
+                    LocalDateTime.now()
+            );
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/immunohematology/approve/" + exam.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.CONFLICT.value());
+        }
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 404 if donation not found during immunohematology exam approval")
+        void shouldReturn404IfDonationNotFound() {
+            UUID nonExistentDonationId = UUID.randomUUID();
+
+            ImmunohematologyExamRequest examRequest = new ImmunohematologyExamRequest(BloodType.O_NEG, IrregularAntibodies.NEGATIVE);
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + nonExistentDonationId + "/immunohematology/approve/" + UUID.randomUUID())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.NOT_FOUND.value())
+                .body("message", containsString("Donation does not exist"));
+        }
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 404 if exam not found during immunohematology exam approval")
+        void shouldReturn404IfExamNotFoundDuringImmunohematologyExamApproval() {
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            UUID nonExistentExamId = UUID.randomUUID();
+
+            ImmunohematologyExamRequest examRequest = new ImmunohematologyExamRequest(BloodType.O_NEG, IrregularAntibodies.NEGATIVE);
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/immunohematology/approve/" + nonExistentExamId)
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.NOT_FOUND.value())
+                .body("message", containsString("Exam not found"));
+        }
+    }
+
+    @Nested
+    class ApproveSerologicalExamTests {
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("should approve serological exam and return 200")
+        void shouldApproveSerologicalExamAndReturn200(){
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestSerologicalScreeningExam(donation));
+            createdExamIds.add(exam.getId());
+
+            SerologicalScreeningExamRequest examRequest = new SerologicalScreeningExamRequest(
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE
+            );
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/serologicalscreening/approve/" + exam.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.OK.value())
+                .body("id", notNullValue())
+                .body("donationId", equalTo(donation.getId().toString()))
+                .body("examStatus", equalTo("APPROVED"))
+                .body("createdAt", notNullValue())
+                .body("updatedAt", notNullValue())
+                .body("hepatitisB", equalTo("NEGATIVE"))
+                .body("hepatitisC", equalTo("NEGATIVE"))
+                .body("chagasDisease", equalTo("NEGATIVE"))
+                .body("syphilis", equalTo("NEGATIVE"))
+                .body("aids", equalTo("NEGATIVE"))
+                .body("htlv1_2", equalTo("NEGATIVE"))
+                .body("observations", notNullValue());
+        }
+
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @ParameterizedTest(name = "Should return 400 if field is null: {1}")
+        @MethodSource("provideInvalidSerologicalScreeningExamRequests")
+        void shouldReturn400WithValidationMessagesForNullFields(SerologicalScreeningExamRequest examRequest, String expectedMessage) {
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestSerologicalScreeningExam(donation));
+            createdExamIds.add(exam.getId());
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/serologicalscreening/approve/" + exam.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .body("message", containsString(expectedMessage));
+        }
+
+        static Stream<Arguments> provideInvalidSerologicalScreeningExamRequests() {
+            return Stream.of(
+                    Arguments.of(
+                            new SerologicalScreeningExamRequest(null, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE),
+                            "hepatitisB field is required"
+                    ),
+                    Arguments.of(
+                            new SerologicalScreeningExamRequest(DiseaseDetection.NEGATIVE, null, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE),
+                            "hepatitisC field is required"
+                    ),
+                    Arguments.of(
+                            new SerologicalScreeningExamRequest(DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, null, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE),
+                            "chagasDisease field is required"
+                    ),
+                    Arguments.of(
+                            new SerologicalScreeningExamRequest(DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, null, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE),
+                            "syphilis field is required"
+                    ),
+                    Arguments.of(
+                            new SerologicalScreeningExamRequest(DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, null, DiseaseDetection.NEGATIVE),
+                            "aids field is required"
+                    ),
+                    Arguments.of(
+                            new SerologicalScreeningExamRequest(DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, null),
+                            "htlv1_2 field is required"
+                    )
+            );
+        }
+
+        @ParameterizedTest
+        @MethodSource("provideDataToInvalidExamRequests")
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 400 if sorological exam should not be approved")
+        void shouldReturn400IfSorologicalExamShouldNotBeApproved(SerologicalScreeningExamRequest examRequest) {
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestSerologicalScreeningExam(donation));
+            createdExamIds.add(exam.getId());
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/serologicalscreening/approve/" + exam.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.BAD_REQUEST.value());
+        }
+
+        public static Stream<Arguments> provideDataToInvalidExamRequests() {
+            return Stream.of(
+                    Arguments.of(new SerologicalScreeningExamRequest(DiseaseDetection.POSITIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE)),
+                    Arguments.of(new SerologicalScreeningExamRequest(DiseaseDetection.NEGATIVE, DiseaseDetection.POSITIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE)),
+                    Arguments.of(new SerologicalScreeningExamRequest(DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.POSITIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE)),
+                    Arguments.of(new SerologicalScreeningExamRequest(DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.POSITIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE)),
+                    Arguments.of(new SerologicalScreeningExamRequest(DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.POSITIVE, DiseaseDetection.NEGATIVE)),
+                    Arguments.of(new SerologicalScreeningExamRequest(DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.POSITIVE))
+            );
+        }
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 409 if serological exam was already analyzed")
+        void shouldReturn409IfSerologicalExamWasAlreadyAnalyzed() {
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            ExamRegistrationService examRegistrationService = new ExamRegistrationService(examRepository);
+
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestSerologicalScreeningExam(donation));
+            createdExamIds.add(exam.getId());
+
+            SerologicalScreeningExamRequest examRequest = new SerologicalScreeningExamRequest(
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE
+            );
+
+            examRegistrationService.registerApprovedExam(
+                    exam.getId(),
+                    SerologicalScreeningExamDTO.fromRequest(examRequest),
+                    LocalDateTime.now()
+            );
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/serologicalscreening/approve/" + exam.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.CONFLICT.value());
+        }
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 404 if donation not found during serological exam approval")
+        void shouldReturn404IfDonationNotFound() {
+            UUID nonExistentDonationId = UUID.randomUUID();
+
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            Exam exam = examRepository.save(examRequestService.requestSerologicalScreeningExam(donation));
+            createdExamIds.add(exam.getId());
+
+            SerologicalScreeningExamRequest examRequest = new SerologicalScreeningExamRequest(
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE
+            );
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + nonExistentDonationId + "/serologicalscreening/approve/" + exam.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.NOT_FOUND.value())
+                .body("message", containsString("Donation does not exist"));
+        }
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 404 if exam not found during serological exam approval")
+        void shouldReturn404IfExamNotFoundDuringSerologicalExamApproval() {
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            UUID nonExistentExamId = UUID.randomUUID();
+
+            SerologicalScreeningExamRequest examRequest = new SerologicalScreeningExamRequest(
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE
+            );
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/serologicalscreening/approve/" + nonExistentExamId)
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.NOT_FOUND.value())
+                .body("message", containsString("Exam not found"));
+        }
+    }
+
+    @Nested
+    class RejectImmunohematologyExamTests {
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("should reject ImmunohematologyExam and return 200")
+        void shouldRejectImmunohematologyExamAndReturn200(){
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestImmunohematologyExam(donation));
+            createdExamIds.add(exam.getId());
+
+            ImmunohematologyExamRequest examRequest = new ImmunohematologyExamRequest(BloodType.O_NEG, IrregularAntibodies.POSITIVE);
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/immunohematology/reject/" + exam.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.OK.value())
+                .body("id", notNullValue())
+                .body("bloodType", equalTo("O_NEG"))
+                .body("donationId", equalTo(donation.getId().toString()))
+                .body("examStatus", equalTo("REJECTED"))
+                .body("irregularAntibodies", equalTo("POSITIVE"))
+                .body("createdAt", notNullValue())
+                .body("updatedAt", notNullValue())
+                .body("observations", notNullValue());
+        }
+
+        @ParameterizedTest
+        @MethodSource("provideInvalidImmunohematologyExamRequests")
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 400 with correct validation message when ImmunohematologyExamRequest fields are null during exam rejection")
+        void shouldReturn400WithValidationMessagesShenImmunohematologyExamRequestFieldsAreNullDuringExamRejection(ImmunohematologyExamRequest examRequest, String expectedMessage) {
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestImmunohematologyExam(donation));
+            createdExamIds.add(exam.getId());
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/immunohematology/reject/" + exam.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .body("message", containsString(expectedMessage));
+        }
+
+        private static Stream<Arguments> provideInvalidImmunohematologyExamRequests() {
+            return Stream.of(
+                    Arguments.of(new ImmunohematologyExamRequest(null, IrregularAntibodies.NEGATIVE), "bloodType field is required"),
+                    Arguments.of(new ImmunohematologyExamRequest(BloodType.O_NEG, null), "irregularAntibodies field is required")
+            );
+        }
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 400 if immunohematology exam should not be rejected")
+        void shouldReturn400IfImmunohematologyExamShouldNotBeRejected() {
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestImmunohematologyExam(donation));
+            createdExamIds.add(exam.getId());
+
+            ImmunohematologyExamRequest examRequest = new ImmunohematologyExamRequest(BloodType.O_NEG, IrregularAntibodies.NEGATIVE);
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/immunohematology/reject/" + exam.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.BAD_REQUEST.value());
+        }
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 404 if donation not found during immunohematology exam rejection")
+        void shouldReturn404IfDonationNotFoundDuringImmunohematologyExamRejection() {
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestImmunohematologyExam(donation));
+            createdExamIds.add(exam.getId());
+
+            UUID nonExistentDonationId = UUID.randomUUID();
+
+            ImmunohematologyExamRequest examRequest = new ImmunohematologyExamRequest(BloodType.O_NEG, IrregularAntibodies.POSITIVE);
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + nonExistentDonationId + "/immunohematology/reject/" + exam.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.NOT_FOUND.value())
+                .body("message", containsString("Donation does not exist"));
+        }
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 404 if exam not found during immunohematology exam rejection")
+        void shouldReturn404IfExamNotFoundDuringImmunohematologyExamRejection() {
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            UUID nonExistentExamId = UUID.randomUUID();
+
+            ImmunohematologyExamRequest examRequest = new ImmunohematologyExamRequest(BloodType.O_NEG, IrregularAntibodies.POSITIVE);
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/immunohematology/reject/" + nonExistentExamId)
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.NOT_FOUND.value())
+                .body("message", containsString("Exam not found"));
+        }
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 409 if immunohematology exam was already analyzed when try to reject")
+        void shouldReturn409IfImmunohematologyExamWasAlreadyAnalyzedWhenTryToReject() {
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            ExamRegistrationService examRegistrationService = new ExamRegistrationService(examRepository);
+
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestImmunohematologyExam(donation));
+            createdExamIds.add(exam.getId());
+
+            ImmunohematologyExamRequest examRequest = new ImmunohematologyExamRequest(BloodType.O_NEG, IrregularAntibodies.POSITIVE);
+
+            examRegistrationService.registerRejectedExam(
+                    exam.getId(),
+                    ImmunohematologyExamDTO.fromRequest(examRequest),
+                    LocalDateTime.now()
+            );
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/immunohematology/reject/" + exam.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.CONFLICT.value());
+        }
+    }
+
+    @Nested
+    class RejectSerologicalScreeningExam {
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("should reject serological exam and return 200")
+        void shouldRejectSerologicalExamAndReturn200(){
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestSerologicalScreeningExam(donation));
+            createdExamIds.add(exam.getId());
+
+            SerologicalScreeningExamRequest examRequest = new SerologicalScreeningExamRequest(
+                    DiseaseDetection.POSITIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE);
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/serologicalscreening/reject/" + exam.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.OK.value())
+                .body("id", notNullValue())
+                .body("donationId", equalTo(donation.getId().toString()))
+                .body("examStatus", equalTo("REJECTED"))
+                .body("createdAt", notNullValue())
+                .body("updatedAt", notNullValue())
+                .body("hepatitisB", equalTo("POSITIVE"))
+                .body("hepatitisC", equalTo("NEGATIVE"))
+                .body("chagasDisease", equalTo("NEGATIVE"))
+                .body("syphilis", equalTo("NEGATIVE"))
+                .body("aids", equalTo("NEGATIVE"))
+                .body("htlv1_2", equalTo("NEGATIVE"))
+                .body("observations", notNullValue());
+        }
+
+        @ParameterizedTest(name = "Should return 400 if field is null: {1}")
+        @MethodSource("provideInvalidSerologicalScreeningExamRequests")
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 400 with correct validation message when SerologicalScreeningExamRequest fields are null during exam rejection")
+        void shouldReturn400WithValidationMessagesForNullFields(SerologicalScreeningExamRequest examRequest, String expectedMessage) {
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestSerologicalScreeningExam(donation));
+            createdExamIds.add(exam.getId());
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/serologicalscreening/reject/" + exam.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .body("message", containsString(expectedMessage));
+        }
+
+        private static Stream<Arguments> provideInvalidSerologicalScreeningExamRequests() {
+            return Stream.of(
+                    Arguments.of(
+                            new SerologicalScreeningExamRequest(null, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE),
+                            "hepatitisB field is required"
+                    ),
+                    Arguments.of(
+                            new SerologicalScreeningExamRequest(DiseaseDetection.POSITIVE, null, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE),
+                            "hepatitisC field is required"
+                    ),
+                    Arguments.of(
+                            new SerologicalScreeningExamRequest(DiseaseDetection.POSITIVE, DiseaseDetection.NEGATIVE, null, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE),
+                            "chagasDisease field is required"
+                    ),
+                    Arguments.of(
+                            new SerologicalScreeningExamRequest(DiseaseDetection.POSITIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, null, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE),
+                            "syphilis field is required"
+                    ),
+                    Arguments.of(
+                            new SerologicalScreeningExamRequest(DiseaseDetection.POSITIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, null, DiseaseDetection.NEGATIVE),
+                            "aids field is required"
+                    ),
+                    Arguments.of(
+                            new SerologicalScreeningExamRequest(DiseaseDetection.POSITIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, DiseaseDetection.NEGATIVE, null),
+                            "htlv1_2 field is required"
+                    )
+            );
+        }
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 400 if serological exam should not be rejected")
+        void shouldReturn400IfSerologicalExamShouldNotBeRejected() {
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestSerologicalScreeningExam(donation));
+            createdExamIds.add(exam.getId());
+
+            SerologicalScreeningExamRequest examRequest = new SerologicalScreeningExamRequest(
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE
+            );
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/serologicalscreening/reject/" + exam.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.BAD_REQUEST.value());
+        }
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 404 if donation not found during serological exam rejection")
+        void shouldReturn404IfDonationNotFoundDuringSerologicalExamRejection() {
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestSerologicalScreeningExam(donation));
+            createdExamIds.add(exam.getId());
+
+            UUID nonExistentDonationId = UUID.randomUUID();
+
+            SerologicalScreeningExamRequest examRequest = new SerologicalScreeningExamRequest(
+                    DiseaseDetection.POSITIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE
+            );
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + nonExistentDonationId + "/serologicalscreening/reject/" + exam.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.NOT_FOUND.value())
+                .body("message", containsString("Donation does not exist"));
+        }
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 404 if exam not found during serological exam rejection")
+        void shouldReturn404IfExamNotFoundDuringSerologicalExamRejection() {
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            UUID nonExistentExamId = UUID.randomUUID();
+
+            SerologicalScreeningExamRequest examRequest = new SerologicalScreeningExamRequest(
+                    DiseaseDetection.POSITIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE
+            );
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/serologicalscreening/reject/" + nonExistentExamId)
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.NOT_FOUND.value())
+                .body("message", containsString("Exam not found"));
+        }
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("Should return 409 if serological exam was already analyzed when try to reject")
+        void shouldReturn409IfSerologicalExamWasAlreadyAnalyzedWhenTryToReject() {
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            ExamRegistrationService examRegistrationService = new ExamRegistrationService(examRepository);
+
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestSerologicalScreeningExam(donation));
+            createdExamIds.add(exam.getId());
+
+            SerologicalScreeningExamRequest examRequest = new SerologicalScreeningExamRequest(
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.POSITIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE,
+                    DiseaseDetection.NEGATIVE
+            );
+
+            examRegistrationService.registerRejectedExam(
+                    exam.getId(),
+                    SerologicalScreeningExamDTO.fromRequest(examRequest),
+                    LocalDateTime.now()
+            );
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+                .body(examRequest)
+            .when()
+                .post("/api/v1/exam/register/donation/" + donation.getId() + "/serologicalscreening/reject/" + exam.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.CONFLICT.value());
+        }
+    }
+
+    @Nested
+    class ViewImmunohematologyExam {
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("should return exam and status 200")
+        void shouldReturnExamAndStatus200(){
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestImmunohematologyExam(donation));
+            createdExamIds.add(exam.getId());
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+            .when()
+                .get("/api/v1/exam/view/immunohematology/" + donation.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.OK.value())
+                .body("id", notNullValue())
+                .body("donationId", equalTo(donation.getId().toString()))
+                .body("examStatus", equalTo("UNDER_ANALYSIS"))
+                .body("createdAt", notNullValue())
+                .body("updatedAt", notNullValue())
+                .body("irregularAntibodies", nullValue())
+                .body("bloodType", nullValue())
+                .body("observations", nullValue());
+        }
+
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("should return 404 if donation not found when viewing immunohematology exam")
+        void shouldReturn404IfDonationNotFoundWhenViewingImmunohematologyExam() {
+            UUID nonExistentDonationId = UUID.randomUUID();
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+            .when()
+                .get("/api/v1/exam/view/immunohematology/" + nonExistentDonationId)
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.NOT_FOUND.value())
+                .body("message", containsString("Donation does not exist"));
+        }
+    }
+
+    @Nested
+    class ViewSerologicalScreeningExam {
+        @Test
+        @Tag("ApiTest")
+        @Tag("IntegrationTest")
+        @DisplayName("should return exam and status 200")
+        void shouldReturnExamAndStatus200(){
+            ExamRequestService examRequestService = new ExamRequestService(examRepository);
+            Donation donation = donationRepository.save(EntityBuilder.createRandomDonation(donor, appointment));
+            createdDonationIds.add(donation.getId());
+
+            Exam exam = examRepository.save(examRequestService.requestSerologicalScreeningExam(donation));
+            createdExamIds.add(exam.getId());
+
+            given()
+                .contentType("application/json")
+                .header("Authorization", "Bearer " + token)
+                .port(port)
+            .when()
+                .get("/api/v1/exam/view/serologicalscreening/" + donation.getId())
+            .then()
+                .log().ifValidationFails(LogDetail.BODY)
+                .statusCode(HttpStatus.OK.value())
+                .body("id", notNullValue())
+                .body("donationId", equalTo(donation.getId().toString()))
+                .body("examStatus", equalTo("UNDER_ANALYSIS"))
+                .body("createdAt", notNullValue())
+                .body("updatedAt", notNullValue())
+                .body("hepatitisB", nullValue())
+                .body("hepatitisC", nullValue())
+                .body("chagasDisease", nullValue())
+                .body("syphilis", nullValue())
+                .body("aids", nullValue())
+                .body("htlv1_2", nullValue())
+                .body("observations", nullValue());
+        }
+    }
+
+    @Test
+    @Tag("ApiTest")
+    @Tag("IntegrationTest")
+    @DisplayName("should return 404 if donation not found when viewing serological screening exam")
+    void shouldReturn404IfDonationNotFoundWhenViewingSerologicalScreeningExam() {
+        UUID nonExistentDonationId = UUID.randomUUID();
+
+        given()
+            .contentType("application/json")
+            .header("Authorization", "Bearer " + token)
+            .port(port)
+        .when()
+            .get("/api/v1/exam/view/serologicalscreening/" + nonExistentDonationId)
+        .then()
+            .log().ifValidationFails(LogDetail.BODY)
+            .statusCode(HttpStatus.NOT_FOUND.value())
+            .body("message", containsString("Donation does not exist"));
+    }
+}
